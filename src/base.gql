@@ -1,11 +1,11 @@
-# 查询
+# 查询 
 type Query {
-	dummy: Boolean
+    dummy: Boolean
 }
 
 # 变更
 type Mutation {
-	dummy: Boolean
+    dummy: Boolean
 }
 
 scalar Date

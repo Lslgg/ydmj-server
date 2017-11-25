@@ -9,12 +9,11 @@ export class RoleResolver {
     }
 
     static Role: any = {
-        Powers(model,limit) {
+        Powers(model,info) { 
             let promise = new Promise<Array<IPowerModel>>((resolve, reject) => {
                 RolePowerSchema.find({ roleId: model.id }).then(res => {
                     var powerIds = res.map(p => p.powerId);
-                    PowerScheam.find({ '_id': { $in: powerIds } }).skip(0).limit(2).then(res => {
-                        console.log(res);
+                    PowerScheam.find({ '_id': { $in: powerIds } }).skip(0).limit(info.limit).then(res => {
                         resolve(res);
                     })
                 })
