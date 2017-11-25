@@ -1,0 +1,13 @@
+# 查询
+type Query {
+	dummy: Boolean
+}
+
+# 变更
+type Mutation {
+	dummy: Boolean
+}
+
+scalar Date
+
+scalar RegExp

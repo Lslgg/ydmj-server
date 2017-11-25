@@ -1,0 +1,54 @@
+{
+  "name": "ydmj-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "prestart": "tsc",
+    "build:prod": "tsc && npm run build:gql",
+    "start": "node dist/server.js",
+    "start:live": "npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/server.ts",
+    "build:gql": "copyfiles -u 1 src/**/*.graphql src/**/*.gql dist/"
+  },
+  "dependencies": {
+    "@types/body-parser": "^1.16.8",
+    "@types/cors": "^2.8.3",
+    "@types/express": "^4.0.39",
+    "@types/mongoose": "^4.7.27",
+    "@types/mongoose-promise": "^4.5.7",
+    "@types/node": "^8.0.53",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "express-graphql": "^0.6.11",
+    "graphql": "^0.11.7",
+    "graphql-playground": "^1.1.0",
+    "graphql-playground-middleware-express": "^1.1.2",
+    "graphql-server-express": "^1.2.0",
+    "graphql-tools": "^2.7.2",
+    "graphql-voyager": "^1.0.0-rc.9",
+    "mongoose": "^4.13.4",
+    "require-text": "0.0.1",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.6.1"
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": [
+      "airbnb/base",
+      "plugin:import/errors"
+    ],
+    "rules": {
+      "no-use-before-define": 0,
+      "arrow-body-style": 0,
+      "dot-notation": 0,
+      "no-console": 0
+    },
+    "env": {
+      "mocha": true
+    }
+  },
+  "devDependencies": {
+    "copyfiles": "^1.2.0"
+  }
+}

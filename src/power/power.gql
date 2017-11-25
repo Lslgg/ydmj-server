@@ -1,0 +1,54 @@
+# 系统权限表
+type Power{
+    _id:ID 
+    # 标题
+    title:String
+    # 操作权限
+    operation:String
+    code:String
+    url:String
+    explain:String 
+    type:String  
+    isValid:Boolean
+    updateAt:Date
+    createAt:Date
+}
+
+extend type Query{
+    # 查找所有权限
+    getPowers:[Power]
+    # 根据ID查找权限
+    getPowerById(id:String):Power
+    # 分页查找权限
+    getPowerPage(pageIndex:Int,PageSize:Int,power:searchPower):[Power]
+    # 根据条件查找权限总数
+    getPowerCount(power:searchPower):Int
+    # 根据条件查找权限
+    getPowerWhere(power:searchPower):[Power]
+}
+
+extend type Mutation {
+    # 创建权限
+    createPower(power:inputPower):Power
+    # 修改权限
+    updatePower(id:String,power:inputPower):Power
+    # 删除权限
+    deletePower(id:String):Boolean
+}
+
+input inputPower{
+    # 标题
+    title:String
+    # 操作权限
+    operation:String
+    code:String
+    url:String
+    explain:String 
+    type:String  
+    isValid:Boolean
+}
+
+
+input searchPower{
+    title:RegExp
+}

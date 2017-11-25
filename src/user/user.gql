@@ -1,0 +1,63 @@
+# 系统用户表
+type User {
+    _id: ID!
+    # 用户登录名
+    username: String
+    # 姓名
+    name: String
+    # 邮件
+    email:String
+    # 密码
+    password:String
+    # 创建时期
+    createAt:Date
+    # 修改时期
+    updateAt:Date
+    #用户角色
+    Role:Role
+    #是否有效
+    isValid:Boolean
+}
+
+extend type Query {
+    # 查找所有用户
+    getUsers: [User]
+    # 根据ID查找用户
+    getUserById(id:String):User
+    # 分页查找
+    getUserPage(pageIndex: Int, pageSize: Int,user:searchUser): [User]
+    # 查找分页总数
+    getUserCount(user:searchUser):Int
+    # 根据条件查找
+    getUserWhere(user:searchUser): [User]
+   
+}
+
+extend type Mutation {
+    # 创建用户
+    createUser(user:inputUser):User
+    # 修改角色
+    updateUser(id:String,user:inputUser):User
+     # 删除用户
+    deleteUser(id:String):Boolean
+    # 用户登录
+    login (user:loginUser): User
+   
+}
+
+input inputUser{
+    username: String
+    name: String
+    email:String
+    password:String
+    roleId:String
+}
+
+input loginUser{
+    username:String
+    password:String
+}
+
+input searchUser{
+    username:RegExp
+}
