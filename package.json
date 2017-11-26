@@ -8,7 +8,7 @@
     "build:prod": "tsc && npm run build:gql",
     "start": "node dist/server.js",
     "start:live": "npm run build:live",
-    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/server.ts",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./index.ts",
     "build:gql": "copyfiles -u 1 src/**/*.graphql src/**/*.gql dist/"
   },
   "dependencies": {

@@ -19,7 +19,7 @@ class Server {
 		this.routes();
 	}
 
-	public config() {
+	private config() {
 		const MONGO_URI = 'mongodb://localhost/webSite';
 		Mongoose.connect(MONGO_URI || process.env.MONGO_URI, { useMongoClient: true });
 
@@ -31,7 +31,7 @@ class Server {
 		this.app.use(cors(corsOption));
 	}
 
-	public routes(): void {
+	private routes(): void {
 		var uploadFileRouter = new UploadFile().router();
 		this.app.use('/', uploadFileRouter);
 
@@ -39,10 +39,6 @@ class Server {
 		this.app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 		this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 		this.app.use('/voyager', middleware({ endpointUrl: '/graphql' }));
-
-		this.app.listen(8080, function() {
-			console.log('Now browse to http://localhost:8080/playground');
-		});
 	}
 
 	private setCors() {
@@ -55,4 +51,4 @@ class Server {
 	}
 }
 
-new Server();
+export default new Server().app;
