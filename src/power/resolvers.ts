@@ -22,6 +22,7 @@ export class PowerResolver {
         getPowerById(_, { id }, context): Promise<IPowerModel> {
             let promise = new Promise<IPowerModel>((resolve, reject) => {
                 PowerSchema.findById(id).then(res => {
+                    console.log(res);
                     resolve(res);
                 });
             });

@@ -2,7 +2,7 @@ import { model, Schema, Document } from 'mongoose';
 
 export interface IPowerModel extends Document {
     title:String
-    operation:String
+    operation:[String]
     code:String
     url:String
     explain:String 
@@ -11,10 +11,12 @@ export interface IPowerModel extends Document {
     updateAt:Date
     createAt:Date
 }
-
+const GENDERS=['SHOW','ADD','UPDATE','DELETE']
 let schema: Schema = new Schema({
     title:String,
-    operation:String,
+    operation:{
+        type: [String], enum: GENDERS
+    },
     code:String,
     url:String,
     explain:String, 
