@@ -4,24 +4,24 @@ import { UploadFile } from '../file/uploadFile';
 
 export class AdvertResolver {
 	constructor() {}
-    
-    static Advert: any = {
-        Images(model) { 
-            let promise =new Promise<Array<any>>( async (resolve, reject) => {
-                var uploadFile = new UploadFile();
-                var files=await uploadFile.getImgById(model.imageId);
-                resolve(files);
-            })
-            return promise;
-        }
-    }
+
+	static Advert: any = {
+		Images(model) {
+			let promise = new Promise<Array<any>>(async (resolve, reject) => {
+				var uploadFile = new UploadFile();
+				var files = await uploadFile.getImgById(model.imageId);
+				resolve(files);
+			});
+			return promise;
+		}
+	};
 
 	static Query: any = {
-		async getAdverts(_, __, context): Promise<Array<IAdvertModel>> {
-            var uploadFile = new UploadFile();
+		getAdverts(_, __, context): Promise<Array<IAdvertModel>> {
+			var uploadFile = new UploadFile();
 			let promise = new Promise<Array<IAdvertModel>>((resolve, reject) => {
 				AdvertSchema.find().then((res) => {
-                    resolve(res);
+					resolve(res);
 				});
 			});
 			return promise;
@@ -36,11 +36,7 @@ export class AdvertResolver {
 			return promise;
 		},
 
-		getAdvertPage(
-			_,
-			{ pageIndex = 1, pageSize = 10, advert },
-			context
-		): DocumentQuery<Array<IAdvertModel>, IAdvertModel> {
+		getAdvertPage(_, { pageIndex = 1, pageSize = 10, advert }, context) {
 			var userInfo = AdvertSchema.find(advert).skip((pageIndex - 1) * pageSize).limit(pageSize);
 			return userInfo;
 		},
@@ -57,7 +53,7 @@ export class AdvertResolver {
 	};
 
 	static Mutation: any = {
-		createAdvert(_, { advert }, context): MongoosePromise<Array<IAdvertModel>> {
+		createAdvert(_, { advert }, context) {
 			return AdvertSchema.create(advert);
 		},
 
@@ -71,10 +67,11 @@ export class AdvertResolver {
 
 			return promise;
 		},
+
 		deleteAdvert(_, { id }, context): Promise<Boolean> {
 			let promise = new Promise<Boolean>((resolve, reject) => {
 				AdvertSchema.findByIdAndRemove(id, (err, res) => {
-                    new UploadFile().deleteImg(res.imageId);
+					new UploadFile().deleteImg(res.imageId);
 					resolve(res != null);
 				});
 			});
