@@ -29,6 +29,7 @@ export default{
    },
    User:UserResolver.User,
    Role:RoleResolver.Role,
+   Advert:AdvertResolver.Advert,
    Date,
    RegExp
 }

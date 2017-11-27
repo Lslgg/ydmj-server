@@ -23,7 +23,7 @@ export class UploadFile {
 		this.db = new Loki(`${this.UPLOAD_PATH}/${this.DB_NAME}`, { persistenceMethod: 'fs' });
 	}
 
-	public router(): any {
+	public router(): express.Router {
 		let router: express.Router;
 		router = express.Router();
 
@@ -33,7 +33,12 @@ export class UploadFile {
 				const data = col.insert(req.file);
 
 				this.db.saveDatabase();
-				res.send({ id: data.$loki, fileName: data.filename, originalName: data.originalname });
+				res.send({
+					id: data.$loki,
+					fileName: data.filename,
+					originalName: data.originalname,
+					mimetype: data.mimetype
+				});
 			} catch (err) {
 				res.sendStatus(400);
 			}
@@ -94,6 +99,52 @@ export class UploadFile {
 			}
 		});
 
+		router.get('/getImg/:id', async (req, res) => {
+			try {
+				const col = await loadCollection(this.COLLECTION_NAME, this.db);
+				const result = col.get(req.params.id);
+				res.send(result);
+			} catch (err) {
+				res.sendStatus(400);
+			}
+		});
+
 		return router;
+	}
+
+	async getImgById(id: any): Promise<any> {
+		try {
+			const col = await loadCollection(this.COLLECTION_NAME, this.db);
+			const result = col.find({ $loki: { $in: id } });
+			var list = [];
+			for (var i = 0; i < result.length; i++) {
+				let self = result[i];
+				let info = Object.assign({ id: 0 }, self);
+				info.id = self['$loki'];
+				list.push(info);
+			}
+			return list;
+		} catch (err) {
+			return null;
+		}
+	}
+
+	async deleteImg(id: any): Promise<any> {
+		try {
+			console.log(id);
+			const col = await loadCollection(this.COLLECTION_NAME, this.db);
+			const result = col.find({ $loki: { $in: id } });
+			if (!result) {
+				return null;
+			}
+			for(var i=0,leth=result.length; i<leth;i++){
+				let self=result[i];
+				cleanFolder(self.destination, self.filename);
+			}
+			col.remove(result);
+			this.db.saveDatabase();
+		} catch (err) {
+			return null;
+		}
 	}
 }

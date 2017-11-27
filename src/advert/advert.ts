@@ -2,7 +2,7 @@ import { model, Schema, Document } from 'mongoose';
 
 export interface IAdvertModel extends Document {
     title:String,
-    imageSrc:String,
+    imageId:[Number],
     startDate:Date,
     endDate:Date,
     explain:String,
@@ -15,10 +15,10 @@ export interface IAdvertModel extends Document {
 
 let schema: Schema = new Schema({
     title:String,
-    imageSrc:String,
+    imageId:[Number],
     startDate:Date,
     endDate:Date,
-    explain:String,
+    explain:String, 
     activity:Number,  
     type:Number,
     isValid:Boolean,

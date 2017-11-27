@@ -1,70 +1,69 @@
 # 广告管理表
-type Advert{
-    _id:ID 
-    # 标题
-    title:String
-    imageSrc:String
-    # 活动开始时间
-    startDate:Date
-    # 活动对结束时间
-    endDate:Date
-    # 说明
-    explain:String
-    # 活动状态
-    activity:Int  
-    # 活动类型
-    type:Int
-    isValid:Boolean
-    updateAt:Date
-    createAt:Date
+type Advert {
+	_id: ID
+	# 标题
+	title: String
+	Images: [File]
+	# 活动开始时间
+	startDate: Date
+	# 活动对结束时间
+	endDate: Date
+	# 说明
+	explain: String
+	# 活动状态
+	activity: Int
+	# 活动类型
+	type: Int
+	isValid: Boolean
+	updateAt: Date
+	createAt: Date
 }
 
-extend type Query{
-    # 查找所有权限
-    getAdverts:[Advert]
-    # 根据ID查找权限
-    getAdvertById(id:String):Advert
-    # 分页查找权限
-    getAdvertPage(pageIndex:Int,PageSize:Int,advert:searchAdvert):[Advert]
-    # 根据条件查找权限总数
-    getAdvertCount(advert:searchAdvert):Int
-    # 根据条件查找权限
-    getAdvertWhere(advert:searchAdvert):[Advert]
+extend type Query {
+	# 查找所有权限
+	getAdverts: [Advert]
+	# 根据ID查找权限
+	getAdvertById(id: String): Advert
+	# 分页查找权限
+	getAdvertPage(pageIndex: Int, PageSize: Int, advert: searchAdvert): [Advert]
+	# 根据条件查找权限总数
+	getAdvertCount(advert: searchAdvert): Int
+	# 根据条件查找权限
+	getAdvertWhere(advert: searchAdvert): [Advert]
 }
 
 extend type Mutation {
-    # 创建活动
-    createAdvert(advert:inputAdvert):Advert
-    # 修改活动
-    updateAdvert(id:String,power:inputAdvert):Advert
-    # 删除活动
-    deleteAdvert(id:String):Boolean
+	# 创建活动
+	createAdvert(advert: inputAdvert): Advert
+	# 修改活动
+	updateAdvert(id: String, advert: inputAdvert): Advert
+	# 删除活动
+	deleteAdvert(id: String): Boolean
 }
 
-input inputAdvert{
-    # 标题
-    title:String
-    imageSrc:String
-    # 活动开始时间
-    startDate:Date
-    # 活动对结束时间
-    endDate:Date
-    # 说明
-    explain:String
-    # 活动状态
-    activity:Int  
-    # 活动类型
-    type:Int
-    isValid:Boolean
+input inputAdvert {
+	# 标题
+	title: String
+	imageId: [Int]
+	# 活动开始时间
+	startDate: Date
+	# 活动对结束时间
+	endDate: Date
+	# 说明
+	explain: String
+	# 活动状态
+	activity: Int
+	# 活动类型
+	type: Int
+	isValid: Boolean
 }
 
-
-input searchAdvert{
-    title:RegExp
-    # 活动类型
-    type:Int
-    # 活动开始时间
-    startDate:Date
-    # 活动对结束时间
-    endDate:Date
+input searchAdvert {
+	title: RegExp
+	# 活动类型
+	type: Int
+	# 活动开始时间
+	startDate: Date
+	# 活动对结束时间
+	endDate: Date
 }

@@ -1,11 +1,30 @@
-# 查询 
+# 查询
 type Query {
-    dummy: Boolean
+	dummy: Boolean
 }
 
 # 变更
 type Mutation {
-    dummy: Boolean
+	dummy: Boolean
+}
+
+type File {
+	id: String
+	fieldname: String
+	originalname: String
+	encoding: String
+	mimetype: String
+	destination: String
+	filename: String
+	path: String
+	size: Float
+	meta: Meta
+}
+
+type Meta {
+	revision: Int
+	created: Float
+	version: Int
 }
 
 scalar Date
