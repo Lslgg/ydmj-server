@@ -1,3 +1,3 @@
 # ydmj-server
 
-This project was typescript,graphql and express.
+This project is typescript,graphql and express.
