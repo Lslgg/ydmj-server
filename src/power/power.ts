@@ -1,6 +1,7 @@
 import { model, Schema, Document } from 'mongoose';
 
 export interface IPowerModel extends Document {
+	id:string,
 	title: String;
 	operation: [String];
 	code: String;

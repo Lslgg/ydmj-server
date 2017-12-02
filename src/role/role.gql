@@ -1,6 +1,6 @@
 # 系统角色表
 type Role {
-    _id: ID!
+    id: ID!
 	# 角色名
 	roleName: String
 	# 说明

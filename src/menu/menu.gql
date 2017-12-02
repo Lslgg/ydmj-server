@@ -1,6 +1,6 @@
 # 系统菜单表
 type Menu{
-    _id:ID 
+    id:ID 
     # 标题
     title:String
     # 图标ico
@@ -50,4 +50,5 @@ input inputMenu{
 
 input searchMenu{
     title:RegExp
+    pid:String
 }

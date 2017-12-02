@@ -51,7 +51,12 @@ export class UserResolver {
         getUserCount(_, { user }, context) {
             var count = UserSchema.count(user);
             return count;
-        }
+        },
+
+        login(_, { user }, context): DocumentQuery<IUserModel, IUserModel> {
+            var users = UserSchema.findOne(user)
+            return users
+        },
     }
 
     static Mutation: any = {
@@ -63,17 +68,12 @@ export class UserResolver {
         updateUser(_, { id, user }, context) {
             let promise = new Promise<IUserModel>((resolve, reject) => {
                 UserSchema.findByIdAndUpdate(id, user, (err, res) => {
-                    Object.assign(res,user);
+                    Object.assign(res, user);
                     resolve(res);
                 })
             });
 
             return promise;
-        },
-
-        login(_, { user }, context): DocumentQuery<IUserModel, IUserModel> {
-            var users = UserSchema.findOne(user)
-            return users
         },
 
         deleteUser(_, { id }, context): Promise<Boolean> {

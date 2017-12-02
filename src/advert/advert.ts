@@ -1,6 +1,7 @@
 import { model, Schema, Document } from 'mongoose';
 
 export interface IAdvertModel extends Document {
+    id:string,
     title:String,
     imageId:[Number],
     startDate:Date,

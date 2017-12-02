@@ -49,6 +49,8 @@ class Server {
 			callback(null, { origin: success });
 		};
 	}
+
+
 }
 
 export default new Server().app;

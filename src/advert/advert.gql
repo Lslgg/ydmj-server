@@ -1,6 +1,6 @@
 # 广告管理表
 type Advert {
-	_id: ID
+	id: ID
 	# 标题
 	title: String
 	Images: [File]

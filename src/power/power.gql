@@ -1,6 +1,6 @@
 # 系统权限表
 type Power {
-	_id: ID
+	id: ID
 	# 标题
 	title: String
 	# 操作权限

@@ -1,6 +1,6 @@
 # 系统用户表
 type User {
-    _id: ID!
+    id: ID!
     # 用户登录名
     username: String
     # 姓名
@@ -30,6 +30,8 @@ extend type Query {
     getUserCount(user:searchUser):Int
     # 根据条件查找
     getUserWhere(user:searchUser): [User]
+    # 用户登录
+    login (user:loginUser): User
    
 }
 
@@ -40,8 +42,7 @@ extend type Mutation {
     updateUser(id:String,user:inputUser):User
      # 删除用户
     deleteUser(id:String):Boolean
-    # 用户登录
-    login (user:loginUser): User
+    
    
 }
 

@@ -1,6 +1,7 @@
 import { model, Schema, Document } from 'mongoose';
 
 export interface IRoleModel extends Document {
+    id:string,
     roleName: string,
     desc:string,
     isValid:Boolean,

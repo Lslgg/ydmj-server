@@ -1,6 +1,7 @@
 import { model, Schema, Document } from 'mongoose';
 
 export interface IMenuModel extends Document {
+    id:string,
     title: String,
     menuImg: String,
     isLeaf: Boolean,
@@ -17,7 +18,7 @@ let schema: Schema = new Schema({
     menuImg:String,
     pid: String,
     code: String,
-    url: String,
+    url: String, 
     isLeaf: Boolean,
     isValid: Boolean,
     createAt: {
