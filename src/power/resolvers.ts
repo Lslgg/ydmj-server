@@ -14,7 +14,7 @@ export class PowerResolver {
             let promise = new Promise<Array<IPowerModel>>((resolve, reject) => {
                 PowerSchema.find().then(res => {
                     resolve(res);
-                });
+                }).catch(err=>resolve(null));
             });
             return promise;
         },
@@ -22,17 +22,16 @@ export class PowerResolver {
         getPowerById(_, { id }, context): Promise<IPowerModel> {
             let promise = new Promise<IPowerModel>((resolve, reject) => {
                 PowerSchema.findById(id).then(res => {
-                    console.log(res);
                     resolve(res);
-                });
+                }).catch(err=>resolve(null));
             });
             return promise;
         },
 
         getPowerPage(_, { pageIndex = 1, pageSize = 10, power }, context):
             DocumentQuery<Array<IPowerModel>, IPowerModel> {
-            var userInfo = PowerSchema.find(power).skip((pageIndex - 1) * pageSize).limit(pageSize)
-            return userInfo;
+            var list = PowerSchema.find(power).skip((pageIndex - 1) * pageSize).limit(pageSize)
+            return list;
         },
 
         getPowerCount(_, { power }, context) {

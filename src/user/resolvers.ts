@@ -23,7 +23,7 @@ export class UserResolver {
             let promise = new Promise<Array<IUserModel>>((resolve, reject) => {
                 var users = UserSchema.find().then(res => {
                     resolve(res);
-                });
+                }).catch(err=>resolve(null));
             });
             return promise;
         },
@@ -32,7 +32,7 @@ export class UserResolver {
             let promise = new Promise<IUserModel>((resolve, reject) => {
                 var users = UserSchema.findById(id).then(res => {
                     resolve(res);
-                });
+                }).catch(err=>resolve(null));
             });
             return promise;
         },

@@ -20,7 +20,7 @@ let UserSchema: Schema = new Schema({
         required: true
     },
     email: String,
-    password: String,
+    password: String, 
     roleId: String,
     isValid:{
         type:Boolean,

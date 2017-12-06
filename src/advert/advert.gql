@@ -25,7 +25,7 @@ extend type Query {
 	# 根据ID查找权限
 	getAdvertById(id: String): Advert
 	# 分页查找权限
-	getAdvertPage(pageIndex: Int, PageSize: Int, advert: searchAdvert): [Advert]
+	getAdvertPage(pageIndex: Int, pageSize: Int, advert: searchAdvert): [Advert]
 	# 根据条件查找权限总数
 	getAdvertCount(advert: searchAdvert): Int
 	# 根据条件查找权限

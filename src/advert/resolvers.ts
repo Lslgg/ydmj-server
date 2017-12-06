@@ -22,7 +22,7 @@ export class AdvertResolver {
 			let promise = new Promise<Array<IAdvertModel>>((resolve, reject) => {
 				AdvertSchema.find().then((res) => {
 					resolve(res);
-				});
+				}).catch(err=>resolve(null));
 			});
 			return promise;
 		},
@@ -31,7 +31,7 @@ export class AdvertResolver {
 			let promise = new Promise<IAdvertModel>((resolve, reject) => {
 				AdvertSchema.findById(id).then((res) => {
 					resolve(res);
-				});
+				}).catch(err=>resolve(null));
 			});
 			return promise;
 		},

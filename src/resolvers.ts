@@ -6,6 +6,8 @@ import { AdvertResolver } from './advert/resolvers';
 
 import Date from './scalar/Date';
 import RegExp from './scalar/RegExp';
+import JsonObject from './scalar/JsonObject';
+
 
 export default {
 	Query: {
@@ -25,6 +27,5 @@ export default {
 	User: UserResolver.User,
 	Role: RoleResolver.Role,
 	Advert: AdvertResolver.Advert,
-	Date,
-	RegExp
+	Date,RegExp,JsonObject
 };

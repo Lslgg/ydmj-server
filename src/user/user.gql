@@ -51,7 +51,8 @@ input inputUser{
     name: String
     email:String
     password:String
-    roleId:String
+    roleId:String,
+    isValid:Boolean
 }
 
 input loginUser{

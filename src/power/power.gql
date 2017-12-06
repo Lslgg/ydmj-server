@@ -27,7 +27,7 @@ extend type Query {
 	# 根据ID查找权限
 	getPowerById(id: String): Power
 	# 分页查找权限
-	getPowerPage(pageIndex: Int, PageSize: Int, power: searchPower): [Power]
+	getPowerPage(pageIndex: Int, pageSize: Int, power: searchPower): [Power]
 	# 根据条件查找权限总数
 	getPowerCount(power: searchPower): Int
 	# 根据条件查找权限

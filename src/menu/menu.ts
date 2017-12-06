@@ -13,16 +13,16 @@ export interface IMenuModel extends Document {
     createAt:Date
 }
 
-let schema: Schema = new Schema({
+let schema: Schema = new Schema({  
     title: String,
-    menuImg:String,
+    menuImg:String, 
     pid: String,
     code: String,
     url: String, 
     isLeaf: Boolean,
     isValid: Boolean,
     createAt: {
-        type: Date,
+        type: Date, 
         default: new Date(),
         required: true
     },

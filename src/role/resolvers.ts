@@ -15,9 +15,9 @@ export class RoleResolver {
                     var powerIds = res.map(p => p.powerId);
                     PowerScheam.find({ '_id': { $in: powerIds } }).skip(0).limit(info.limit).then(res => {
                         resolve(res);
-                    })
+                    }).catch(err=>resolve(null))
                 })
-            })
+            }) 
             return promise;
         }
     }
@@ -28,7 +28,7 @@ export class RoleResolver {
             let promise = new Promise<Array<IRoleModel>>((resolve, reject) => {
                 RoleSchema.find().then(res => {
                     resolve(res);
-                });
+                }).catch(err=> resolve(null));
             });
             return promise;
         },
@@ -37,7 +37,7 @@ export class RoleResolver {
             let promise = new Promise<IRoleModel>((resolve, reject) => {
                 RoleSchema.findById(id).then(res => {
                     resolve(res);
-                });
+                }).catch(err=> resolve(null));
             });
             return promise;
         },

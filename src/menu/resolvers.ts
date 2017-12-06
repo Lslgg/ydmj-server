@@ -13,8 +13,8 @@ export class MenuResolver {
             let promise = new Promise<Array<IMenuModel>>((resolve, reject) => {
                 MenuSchema.find().then(res => {
                     resolve(res);
-                });
-            });
+                }).catch(err=>resolve(null));
+            })
             return promise;
         },
 
@@ -22,7 +22,7 @@ export class MenuResolver {
             let promise = new Promise<IMenuModel>((resolve, reject) => {
                 MenuSchema.findById(id).then(res => {
                     resolve(res);
-                });
+                }).catch(err=>resolve(null));
             });
             return promise;
         },
@@ -39,8 +39,9 @@ export class MenuResolver {
         },
 
         getMenuWhere(_, { menu }, context) {
-            var users = MenuSchema.find(menu);
-            return users;
+            //var users = MenuSchema.find({"pid":{"$in" : ["5a221555842273172c089eb1","5a2215d3842273172c089eb2"]}});
+            console.log(menu);
+            return MenuSchema.find(menu);
         },
     }
 

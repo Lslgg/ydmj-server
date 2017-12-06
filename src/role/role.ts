@@ -1,26 +1,29 @@
 import { model, Schema, Document } from 'mongoose';
 
 export interface IRoleModel extends Document {
-    id:string,
+    id: string,
     roleName: string,
-    desc:string,
-    isValid:Boolean,
+    desc: string,
+    code:string
+    isValid: Boolean,
     createdAt: Date,
     updateAt: Date,
 }
 
 export interface IRolePowerModel extends Document {
-    roleId:String,
-    powerId:String
+    roleId: String,
+    powerId: String
 }
 
 let RoleSchema: Schema = new Schema({
     roleName: {
         type: String,
         default: '',
+        unique: true,
         required: true
     },
     desc: String,
+    code:String, 
     isValid: Boolean,
     createAt: {
         type: Date,
@@ -35,9 +38,9 @@ let RoleSchema: Schema = new Schema({
 })
 
 
-export const RolePowerSchema=model<IRolePowerModel>("RolePower",new Schema({
-    roleId:String,
-    powerId:String
+export const RolePowerSchema = model<IRolePowerModel>("RolePower", new Schema({
+    roleId: String,
+    powerId: String
 }))
 
 export default model<IRoleModel>('Role', RoleSchema);

@@ -21,7 +21,7 @@ extend type Query{
     # 根据ID查找菜单
     getMenuById(id:String):Menu
     # 分页查找菜单
-    getMenuPage(pageIndex:Int,PageSize:Int,menu:searchMenu):[Menu]
+    getMenuPage(pageIndex:Int,pageSize:Int,menu:searchMenu):[Menu]
     # 根据条件查找菜单总数
     getMenuCount(menu:searchMenu):Int
     # 根据条件查找菜单
@@ -50,5 +50,6 @@ input inputMenu{
 
 input searchMenu{
     title:RegExp
-    pid:String
+    pid:JsonObject
+    code:JsonObject
 }

@@ -30,3 +30,5 @@ type Meta {
 scalar Date
 
 scalar RegExp
+
+scalar JsonObject

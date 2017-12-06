@@ -5,6 +5,7 @@ type Role {
 	roleName: String
 	# 说明
 	desc: String
+	code:String
 	# 是否用效
 	isValid: Boolean
 	# 创建时期
@@ -46,6 +47,7 @@ extend type Mutation {
 input inputRole {
 	roleName: String
 	desc: String
+	code:String
 	isValid: Boolean
 }
 
