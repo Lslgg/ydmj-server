@@ -66,6 +66,18 @@ export class PowerResolver {
                 })
             });
             return promise;
+        },
+        addAllPower(_, { power }, context):MongoosePromise<Array<IPowerModel>> {
+            return PowerSchema.create(power); 
+        },
+        delAllPower(_, { power }, context): Promise<Boolean> {
+            let promise = new Promise<Boolean>((resolve, reject) => {
+                if(!power) resolve(false);
+                PowerSchema.find(power).remove((err, res) => {
+                    resolve(res != null)
+                })
+            });
+            return promise;
         }
     }
 }

@@ -7,7 +7,7 @@ type Query {
 type Mutation {
 	dummy: Boolean
 }
-
+# 文件
 type File {
 	id: String
 	fieldname: String

@@ -40,7 +40,6 @@ export class MenuResolver {
 
         getMenuWhere(_, { menu }, context) {
             //var users = MenuSchema.find({"pid":{"$in" : ["5a221555842273172c089eb1","5a2215d3842273172c089eb2"]}});
-            console.log(menu);
             return MenuSchema.find(menu);
         },
     }

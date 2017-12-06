@@ -41,6 +41,10 @@ extend type Mutation {
 	updatePower(id: String, power: inputPower): Power
 	# 删除权限
 	deletePower(id: String): Boolean
+	# 批量添加权限
+	addAllPower(power:[inputPower]):[Power]
+	# 批量根据条件删除
+	delAllPower(power:searchPower):Boolean
 }
 
 input inputPower {
@@ -56,5 +60,10 @@ input inputPower {
 }
 
 input searchPower {
+	_id:JsonObject
 	title: RegExp
+	code: RegExp
+	url: RegExp
+	type: RegExp
+	isValid: Boolean
 }
