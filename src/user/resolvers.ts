@@ -1,19 +1,22 @@
 import UserSchema, { IUserModel } from './user';
 import RoleSchema from '../role/role';
+import ProfileSchema from '../profile/profile';
+
 
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 
 export class UserResolver {
 
-    private userModel: IUserModel;
 
-    constructor(userModel: IUserModel) {
-        this.userModel = userModel;
+    constructor() {
     }
 
     static User: any = {
         Role(model) {
             return RoleSchema.findById(model.roleId);
+        },
+        Profile(model) {
+            return ProfileSchema.findById(model.profileId);
         }
     }
 
@@ -23,7 +26,7 @@ export class UserResolver {
             let promise = new Promise<Array<IUserModel>>((resolve, reject) => {
                 var users = UserSchema.find().then(res => {
                     resolve(res);
-                }).catch(err=>resolve(null));
+                }).catch(err => resolve(null));
             });
             return promise;
         },
@@ -32,7 +35,7 @@ export class UserResolver {
             let promise = new Promise<IUserModel>((resolve, reject) => {
                 var users = UserSchema.findById(id).then(res => {
                     resolve(res);
-                }).catch(err=>resolve(null));
+                }).catch(err => resolve(null));
             });
             return promise;
         },

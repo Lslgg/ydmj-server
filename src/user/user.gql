@@ -9,14 +9,16 @@ type User {
     email:String
     # 密码
     password:String
-    # 创建时期
+    # 创建时间
     createAt:Date
-    # 修改时期
+    # 修改时间
     updateAt:Date
     #用户角色
     Role:Role
     #是否有效
     isValid:Boolean
+    #用户资料
+    Profile:Profile
 }
 
 extend type Query {
@@ -42,8 +44,6 @@ extend type Mutation {
     updateUser(id:String,user:inputUser):User
      # 删除用户
     deleteUser(id:String):Boolean
-    
-   
 }
 
 input inputUser{
@@ -52,6 +52,7 @@ input inputUser{
     email:String
     password:String
     roleId:String,
+    profileId:String,
     isValid:Boolean
 }
 

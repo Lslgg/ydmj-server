@@ -3,6 +3,8 @@ import { RoleResolver } from './role/resolvers';
 import { MenuResolver } from './menu/resolvers';
 import { PowerResolver } from './power/resolvers';
 import { AdvertResolver } from './advert/resolvers';
+import { ProfileResolver } from './profile/resolvers';
+
 
 import Date from './scalar/Date';
 import RegExp from './scalar/RegExp';
@@ -15,14 +17,17 @@ export default {
 		...RoleResolver.Query,
 		...MenuResolver.Query,
 		...PowerResolver.Query,
-		...AdvertResolver.Query
+		...AdvertResolver.Query,
+		...ProfileResolver.Query,
 	},
 	Mutation: {
 		...UserResolver.Mutation,
 		...RoleResolver.Mutation,
 		...MenuResolver.Mutation,
 		...PowerResolver.Mutation,
-		...AdvertResolver.Mutation
+		...AdvertResolver.Mutation,
+		...ProfileResolver.Mutation,
+		
 	},
 	User: UserResolver.User,
 	Role: RoleResolver.Role,

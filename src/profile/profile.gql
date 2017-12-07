@@ -1,0 +1,44 @@
+# 用户资料
+type Profile{
+    id:String
+    phone:String
+    address:String
+    card:Int
+    createAt:Date
+    updateAt:Date
+}
+
+extend type Query {
+    # 查找所有用户资料
+    getProfiles: [Profile]
+    # 根据ID查找用户资料
+    getProfileById(id:String):Profile
+    # 分页查找用户资料
+    getProfilePage(pageIndex: Int, pageSize: Int,profile:searchProfile): [Profile]
+    # 查找分页用户资料总数
+    getProfileCount(profile:searchProfile):Int
+    # 根据条件查找用户资料
+    getProfileWhere(profile:searchProfile): [Profile]
+    # 聚合查询
+    getProfileAggregate(profile:JsonObject):JsonObject
+}
+
+extend type Mutation {
+    # 创建用户资料
+    createProfile(profile:inputProfile):Profile
+    # 修改用户资料
+    updateProfile(id:String,profile:inputUser):Profile
+     # 删除用户资料
+    deleteProfile(id:String):Boolean
+}
+
+input inputProfile{
+    phone:String
+    address:String
+    card:Int
+}
+
+input searchProfile{
+    _id:JsonObject
+    phone:RegExp
+}

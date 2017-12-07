@@ -2,11 +2,12 @@ import { model, Schema, Document } from 'mongoose';
 
 export interface IUserModel extends Document {
     id:string,
-    name: string,
-    username: string,
-    email: number,
+    name: String,
+    username: String,
+    email: String,
     password: String,
-    roleId: string,
+    roleId: String,
+    profileId:String,
     createdAt: Date,
     updateAt: Date,
     isValid:Boolean,
@@ -22,6 +23,7 @@ let UserSchema: Schema = new Schema({
     email: String,
     password: String, 
     roleId: String,
+    profileId:String,
     isValid:{
         type:Boolean,
         default:true

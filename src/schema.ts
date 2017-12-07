@@ -8,8 +8,10 @@ var Role = requireText('./role/role.gql', require);
 var Menu = requireText('./menu/menu.gql', require);
 var Power = requireText('./power/power.gql', require);
 var Advert = requireText('./advert/advert.gql', require);
+var Profile = requireText('./profile/profile.gql', require);
 
-var typeDefs = [Base, User, Role, Menu,Power,Advert];
+
+var typeDefs = [Base, User, Role, Menu,Power,Advert,Profile];
 
 const schema = makeExecutableSchema({
   typeDefs: typeDefs,
