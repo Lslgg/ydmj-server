@@ -47,19 +47,18 @@ export class ProfileResolver {
         },
 
         getProfileAggregate(_, { profile }, context): Promise<{}> {
+            /**{ $project: { "card": 1,"phone":1 } },
+                { $match: { card: { $gt: 10, $lte: 970 } } },
+                { $group: { _id: "$_id", total: { $min: "$card" } } }*/
             let promise = new Promise<{}>((resolve, reject) => {
-                ProfileSchema.aggregate([
-                    { $project: { "card": 1,"phone":1 } },
-                    { $match: { card: { $gt: 10, $lte: 970 } } },
-                    { $group: { _id: "$_id", total: { $min: "$card" } } }
-                ]
+                ProfileSchema.aggregate([profile]
                 ).then(data => resolve(data))
                 .catch(err=> {
                     console.error(err);
                     reject(err);
                 });
             })
-
+ 
             return promise;
         }
     }

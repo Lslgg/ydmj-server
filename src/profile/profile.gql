@@ -20,7 +20,7 @@ extend type Query {
     # 根据条件查找用户资料
     getProfileWhere(profile:searchProfile): [Profile]
     # 聚合查询
-    getProfileAggregate(profile:JsonObject):JsonObject
+    getProfileAggregate(profile:[JsonObject]):JsonObject
 }
 
 extend type Mutation {
@@ -42,3 +42,4 @@ input searchProfile{
     _id:JsonObject
     phone:RegExp
 }
+

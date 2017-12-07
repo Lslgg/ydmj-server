@@ -18,7 +18,9 @@ export default new GraphQLScalarType({
                 [ast],
             );
         }
+        // console.log(ast.value);  
         let jsobj =JSON.parse(ast.value);
+        // console.log(jsobj);  
         return  jsobj;
     },
 });
