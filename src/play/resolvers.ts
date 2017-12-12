@@ -6,7 +6,7 @@ export class Play {
 
     constructor() {
 
-    }
+    } 
 
     static Query = {
         getPlays(_, __, context) {

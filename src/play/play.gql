@@ -1,14 +1,21 @@
+#玩家用户表
 type Play {
     id:Int
+    #微信ID
     weixin:String
     deviceMac:String
+    #微信名
     name:String
     forbid:Boolean
+    #微信头像
     image:String
     sex:Int
     state:Int
+    #房卡数量
     cardNum:Int
+    #最后登录时间
     lastLoginTime:Date
+    #登录IP地址
     lastLoginIp:String
     updateTime:Date
     createTime:Date
@@ -16,6 +23,7 @@ type Play {
     platform:String
     appVersion:String
     resourceVersion:String
+    #群主ID
     code:String
 }
 
