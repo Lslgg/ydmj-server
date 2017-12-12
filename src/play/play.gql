@@ -1,0 +1,37 @@
+type Play {
+    id:Int
+    weixin:String
+    deviceMac:String
+    name:String
+    forbid:Boolean
+    image:String
+    sex:Int
+    state:Int
+    cardNum:Int
+    lastLoginTime:Date
+    lastLoginIp:String
+    updateTime:Date
+    createTime:Date
+    deleteTime:Date
+    platform:String
+    appVersion:String
+    resourceVersion:String
+    code:String
+}
+
+extend type Query {
+    # 查找所有玩家
+    getPlays: [Play]
+    # 根据ID查找玩家
+    getPlayById(id:String):User
+    # 分页查找玩家
+    getPlayPage(pageIndex: Int, pageSize: Int,where:String): [Play]
+    # 查找分页玩家总数
+    getPlayCount(where:String):Int
+    # 根据条件查找
+    getPlayWhere(where:String): [Play]
+}
+
+extend type Mutation {
+   
+}

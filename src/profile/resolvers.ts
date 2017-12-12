@@ -3,7 +3,7 @@ import RoleSchema from '../role/role';
 
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 
-export class ProfileResolver {
+export class Profile {
 
     constructor() {
     }

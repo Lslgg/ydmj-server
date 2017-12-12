@@ -1,7 +1,7 @@
 import PowerSchema, { IPowerModel } from './power';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 
-export class PowerResolver {
+export class Power {
 
     constructor() {
 

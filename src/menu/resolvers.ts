@@ -1,7 +1,7 @@
 import MenuSchema, { IMenuModel } from './menu';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 
-export class MenuResolver {
+export class Menu {
 
     constructor() {
     }

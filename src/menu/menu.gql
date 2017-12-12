@@ -53,4 +53,5 @@ input searchMenu{
     pid:String
     code:JsonObject
     url:JsonObject
+    isValid:Boolean
 }

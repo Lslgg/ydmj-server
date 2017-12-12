@@ -1,36 +1,36 @@
-import { UserResolver } from './user/resolvers';
-import { RoleResolver } from './role/resolvers';
-import { MenuResolver } from './menu/resolvers';
-import { PowerResolver } from './power/resolvers';
-import { AdvertResolver } from './advert/resolvers';
-import { ProfileResolver } from './profile/resolvers';
-
+import { User } from './user/resolvers';
+import { Role } from './role/resolvers';
+import { Menu } from './menu/resolvers';
+import { Power } from './power/resolvers';
+import { Advert } from './advert/resolvers';
+import { Profile } from './profile/resolvers';
+import { Play } from './Play/resolvers';
 
 import Date from './scalar/Date';
 import RegExp from './scalar/RegExp';
 import JsonObject from './scalar/JsonObject';
 
-
 export default {
 	Query: {
-		...UserResolver.Query,
-		...RoleResolver.Query,
-		...MenuResolver.Query,
-		...PowerResolver.Query,
-		...AdvertResolver.Query,
-		...ProfileResolver.Query,
+		...User.Query,
+		...Role.Query,
+		...Menu.Query,
+		...Power.Query,
+		...Advert.Query,
+		...Profile.Query,
+		...Play.Query,
 	},
 	Mutation: {
-		...UserResolver.Mutation,
-		...RoleResolver.Mutation,
-		...MenuResolver.Mutation,
-		...PowerResolver.Mutation,
-		...AdvertResolver.Mutation,
-		...ProfileResolver.Mutation,
-		
+		...User.Mutation,
+		...Role.Mutation,
+		...Menu.Mutation,
+		...Power.Mutation,
+		...Advert.Mutation,
+		...Profile.Mutation,
+		...Play.Mutation,
 	},
-	User: UserResolver.User,
-	Role: RoleResolver.Role,
-	Advert: AdvertResolver.Advert,
+	User: User.User,
+	Role: Role.Role,
+	Advert: Advert.Advert,
 	Date,RegExp,JsonObject
 };

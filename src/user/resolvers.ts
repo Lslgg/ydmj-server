@@ -5,7 +5,7 @@ import ProfileSchema from '../profile/profile';
 
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 
-export class UserResolver {
+export class User {
 
 
     constructor() {

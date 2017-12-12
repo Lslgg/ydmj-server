@@ -9,7 +9,6 @@ var cors = require('cors');
 var { graphqlExpress, graphiqlExpress } = require('graphql-server-express');
 var { makeExecutableSchema } = require('graphql-tools');
 const expressPlayground = require('graphql-playground-middleware-express').default;
-
 class Server {
 	public app: express.Application;
 
@@ -22,7 +21,6 @@ class Server {
 	private config() {
 		const MONGO_URI = 'mongodb://localhost/webSite';
 		Mongoose.connect(MONGO_URI || process.env.MONGO_URI, { useMongoClient: true });
-
 		this.app.use(bodyParser.urlencoded({ extended: false }));
 		this.app.use(bodyParser.json());
 
@@ -42,7 +40,7 @@ class Server {
 	}
 
 	private setCors() {
-		var whitelist: Array<string> = [ 'http://localhost:4200' ];
+		var whitelist: Array<string> = ['http://localhost:4200'];
 		return (req, callback) => {
 			let origin = req.header('Origin');
 			var success = whitelist.findIndex((value) => value == origin) > -1;

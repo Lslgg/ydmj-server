@@ -3,7 +3,7 @@ import PowerScheam, { IPowerModel } from '../power/power';
 
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 
-export class RoleResolver {
+export class Role {
 
     constructor() {
     }

@@ -2,7 +2,7 @@ import AdvertSchema, { IAdvertModel } from './advert';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 import { UploadFile } from '../file/uploadFile';
 
-export class AdvertResolver {
+export class Advert {
 	constructor() {}
 
 	static Advert: any = {
