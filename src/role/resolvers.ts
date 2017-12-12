@@ -1,4 +1,4 @@
-import RoleSchema, { IRoleModel, RolePowerSchema, IRolePowerModel } from './role';
+import RoleSchema, { IRoleModel, RolePowerSchema, IRolePowerModel, ToObjectId } from './role';
 import PowerScheam, { IPowerModel } from '../power/power';
 
 import { DocumentQuery, MongoosePromise } from 'mongoose';
@@ -9,15 +9,15 @@ export class RoleResolver {
     }
 
     static Role: any = {
-        Powers(model,info) { 
+        Powers(model, info) {
             let promise = new Promise<Array<IPowerModel>>((resolve, reject) => {
                 RolePowerSchema.find({ roleId: model.id }).then(res => {
                     var powerIds = res.map(p => p.powerId);
                     PowerScheam.find({ '_id': { $in: powerIds } }).skip(0).limit(info.limit).then(res => {
                         resolve(res);
-                    }).catch(err=>resolve(null))
+                    }).catch(err => resolve(null))
                 })
-            }) 
+            })
             return promise;
         }
     }
@@ -28,7 +28,7 @@ export class RoleResolver {
             let promise = new Promise<Array<IRoleModel>>((resolve, reject) => {
                 RoleSchema.find().then(res => {
                     resolve(res);
-                }).catch(err=> resolve(null));
+                }).catch(err => resolve(null));
             });
             return promise;
         },
@@ -37,7 +37,7 @@ export class RoleResolver {
             let promise = new Promise<IRoleModel>((resolve, reject) => {
                 RoleSchema.findById(id).then(res => {
                     resolve(res);
-                }).catch(err=> resolve(null));
+                }).catch(err => resolve(null));
             });
             return promise;
         },
@@ -88,23 +88,42 @@ export class RoleResolver {
                     RoleSchema.findById(rolePower.roleId).then(res => {
                         resolve(res)
                     })
-                })
+                }).catch(err => { resolve(err) })
             })
         },
-        deleteRolePower(_, { roleId }, context) {
+        addAllRolePower(_, { rolePower }, context) {
+            return new Promise<IRoleModel>((resolve, reject) => {
+                RolePowerSchema.create(rolePower, (err, res) => {
+                    if (err != null) reject(err);
+                    if(rolePower.length<0) resolve(null);
+                    RoleSchema.findById(rolePower[0].roleId).then(res => {
+                        resolve(res)
+                    })
+                }).catch(err => { resolve(err) })
+            })
+        },
+
+        delPowerbyRoleId(_, { roleId }, context) {
             let promise = new Promise<Boolean>((resolve, reject) => {
                 RolePowerSchema.find({ roleId: roleId }).remove().then(res => {
-                    console.log(res);
                     resolve(true);
                 })
             });
             return promise;
         },
-        deletePowerbyId(_, { id }, context) {
+        delPowerbyId(_, { id }, context) {
             let promise = new Promise<Boolean>((resolve, reject) => {
                 RolePowerSchema.findByIdAndRemove(id, (err, res) => {
                     resolve(res != null)
                 })
+            });
+            return promise;
+        },
+        delAllPowerbyId(_, { roleId, id }, context) {
+            let promise = new Promise<Boolean>((resolve, reject) => {
+                RolePowerSchema.find({ powerId: { $in: id },roleId: roleId  }).remove().then(res => {
+                    resolve(true);
+                }).catch(err => resolve(err)) 
             });
             return promise;
         }

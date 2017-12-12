@@ -1,4 +1,4 @@
-import { model, Schema, Document } from 'mongoose';
+import { model, Schema, Document, Types } from 'mongoose';
 
 export interface IRoleModel extends Document {
     id: string,
@@ -11,6 +11,7 @@ export interface IRoleModel extends Document {
 }
 
 export interface IRolePowerModel extends Document {
+    id:string,
     roleId: String,
     powerId: String
 }
@@ -37,6 +38,7 @@ let RoleSchema: Schema = new Schema({
     },
 })
 
+export function ToObjectId(id:string){return Types.ObjectId(id)}
 
 export const RolePowerSchema = model<IRolePowerModel>("RolePower", new Schema({
     roleId: String,

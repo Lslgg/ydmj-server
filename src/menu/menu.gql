@@ -50,6 +50,7 @@ input inputMenu{
 
 input searchMenu{
     title:RegExp
-    pid:JsonObject
+    pid:String
     code:JsonObject
+    url:JsonObject
 }

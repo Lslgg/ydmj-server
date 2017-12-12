@@ -38,10 +38,14 @@ extend type Mutation {
 	deleteRole(id: String): Boolean
 	# 添加角色权限
 	addRolePower(rolePower: inputRolePower): Role
-	# 批量根据角色删除权限
-	deleteRolePower(roleId: String): Boolean
-	# 删除角色权限
-	deletePowerbyId(id: String): Boolean
+	# 根据角色删除角色权限
+	delPowerbyRoleId(roleId: String): Boolean
+	# 根据角色权限管理表ID删除权限 
+	delPowerbyId(id: String): Boolean
+	# 根据角色权限管理表权限Id批量删除权限
+	delAllPowerbyId(roleId:String,id: [String]): Boolean
+	# 批量添加角色权限
+	addAllRolePower(rolePower: [inputRolePower]): Role
 }
 
 input inputRole {

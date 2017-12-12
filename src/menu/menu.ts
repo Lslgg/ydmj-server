@@ -15,7 +15,7 @@ export interface IMenuModel extends Document {
 
 let schema: Schema = new Schema({  
     title: String,
-    menuImg:String, 
+    menuImg:String,  
     pid: String,
     code: String,
     url: String, 

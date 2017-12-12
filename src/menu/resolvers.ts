@@ -13,9 +13,9 @@ export class MenuResolver {
             let promise = new Promise<Array<IMenuModel>>((resolve, reject) => {
                 MenuSchema.find().then(res => {
                     resolve(res);
-                }).catch(err=>resolve(null));
-            })
-            return promise;
+                }).catch(err=>resolve(null)); 
+            }) 
+            return promise;  
         },
 
         getMenuById(_, { id }, context): Promise<IMenuModel> {
@@ -27,9 +27,9 @@ export class MenuResolver {
             return promise;
         },
 
-        getMenuPage(_, { pageIndex = 1, pageSize = 10, Menu }, context):
-            DocumentQuery<Array<IMenuModel>, IMenuModel> {
-            var userInfo = MenuSchema.find(Menu).skip((pageIndex - 1) * pageSize).limit(pageSize)
+        getMenuPage(_, { pageIndex = 1, pageSize = 10, menu }, context) {
+            var userInfo = MenuSchema.find(menu)
+                .skip((pageIndex - 1) * pageSize).limit(pageSize)
             return userInfo;
         },
 

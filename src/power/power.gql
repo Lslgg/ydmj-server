@@ -55,6 +55,7 @@ input inputPower {
 	code: String
 	url: String
 	explain: String
+	menuId:String
 	type: String
 	isValid: Boolean
 }

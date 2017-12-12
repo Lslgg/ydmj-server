@@ -17,7 +17,7 @@ let schema: Schema = new Schema({
 	title: String,
 	operation: {
 		type: [ String ],
-		enum: OPERATION
+		enum: OPERATION  
 	},
 	code: String,
 	url: String,
