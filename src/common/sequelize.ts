@@ -11,11 +11,7 @@ export class MysqDB {
         this.sequelize = new Sequelize("game", "root", "root", {
             host: "localhost",
             dialect: 'mysql',
-            pool: {
-                max: 5,
-                min: 0,
-                idle: 30000
-            }
+            pool: {max: 5,min: 0,idle: 30000}
         });
     }
     /**
@@ -42,7 +38,14 @@ export class MysqDB {
      */
     findById(id: number) {
         var sql = `select * from ${this.tName} where id=${id}`;
-        return this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT });
+        let promise=new Promise<object>((resolve,reject)=>{
+            this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT }).then(data=>{
+                resolve(data[0])
+            }).catch(err=>reject(err));
+        })
+
+        return promise;
+       
     }
     /**
      * 根据条件分页查找 
@@ -50,8 +53,8 @@ export class MysqDB {
      * @param pageSize 
      * @param where 
      */
-    findPage(pageIndex: number, pageSize: number, where: string = "1=1") {
-        var sql = `select * from ${this.tName} where ${where} LIMIT ${(pageIndex - 1) * pageSize}, ${pageSize}`;
+    findPage(pageIndex: number, pageSize: number, where: string = "1=1",order:string="") {
+        var sql = `select * from ${this.tName} where ${where}  ${order} LIMIT ${(pageIndex - 1) * pageSize}, ${pageSize}`;
         return this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT });
     }
     
@@ -79,23 +82,40 @@ export class MysqDB {
     }
     /**
      * 添加
-     * @param sql 
+     * @param field
+     * @param fieldValue 
+     *  
      */
-    Add(sql: string) {
-        return this.sequelize.query(sql, { type: this.sequelize.QueryTypes.INSERT });
+    add(field: string,fieldValue:string) {
+        var sql=`INSERT INTO ${this.tName} (${field}) VALUES (${fieldValue})`
+        let promise=new Promise<boolean>((resolve,reject)=>{
+            this.sequelize.query(sql, { type: this.sequelize.QueryTypes.INSERT })
+            .then(data=> resolve(data[1])).catch(error=>reject(error))
+        })
+        return promise
     }
     /**
      * 修改
      * @param sql 
      */
-    Update(sql: string) {
-        return this.sequelize.query(sql, { type: this.sequelize.QueryTypes.UPDATE });
+    update(updateStr: string,where:string=" 1=1 ") {
+        var sql=`UPDATE ${this.tName} SET ${updateStr} WHERE ${where}`
+        let promise=new Promise<boolean>((resolve,reject)=>{
+            this.sequelize.query(sql, { type: this.sequelize.QueryTypes.UPDATE })
+            .then(data=> resolve(data[1])).catch(error=>reject(error))
+        })
+        return promise
     }
     /**
      * 删除
-     * @param sql 
+     * @param where 
      */
-    Delete(sql: string) {
-        return this.sequelize.query(sql, { type: this.sequelize.QueryTypes.DELETE });
+    delete(where: string=" 1=1 ") {
+        var sql=`delete from ${this.tName} where ${where}`
+        let promise=new Promise<boolean>((resolve,reject)=>{
+            this.sequelize.query(sql, { type: this.sequelize.QueryTypes.DELETE })
+            .then(data=> resolve(data[1])).catch(error=>reject(error))
+        })
+        return promise
     }
 }

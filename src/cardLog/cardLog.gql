@@ -1,0 +1,53 @@
+type CardLog{
+    id: ID!
+    # 用户
+    userName: String
+    # 玩家名
+    playName:String
+    # 房卡数量
+    card:Int
+    #加房卡|减房卡
+    type:String
+    # 创建时间
+    createAt:Date
+    # 修改时间
+    updateAt:Date
+}
+
+extend type Query {
+    # 查找所有房卡日志
+    getCardLogs: [CardLog]
+    # 分页查找房卡日志
+    getCardLogPage(pageIndex: Int, pageSize: Int,cardLog:findCardLog): [CardLog]
+    # 查找房卡日志分页总数
+    getCardLogCount(cardLog:findCardLog):Int
+    # 根据条件查找房卡日志
+    getCardLogWhere(cardLog:findCardLog): [CardLog]
+}
+
+extend type Mutation {
+    # 添加房卡日志
+    createCardLog(cardLog:inputCardLog):CardLog
+     # 删除房卡日志
+    deleteCardLog(id:String):Boolean
+}
+
+input inputCardLog{
+   # 用户
+    userName: String
+    # 玩家名
+    playName:String
+    # 房卡数量
+    card:Int
+    #加房卡|减房卡
+    type:String
+}
+
+input findCardLog{
+    # 用户
+    userName: String
+    # 玩家名
+    playName:String
+    #加房卡|减房卡
+    type:String
+}

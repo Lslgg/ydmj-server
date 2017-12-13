@@ -1,5 +1,5 @@
 #玩家用户表
-type Play {
+type Player {
     id:Int
     #微信ID
     weixin:String
@@ -29,17 +29,18 @@ type Play {
 
 extend type Query {
     # 查找所有玩家
-    getPlays: [Play]
+    getPlayers: [Player]
     # 根据ID查找玩家
-    getPlayById(id:String):User
+    getPlayerById(id:Int):Player
     # 分页查找玩家
-    getPlayPage(pageIndex: Int, pageSize: Int,where:String): [Play]
+    getPlayerPage(pageIndex: Int, pageSize: Int,where:String): [Player]
     # 查找分页玩家总数
-    getPlayCount(where:String):Int
+    getPlayerCount(where:String):Int
     # 根据条件查找
-    getPlayWhere(where:String): [Play]
+    getPlayerWhere(where:String): [Player]
 }
 
 extend type Mutation {
-   
+    #修改用户房卡
+    updatePlayerCard(id:Int,cardNum:Int):Boolean
 }

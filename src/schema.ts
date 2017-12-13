@@ -9,9 +9,14 @@ var Menu = requireText('./menu/menu.gql', require);
 var Power = requireText('./power/power.gql', require);
 var Advert = requireText('./advert/advert.gql', require);
 var Profile = requireText('./profile/profile.gql', require);
-var Play = requireText('./play/play.gql', require);
+var Player = requireText('./player/player.gql', require);
+var CardLog = requireText('./cardLog/cardLog.gql', require);
 
-var typeDefs = [Base, User, Role, Menu,Power,Advert,Profile,Play];
+var typeDefs = [
+  Base, User, Role, 
+  Menu,Power,Advert,
+  Profile,Player,CardLog
+];
 
 const schema = makeExecutableSchema({
   typeDefs: typeDefs,

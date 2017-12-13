@@ -1,0 +1,18 @@
+type Dealers{
+    id:ID!
+    account:String
+    openid:String
+    password:String
+    name:String
+    create_time:Float
+    token:String
+    last_login_time:Float
+    privilege_level:Int
+    level:Int
+    card:Int
+    gift_card:Int
+    wx:String
+    code:String
+    is_del:Int
+    is_allow:Int
+}
