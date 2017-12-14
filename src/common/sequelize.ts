@@ -12,7 +12,7 @@ export class MysqDB {
             host: "localhost",
             dialect: 'mysql',
             pool: { max: 5, min: 0, idle: 30000 },
-            operatorsAliases:false,
+            operatorsAliases: false,
             dialectOptions: {
                 multipleStatements: true
             },
@@ -23,24 +23,34 @@ export class MysqDB {
      * 适用于复杂查询
      * @param sql 
      */
-    findSql(sql: string) {
-        this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT });
+    findSql(sql: string): Promise<{}> {
+        let promise = new Promise<{}>((resolve, reject) => {
+            this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT }).then(data => {
+                resolve(data)
+            }).catch(error => reject(error));
+        })
+        return promise;
     }
 
     /**
      * 查询所有
      * @param sql 
      */
-    find() {
+    find(): Promise<{}> {
         var sql = `SELECT * FROM ${this.tName}`;
-        return this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT });
+        let promise = new Promise<{}>((resolve, reject) => {
+            this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT }).then(data => {
+                resolve(data)
+            }).catch(error => reject(error));
+        })
+        return promise;
     }
 
     /**
      * 根据ID查找
      * @param id 
      */
-    findById(id: string) {
+    findById(id: string): Promise<{}> {
         var sql = `SELECT * FROM ${this.tName} WHERE id=${id}`;
         let promise = new Promise<object>((resolve, reject) => {
             this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT }).then(data => {
@@ -57,16 +67,22 @@ export class MysqDB {
      * @param pageSize 
      * @param where 
      */
-    findPage(pageIndex: number, pageSize: number, where: string = "1=1", order: string = "") {
-        var sql = `SELECT * FROM ${this.tName} WHERE ${where}  ${order} LIMIT ${(pageIndex - 1) * pageSize}, ${pageSize}`;
-        return this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT });
+    findPage(pageIndex: number, pageSize: number, where: string = "1=1", order: string = ""): Promise<{}> {
+        var sql = `SELECT * FROM ${this.tName} WHERE ${where}  
+                ${order} LIMIT ${(pageIndex - 1) * pageSize}, ${pageSize}`;
+        let promise = new Promise<{}>((resolve, reject) => {
+            this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT }).then(data => {
+                resolve(data)
+            }).catch(error => reject(error));
+        });
+        return promise;
     }
 
     /**
      * 根据条件查找总数
      * @param where 
      */
-    findCount(where: string = "1=1") {
+    findCount(where: string = "1=1"): Promise<Number> {
         var sql = `SELECT count(*) count FROM ${this.tName} WHERE ${where}`;
         var promise = new Promise<Number>((resolve, reject) => {
             this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT }).then(result => {
@@ -80,24 +96,25 @@ export class MysqDB {
      * 根据条件查找
      * @param where 
      */
-    findWhere(where: string = "1=1", order: string = "") {
+    findWhere(where: string = "1=1", order: string = ""): Promise<{}> {
         var sql = `SELECT * FROM ${this.tName} WHERE ${where} ${order}`;
-        return this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT });
+        let promise = new Promise<{}>((resolve, reject) => {
+            this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT }).then(data => {
+                resolve(data)
+            }).catch(error => reject(error))
+        });
+        return promise;
     }
     /**
      * 添加
-     * @param field
-     * @param fieldValue 
-     *  
+     * @param info
+     * @return 添加的对象
      */
-    add(dealer: object) {
-        var keys = Object.keys(dealer);
-        var values = Object.keys(dealer).map((key) => `"${dealer[key]}"`);
+    add(info: object): Promise<{}> {
+        var {fields,fieldValues} = this.toAddStr(info);
+        var sql = `INSERT INTO ${this.tName} (${fields}) VALUES (${fieldValues});
+                SELECT LAST_INSERT_ID() as id;`;
 
-        var fields = keys.join(',')
-        var fieldValues = values.join(',')
-
-        var sql = `INSERT INTO ${this.tName} (${fields}) VALUES (${fieldValues});SELECT LAST_INSERT_ID() as id;`
         let promise = new Promise<{}>((resolve, reject) => {
             this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT })
                 .then(data => {
@@ -111,11 +128,12 @@ export class MysqDB {
     /**
      * 修改
      * @param sql 
+     * @return 修改的对象
      */
-    update(dealer: object, id: string) {
-        var where = `id="${id}"`;
+    update(dealer: object, id: string): Promise<{}> {
         var updateStr = this.toUpStr(dealer);
-        var sql = `UPDATE ${this.tName} SET ${updateStr} WHERE ${where}`;
+        var sql = `UPDATE ${this.tName} SET ${updateStr} WHERE id="${id}"`;
+
         let promise = new Promise<{}>((resolve, reject) => {
             this.sequelize.query(sql, { type: this.sequelize.QueryTypes.UPDATE })
                 .then(data => {
@@ -127,8 +145,9 @@ export class MysqDB {
     /**
     * 修改
     * @param sql 
+    * @return 是否成功
     */
-    updateByStr(updateStr: string, where: string = " 1=1 ") {
+    updateByStr(updateStr: string, where: string = " 1=1 "): Promise<boolean> {
         var sql = `UPDATE ${this.tName} SET ${updateStr} WHERE ${where}`;
         let promise = new Promise<boolean>((resolve, reject) => {
             this.sequelize.query(sql, { type: this.sequelize.QueryTypes.UPDATE })
@@ -139,10 +158,10 @@ export class MysqDB {
     /**
      * 删除
      * @param where 
+     * @return 是否成功
      */
-    delete(id: string) {
-        var where = `id="${id}"`;
-        var sql = `DELETE FORM ${this.tName} WHERE ${where}`
+    delete(id: string): Promise<boolean> {
+        var sql = `DELETE FORM ${this.tName} WHERE id="${id}"`;
         let promise = new Promise<boolean>((resolve, reject) => {
             this.sequelize.query(sql, { type: this.sequelize.QueryTypes.DELETE })
                 .then(data => {
@@ -164,5 +183,19 @@ export class MysqDB {
         str = str.replace(/({")/g, "");
         str = str.replace(/(})/g, "");
         return str;
+    }
+    
+    /**
+     * 将对象转换为添加字符串
+     * @param info 
+     * @retrun 字段名和字段值
+     */
+    private toAddStr(info: object): { fields: string, fieldValues: string } {
+        var keys = Object.keys(info);
+        var values = Object.keys(info).map((key) => `"${info[key]}"`);
+
+        var fields = keys.join(',');
+        var fieldValues = values.join(',');
+        return { fields, fieldValues };
     }
 }
