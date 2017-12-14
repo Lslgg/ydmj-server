@@ -15,23 +15,24 @@ export class Player {
         getPlayerById(_, { id }, context) {
             return Player.mysql.findById(id);
         },
-        getPlayerPage(_, { pageIndex = 1, pageSize = 10, where }, context) {
-            return Player.mysql.findPage(pageIndex, pageSize, where, "ORDER BY cardNum")
+        getPlayerPage(_, { pageIndex = 1, pageSize = 10, where, order }, context) {
+            order = order ? "ORDER BY cardNum" : order;
+            return Player.mysql.findPage(pageIndex, pageSize, where, order)
         },
 
         getPlayerCount(_, { where }, context) {
             return Player.mysql.findCount(where);
         },
-        getPlayerWhere(_, { where }, context) {
+        getPlayerWhere(_, { where, order }, context) {
             return Player.mysql.findWhere(where);
         }
     }
 
     static Mutation = {
-        updatePlayerCard(_, { id,cardNum }, context) {
-            var upSql=`cardNum=cardNum+${cardNum}`;
-            var where= `id=${id}`;
-            return Player.mysql.update(upSql,where); 
+        updatePlayerCard(_, { id, cardNum }, context) {
+            var upSql = `cardNum=cardNum+${cardNum}`;
+            var where = `id=${id}`;
+            return Player.mysql.updateByStr(upSql, where);
         }
     }
 }

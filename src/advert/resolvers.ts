@@ -3,16 +3,17 @@ import { DocumentQuery, MongoosePromise } from 'mongoose';
 import { UploadFile } from '../file/uploadFile';
 
 export class Advert {
-	constructor() {}
+	constructor() { }
 
 	static Advert: any = {
 		Images(model) {
-			let promise = new Promise<Array<any>>(async (resolve, reject) => {
-				var uploadFile = new UploadFile();
-				var files = await uploadFile.getImgById(model.imageId);
-				resolve(files);
+			var uploadFile = new UploadFile();
+			let promise = new Promise<Array<any>>((resolve, reject) => {
+				uploadFile.getImgById(model.imageId).then(files => {
+					resolve(files);
+				})
 			});
-			return promise;
+			return promise; 
 		}
 	};
 
@@ -22,7 +23,7 @@ export class Advert {
 			let promise = new Promise<Array<IAdvertModel>>((resolve, reject) => {
 				AdvertSchema.find().then((res) => {
 					resolve(res);
-				}).catch(err=>resolve(null));
+				}).catch(err => resolve(null));
 			});
 			return promise;
 		},
@@ -31,7 +32,7 @@ export class Advert {
 			let promise = new Promise<IAdvertModel>((resolve, reject) => {
 				AdvertSchema.findById(id).then((res) => {
 					resolve(res);
-				}).catch(err=>resolve(null));
+				}).catch(err => resolve(null));
 			});
 			return promise;
 		},
@@ -76,6 +77,6 @@ export class Advert {
 				});
 			});
 			return promise;
-		}
+		} 
 	};
 }

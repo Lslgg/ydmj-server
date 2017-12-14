@@ -1,3 +1,4 @@
+# 后台添加的房卡日志
 type CardLog{
     id: ID!
     # 用户

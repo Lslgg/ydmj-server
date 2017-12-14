@@ -40,7 +40,7 @@ extend type Query {
 extend type Mutation {
     # 创建用户
     createUser(user:inputUser):User
-    # 修改角色
+    # 修改用户
     updateUser(id:String,user:inputUser):User
      # 删除用户
     deleteUser(id:String):Boolean

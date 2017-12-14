@@ -6,7 +6,7 @@ import { Advert } from './advert/resolvers';
 import { Profile } from './profile/resolvers';
 import { Player } from './Player/resolvers';
 import { CardLog } from './cardLog/resolvers';
-
+import { Dealer } from './dealer/resolvers';
 
 import Date from './scalar/Date';
 import RegExp from './scalar/RegExp';
@@ -22,6 +22,7 @@ export default {
 		...Profile.Query,
 		...Player.Query,
 		...CardLog.Query,
+		...Dealer.Query,
 	},
 	Mutation: {
 		...User.Mutation,
@@ -32,7 +33,7 @@ export default {
 		...Profile.Mutation,
 		...Player.Mutation,
 		...CardLog.Mutation,
-		
+		...Dealer.Mutation,
 	},
 	User: User.User,
 	Role: Role.Role,

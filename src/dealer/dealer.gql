@@ -1,0 +1,59 @@
+type Dealer{
+    id:ID!
+    account:String
+    openid:String
+    password:String
+    name:String
+    create_time:Float
+    token:String
+    last_login_time:Float
+    privilege_level:Int
+    level:Int
+    card:Int
+    gift_card:Int
+    wx:String
+    code:String
+    is_del:Int
+    is_allow:Int
+}
+
+
+extend type Query {
+    # 查找所有群主
+    getDealers: [Dealer]
+    # 根据ID查找群主
+    getDealerById(id:String):Dealer
+    # 分页查找
+    getDealerPage(pageIndex: Int, pageSize: Int,where:String,order:String): [Dealer]
+    # 查找分页群主总数
+    getDealerCount(where:String):Int
+    # 根据条件查找群主
+    getDealerWhere(where:String,order:String): [Dealer]
+}
+
+extend type Mutation {
+    # 创建群主
+    createDealer(dealer:inputDealer):Dealer
+    # 修改群主
+    updateDealer(id:String,dealer:inputDealer):Dealer
+    # 删除群主
+    deleteDealer(id:String):Boolean
+}
+
+input inputDealer{
+    account:String
+    openid:String
+    password:String
+    name:String
+    create_time:Float
+    token:String
+    last_login_time:Float
+    privilege_level:Int
+    level:Int
+    card:Int
+    gift_card:Int
+    wx:String
+    code:String
+    is_del:Int
+    is_allow:Int
+}

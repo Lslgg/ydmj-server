@@ -33,14 +33,14 @@ extend type Query {
     # 根据ID查找玩家
     getPlayerById(id:Int):Player
     # 分页查找玩家
-    getPlayerPage(pageIndex: Int, pageSize: Int,where:String): [Player]
+    getPlayerPage(pageIndex: Int, pageSize: Int,where:String,order:String): [Player]
     # 查找分页玩家总数
     getPlayerCount(where:String):Int
     # 根据条件查找
-    getPlayerWhere(where:String): [Player]
+    getPlayerWhere(where:String,order:String): [Player]
 }
 
 extend type Mutation {
     #修改用户房卡
-    updatePlayerCard(id:Int,cardNum:Int):Boolean
+    updatePlayerCard(id:Int,cardNum:Int): Boolean
 }
