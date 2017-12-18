@@ -12,12 +12,14 @@ var Profile = requireText('./profile/profile.gql', require);
 var Player = requireText('./player/player.gql', require);
 var CardLog = requireText('./cardLog/cardLog.gql', require);
 var Dealer = requireText('./dealer/dealer.gql', require);
+var Setting = requireText('./setting/setting.gql', require);
+
 
 var typeDefs = [
   Base, User, Role, 
   Menu,Power,Advert,
   Profile,Player,CardLog,
-  Dealer
+  Dealer,Setting
 ];
 
 const schema = makeExecutableSchema({

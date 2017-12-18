@@ -1,12 +1,14 @@
-import { User } from './user/resolvers';
-import { Role } from './role/resolvers';
-import { Menu } from './menu/resolvers';
-import { Power } from './power/resolvers';
-import { Advert } from './advert/resolvers';
-import { Profile } from './profile/resolvers';
-import { Player } from './Player/resolvers';
-import { CardLog } from './cardLog/resolvers';
-import { Dealer } from './dealer/resolvers';
+import { User } from './user/resolver';
+import { Role } from './role/resolver';
+import { Menu } from './menu/resolver';
+import { Power } from './power/resolver';
+import { Advert } from './advert/resolver';
+import { Profile } from './profile/resolver';
+import { Player } from './Player/resolver';
+import { CardLog } from './cardLog/resolver';
+import { Dealer } from './dealer/resolver';
+import { Setting } from './setting/resolver';
+
 
 import Date from './scalar/Date';
 import RegExp from './scalar/RegExp';
@@ -23,6 +25,7 @@ export default {
 		...Player.Query,
 		...CardLog.Query,
 		...Dealer.Query,
+		...Setting.Query,
 	},
 	Mutation: {
 		...User.Mutation,
@@ -34,6 +37,8 @@ export default {
 		...Player.Mutation,
 		...CardLog.Mutation,
 		...Dealer.Mutation,
+		...Setting.Mutation,
+		
 	},
 	User: User.User,
 	Role: Role.Role,

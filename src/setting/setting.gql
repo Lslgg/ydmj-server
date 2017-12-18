@@ -1,0 +1,84 @@
+# 版本设置
+type Version{
+    id:ID!
+    iOSUrl:String
+    iOSVersion:String
+    androidUrl:String
+    androidVersion:String
+    updateTime:Float
+    createTime:Float
+    deleteTime:Float
+}
+
+# 公告信息
+type News{
+    id:ID!
+    content:String
+    updateTime:Float
+    createTime:Float
+    deleteTime:Float
+}
+
+# 走门灯信息
+type Notice{
+    id:ID!
+    content:String
+    updateTime:Float
+    createTime:Float
+    deleteTime:Float
+}
+
+# 微信提示是|否免费房卡
+type Tip{
+    id:ID!
+    content:String
+    free:Boolean
+    ifcheck:Boolean
+    updateTime:Float
+    createTime:Float
+    deleteTime:Float
+    iOSCharge:Boolean
+}
+
+extend type Query {
+    # 查找版本设置
+    getVersionById(id:String): Version
+    # 查找公告信息
+    getNewsById(id:String): News
+    # 查找走门灯信息
+    getNoticeById(id:String): Notice
+    # 查找微信提示|否免费房卡
+    getTipById(id:String): Tip
+   
+}
+
+extend type Mutation {
+    #修改版本设置
+    updateVersion(id:String,version:inputVersion): Version
+    #修改公告信息
+    updateNews(id:String,news:inputNews): News
+    #修改走门灯信息
+    updateNotice(id:String,notice:inputNotice): Notice
+    #修改微信提示|否免费房卡
+    updateTip(id:String,tip:inputTip): Tip
+}
+
+input inputVersion{
+    iOSUrl:String
+    iOSVersion:String
+    androidUrl:String
+    androidVersion:String
+}
+
+input inputNews{
+    content:String
+}
+
+input inputNotice{
+    content:String
+}
+
+input inputTip{
+    content:String
+    free:Boolean
+}
