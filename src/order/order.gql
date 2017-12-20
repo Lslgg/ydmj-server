@@ -1,0 +1,31 @@
+# 充值订单表
+type Order {
+    id:ID!
+    userId:String
+    name:String
+    dealerId:String
+    dealerName:String
+    card:Int
+    cost:Float
+    createTime:Date
+}
+
+extend type Query {
+    # 分页查找玩家
+    getOrderPage(pageIndex: Int, pageSize: Int,where:String,order:String): [Order]
+    # 查找分页玩家总数
+    getOrderCount(where:String):Int
+    # 根据用户统计房卡数和消费金额
+    getOrderCardCost(where:String):OrderCardCost
+}
+
+type OrderCardCost{
+    count:Int
+    card:Int
+    cost:Int
+}
+
+
+extend type Mutation {
+   
+}

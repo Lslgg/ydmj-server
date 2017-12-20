@@ -8,12 +8,12 @@ import { Player } from './Player/resolver';
 import { CardLog } from './cardLog/resolver';
 import { Dealer } from './dealer/resolver';
 import { Setting } from './setting/resolver';
-
+import { Order } from './order/resolver';
 
 import Date from './scalar/Date';
 import RegExp from './scalar/RegExp';
 import JsonObject from './scalar/JsonObject';
-
+ 
 export default {
 	Query: {
 		...User.Query,
@@ -26,6 +26,7 @@ export default {
 		...CardLog.Query,
 		...Dealer.Query,
 		...Setting.Query,
+		...Order.Query,
 	},
 	Mutation: {
 		...User.Mutation,
@@ -38,7 +39,7 @@ export default {
 		...CardLog.Mutation,
 		...Dealer.Mutation,
 		...Setting.Mutation,
-		
+		...Order.Mutation,
 	},
 	User: User.User,
 	Role: Role.Role,
