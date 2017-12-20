@@ -1,6 +1,6 @@
 import AdvertSchema, { IAdvertModel } from './advert';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
-import { UploadFile } from '../file/uploadFile';
+import { UploadFile } from '../../common/file/uploadFile';
 
 export class Advert {
 	constructor() { }

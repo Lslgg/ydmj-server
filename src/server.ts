@@ -2,13 +2,14 @@ import * as express from 'express';
 import { express as middleware } from 'graphql-voyager/middleware';
 import * as Mongoose from 'mongoose';
 import schema from './schema';
-import { UploadFile } from './file/uploadFile';
+import { UploadFile } from './common/file/uploadFile';
 
 var bodyParser = require('body-parser');
 var cors = require('cors');
 var { graphqlExpress, graphiqlExpress } = require('graphql-server-express');
 var { makeExecutableSchema } = require('graphql-tools');
 const expressPlayground = require('graphql-playground-middleware-express').default;
+
 class Server {
 	public app: express.Application;
 

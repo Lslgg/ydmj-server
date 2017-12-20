@@ -1,18 +1,18 @@
-import { User } from './user/resolver';
-import { Role } from './role/resolver';
-import { Menu } from './menu/resolver';
-import { Power } from './power/resolver';
-import { Advert } from './advert/resolver';
-import { Profile } from './profile/resolver';
-import { Player } from './Player/resolver';
-import { CardLog } from './cardLog/resolver';
-import { Dealer } from './dealer/resolver';
-import { Setting } from './setting/resolver';
-import { Order } from './order/resolver';
+import { User } from './gql-system/user/resolver';
+import { Role } from './gql-system/role/resolver';
+import { Menu } from './gql-system/menu/resolver';
+import { Power } from './gql-system/power/resolver';
+import { Profile } from './gql-system/profile/resolver';
+import { Advert } from './gql-game/advert/resolver';
+import { Player } from './gql-game/Player/resolver';
+import { CardLog } from './gql-game/cardLog/resolver';
+import { Dealer } from './gql-game/dealer/resolver';
+import { Setting } from './gql-game/setting/resolver';
+import { Order } from './gql-game/order/resolver';
 
-import Date from './scalar/Date';
-import RegExp from './scalar/RegExp';
-import JsonObject from './scalar/JsonObject';
+import Date from './common/scalar/Date';
+import RegExp from './common/scalar/RegExp';
+import JsonObject from './common/scalar/JsonObject';
  
 export default {
 	Query: {

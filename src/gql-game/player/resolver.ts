@@ -1,4 +1,4 @@
-import { MysqDB } from '../common/sequelize';
+import { MysqDB } from '../../common/sequelize';
 
 export class Player {
 
