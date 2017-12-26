@@ -19,11 +19,11 @@ extend type Query {
     # 查找所有房卡日志
     getCardLogs: [CardLog]
     # 分页查找房卡日志
-    getCardLogPage(pageIndex: Int, pageSize: Int,cardLog:findCardLog): [CardLog]
+    getCardLogPage(pageIndex: Int, pageSize: Int,cardLog:searchCardLog): [CardLog]
     # 查找房卡日志分页总数
-    getCardLogCount(cardLog:findCardLog):Int
+    getCardLogCount(cardLog:searchCardLog):Int
     # 根据条件查找房卡日志
-    getCardLogWhere(cardLog:findCardLog): [CardLog]
+    getCardLogWhere(cardLog:searchCardLog): [CardLog]
 }
 
 extend type Mutation {
@@ -44,11 +44,11 @@ input inputCardLog{
     type:String
 }
 
-input findCardLog{
+input searchCardLog{
     # 用户
-    userName: String
+    userName:JsonObject
     # 玩家名
-    playName:String
-    #加房卡|减房卡
-    type:String
+    playName:JsonObject
+    # 创建时间
+    createAt:JsonObject
 }

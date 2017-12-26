@@ -1,0 +1,32 @@
+# 房卡记录
+type CardRecord{
+    id:String
+
+    userId:String
+    # 玩家
+    userName:String
+    dealerId:String
+    # 群主
+    dealerName:String
+    # 房卡数量
+    changeNum:String
+    # 类型
+    reason:String
+
+    createTime:Float
+}
+
+extend type Query {
+    # 分页查找房卡记录
+    getCardRecordPage(pageIndex: Int, pageSize: Int,where:String,order:String): [CardRecord]
+    # 查找分页查找房卡记录总数
+    getCardRecordCount(where:String):Int
+    # 根据条件查找房卡记录
+    getCardRecordWhere(where:String!,order:String): [CardRecord]
+    # 统计当天房卡记录
+    getCardRecordStatistice(where:String!,order:String): Int
+}
+
+extend type Mutation {
+   
+}

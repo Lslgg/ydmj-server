@@ -16,7 +16,7 @@ export class Player {
             return Player.mysql.findById(id);
         },
         getPlayerPage(_, { pageIndex = 1, pageSize = 10, where, order }, context) {
-            order = order ? "ORDER BY cardNum" : order;
+            order = order ? "cardNum" : order;
             return Player.mysql.findPage(pageIndex, pageSize, where, order)
         },
 

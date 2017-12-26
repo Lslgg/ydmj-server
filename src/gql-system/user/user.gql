@@ -62,5 +62,6 @@ input loginUser{
 }
 
 input searchUser{
-    username:RegExp
+    username:JsonObject
+    roleId:JsonObject
 }

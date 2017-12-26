@@ -9,7 +9,7 @@ export interface IProfileModel extends Document {
     updateAt: Date,
 }
 
-let schema: Schema = new Schema({
+let schema: Schema = new Schema({ 
     card: Number,
     address: String,
     phone: String, 

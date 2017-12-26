@@ -67,9 +67,9 @@ export class MysqDB {
      * @param pageSize 
      * @param where 
      */
-    findPage(pageIndex: number, pageSize: number, where: string = "1=1", order: string = ""): Promise<{}> {
+    findPage(pageIndex: number, pageSize: number, where: string = "1=1", order: string = "id"): Promise<{}> {
         var sql = `SELECT * FROM ${this.tName} WHERE ${where}  
-                ${order} LIMIT ${(pageIndex - 1) * pageSize}, ${pageSize}`;
+                ORDER BY ${order} LIMIT ${(pageIndex - 1) * pageSize}, ${pageSize}`;
         let promise = new Promise<{}>((resolve, reject) => {
             this.sequelize.query(sql, { type: this.sequelize.QueryTypes.SELECT }).then(data => {
                 resolve(data)
@@ -197,5 +197,9 @@ export class MysqDB {
         var fields = keys.join(',');
         var fieldValues = values.join(',');
         return { fields, fieldValues };
+    }
+
+    private getxxx(){
+       this.sequelize.Model
     }
 }

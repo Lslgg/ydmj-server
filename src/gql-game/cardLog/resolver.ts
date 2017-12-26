@@ -33,10 +33,10 @@ export class CardLog {
         getCardLogWhere(_, { cardLog }, context) {
             return schema.find(cardLog);
         },
-    }
+    } 
 
     static Mutation: any = {
-
+ 
         createCardLog (_, { cardLog }, context): MongoosePromise<Array<ICardLogModel>> {
             return schema.create(cardLog)
         },

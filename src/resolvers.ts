@@ -9,6 +9,8 @@ import { CardLog } from './gql-game/cardLog/resolver';
 import { Dealer } from './gql-game/dealer/resolver';
 import { Setting } from './gql-game/setting/resolver';
 import { Order } from './gql-game/order/resolver';
+import { CardRecord } from './gql-game/cardRecord/resolver';
+
 
 import Date from './common/scalar/Date';
 import RegExp from './common/scalar/RegExp';
@@ -27,6 +29,7 @@ export default {
 		...Dealer.Query,
 		...Setting.Query,
 		...Order.Query,
+		...CardRecord.Query,
 	},
 	Mutation: {
 		...User.Mutation,
@@ -40,6 +43,8 @@ export default {
 		...Dealer.Mutation,
 		...Setting.Mutation,
 		...Order.Mutation,
+		...CardRecord.Mutation,
+		
 	},
 	User: User.User,
 	Role: Role.Role,

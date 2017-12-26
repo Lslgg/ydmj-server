@@ -61,5 +61,5 @@ input inputRolePower {
 }
 
 input searchRole {
-	roleName: RegExp
+	roleName: JsonObject
 }

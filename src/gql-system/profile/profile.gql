@@ -27,7 +27,7 @@ extend type Mutation {
     # 创建用户资料
     createProfile(profile:inputProfile):Profile
     # 修改用户资料
-    updateProfile(id:String,profile:inputUser):Profile
+    updateProfile(id:String,profile:inputProfile):Profile
      # 删除用户资料
     deleteProfile(id:String):Boolean
 }

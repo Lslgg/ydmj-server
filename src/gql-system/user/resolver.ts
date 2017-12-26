@@ -19,7 +19,7 @@ export class User {
             return ProfileSchema.findById(model.profileId);
         }
     }
-
+ 
     static Query: any = {
 
         getUsers(_, __, context): Promise<Array<IUserModel>> {
@@ -70,6 +70,7 @@ export class User {
 
         updateUser(_, { id, user }, context) {
             let promise = new Promise<IUserModel>((resolve, reject) => {
+                console.log(id,user);
                 UserSchema.findByIdAndUpdate(id, user, (err, res) => {
                     Object.assign(res, user);
                     resolve(res);

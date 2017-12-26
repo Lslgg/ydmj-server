@@ -5,7 +5,8 @@ import { DocumentQuery, MongoosePromise } from 'mongoose';
 
 export class Role {
 
-    constructor() {
+    constructor() { 
+
     }
 
     static Role: any = {
@@ -94,8 +95,8 @@ export class Role {
         addAllRolePower(_, { rolePower }, context) {
             return new Promise<IRoleModel>((resolve, reject) => {
                 RolePowerSchema.create(rolePower, (err, res) => {
-                    if (err != null) reject(err);
-                    if(rolePower.length<0) resolve(null);
+                    if (err != null) reject(null);
+                    if(!rolePower) resolve(null);
                     RoleSchema.findById(rolePower[0].roleId).then(res => {
                         resolve(res)
                     })

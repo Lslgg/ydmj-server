@@ -13,14 +13,14 @@ export interface ICardLogModel extends Document {
 let schema: Schema = new Schema({
     userName: String,
     playName: String,  
-    card: Number, 
+    card: Number,  
     type:String,
     createAt: {
-        type: Date,
+        type: Date, 
         default: new Date(),
         required: true
     },
-    updateAt: {
+    updateAt: { 
         type: Date,
         default: new Date(),
         required: true
