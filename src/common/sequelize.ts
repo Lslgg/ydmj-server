@@ -161,7 +161,7 @@ export class MysqDB {
      * @return 是否成功
      */
     delete(id: string): Promise<boolean> {
-        var sql = `DELETE FORM ${this.tName} WHERE id="${id}"`;
+        var sql = `DELETE FROM ${this.tName} WHERE id="${id}"`;
         let promise = new Promise<boolean>((resolve, reject) => {
             this.sequelize.query(sql, { type: this.sequelize.QueryTypes.DELETE })
                 .then(data => {

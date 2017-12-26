@@ -30,10 +30,8 @@ extend type Query {
 }
 
 extend type Mutation {
-	# 创建角色
-	createRole(role: inputRole): Role
-	# 修改角色
-	updateRole(id: String, role: inputRole): Role
+	# 创建角色|修改角色
+	saveRole(role: inputRole): Role
 	# 删除角色
 	deleteRole(id: String): Boolean
 	# 添加角色权限
@@ -49,6 +47,7 @@ extend type Mutation {
 }
 
 input inputRole {
+	id:String
 	roleName: String
 	desc: String
 	code:String

@@ -13,16 +13,16 @@ export class Menu {
             let promise = new Promise<Array<IMenuModel>>((resolve, reject) => {
                 MenuSchema.find().then(res => {
                     resolve(res);
-                }).catch(err=>resolve(null)); 
-            }) 
-            return promise;  
+                }).catch(err => resolve(null));
+            })
+            return promise;
         },
 
         getMenuById(_, { id }, context): Promise<IMenuModel> {
             let promise = new Promise<IMenuModel>((resolve, reject) => {
                 MenuSchema.findById(id).then(res => {
                     resolve(res);
-                }).catch(err=>resolve(null));
+                }).catch(err => resolve(null));
             });
             return promise;
         },
@@ -45,19 +45,18 @@ export class Menu {
     }
 
     static Mutation: any = {
-        createMenu (_, { menu }, context): MongoosePromise<Array<IMenuModel>> {
+        saveMenu(_, { menu }, context) {
+            if (menu.id) {
+                return new Promise<IMenuModel>((resolve, reject) => {
+                    MenuSchema.findByIdAndUpdate(menu.id, menu, (err, res) => {
+                        Object.assign(res, menu);
+                        resolve(res);
+                    })
+                });
+            }
             return MenuSchema.create(menu)
         },
-        updateMenu (_, { id, menu }, context) {
-            let promise = new Promise<IMenuModel>((resolve, reject) => {
-                MenuSchema.findByIdAndUpdate(id, menu, (err, res) => {
-                    Object.assign(res, menu);
-                    resolve(res);
-                })
-            });
 
-            return promise;
-        },
         deleteMenu(_, { id }, context): Promise<Boolean> {
             let promise = new Promise<Boolean>((resolve, reject) => {
                 MenuSchema.findByIdAndRemove(id, (err, res) => {

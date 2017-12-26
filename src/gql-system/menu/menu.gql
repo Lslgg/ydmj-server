@@ -29,15 +29,16 @@ extend type Query{
 }
 
 extend type Mutation {
-    # 创建菜单
-    createMenu(menu:inputMenu):Menu
-    # 修改菜单
+    # 创建菜单|修改菜单
+    saveMenu(menu:inputMenu):Menu
+    # 
     updateMenu(id:String,menu:inputMenu):Menu
     # 删除菜单
     deleteMenu(id:String):Boolean
 }
 
 input inputMenu{
+    id:String
     menuImg:String
     isLeaf:Boolean
     pid:String

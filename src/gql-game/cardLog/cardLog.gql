@@ -28,7 +28,7 @@ extend type Query {
 
 extend type Mutation {
     # 添加房卡日志
-    createCardLog(cardLog:inputCardLog):CardLog
+    saveCardLog(cardLog:inputCardLog):CardLog
      # 删除房卡日志
     deleteCardLog(id:String):Boolean
 }

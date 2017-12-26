@@ -33,15 +33,14 @@ extend type Query {
 }
 
 extend type Mutation {
-	# 创建活动
-	createAdvert(advert: inputAdvert): Advert
-	# 修改活动
-	updateAdvert(id: String, advert: inputAdvert): Advert
+	# 创建活动|修改活动
+	saveAdvert(advert: inputAdvert): Advert
 	# 删除活动
 	deleteAdvert(id: String): Boolean
 }
 
 input inputAdvert {
+	id:String
 	# 标题
 	title: String
 	imageId: [Int]

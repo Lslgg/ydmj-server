@@ -53,31 +53,28 @@ export class Profile {
             let promise = new Promise<{}>((resolve, reject) => {
                 ProfileSchema.aggregate([profile]
                 ).then(data => resolve(data))
-                .catch(err=> {
-                    console.error(err);
-                    reject(err);
-                });
+                    .catch(err => {
+                        console.error(err);
+                        reject(err);
+                    });
             })
- 
+
             return promise;
         }
     }
 
     static Mutation: any = {
 
-        createProfile(_, { profile }, context): MongoosePromise<Array<IProfileModel>> {
+        saveProfile(_, { profile }, context) {
+            if (profile.id) {
+                return new Promise<IProfileModel>((resolve, reject) => {
+                    ProfileSchema.findByIdAndUpdate(profile.id, profile, (err, res) => {
+                        Object.assign(res, profile);
+                        resolve(res);
+                    })
+                });
+            }
             return ProfileSchema.create(profile)
-        },
-
-        updateProfile(_, { id, profile }, context) {
-            let promise = new Promise<IProfileModel>((resolve, reject) => {
-                ProfileSchema.findByIdAndUpdate(id, profile, (err, res) => {
-                    Object.assign(res, profile);
-                    resolve(res);
-                })
-            });
-
-            return promise;
         },
 
         deleteProfile(_, { id }, context): Promise<Boolean> {

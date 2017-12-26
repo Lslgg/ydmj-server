@@ -13,7 +13,7 @@ export class Advert {
 					resolve(files);
 				})
 			});
-			return promise; 
+			return promise;
 		}
 	};
 
@@ -54,19 +54,16 @@ export class Advert {
 	};
 
 	static Mutation: any = {
-		createAdvert(_, { advert }, context) {
-			return AdvertSchema.create(advert);
-		},
-
-		updateAdvert(_, { id, advert }, context) {
-			let promise = new Promise<IAdvertModel>((resolve, reject) => {
-				AdvertSchema.findByIdAndUpdate(id, advert, (err, res) => {
-					Object.assign(res, advert);
-					resolve(res);
+		saveAdvert(_, { advert }, context) {
+			if (advert.id) {
+				return new Promise<IAdvertModel>((resolve, reject) => {
+					AdvertSchema.findByIdAndUpdate(advert.id, advert, (err, res) => {
+						Object.assign(res, advert);
+						resolve(res);
+					});
 				});
-			});
-
-			return promise;
+			}
+			return AdvertSchema.create(advert);
 		},
 
 		deleteAdvert(_, { id }, context): Promise<Boolean> {
@@ -77,6 +74,6 @@ export class Advert {
 				});
 			});
 			return promise;
-		} 
+		}
 	};
 }

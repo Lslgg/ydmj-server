@@ -32,10 +32,8 @@ extend type Query {
 }
 
 extend type Mutation {
-    # 创建群主
-    createDealer(dealer:inputDealer):Dealer
-    # 修改群主
-    updateDealer(id:String,dealer:inputDealer):Dealer
+    # 创建群主|修改群主
+    saveDealer(dealer:inputDealer):Dealer
     # 删除群主
     deleteDealer(id:String):Boolean
 }

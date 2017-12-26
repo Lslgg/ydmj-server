@@ -5,7 +5,7 @@ import { DocumentQuery, MongoosePromise } from 'mongoose';
 
 export class Role {
 
-    constructor() { 
+    constructor() {
 
     }
 
@@ -61,18 +61,16 @@ export class Role {
     }
 
     static Mutation: any = {
-        createRole(_, { role }, context): MongoosePromise<Array<IRoleModel>> {
+        saveRole(_, { role }, context) {
+            if (role.id) {
+                return new Promise<IRoleModel>((resolve, reject) => {
+                    RoleSchema.findByIdAndUpdate(role.id, role, (err, res) => {
+                        Object.assign(res, role);
+                        resolve(res);
+                    })
+                });
+            }
             return RoleSchema.create(role)
-        },
-        updateRole(_, { id, role }, context) {
-            let promise = new Promise<IRoleModel>((resolve, reject) => {
-                RoleSchema.findByIdAndUpdate(id, role, (err, res) => {
-                    Object.assign(res, role);
-                    resolve(res);
-                })
-            });
-
-            return promise;
         },
         deleteRole(_, { id }, context): Promise<Boolean> {
             let promise = new Promise<Boolean>((resolve, reject) => {
@@ -96,7 +94,7 @@ export class Role {
             return new Promise<IRoleModel>((resolve, reject) => {
                 RolePowerSchema.create(rolePower, (err, res) => {
                     if (err != null) reject(null);
-                    if(!rolePower) resolve(null);
+                    if (!rolePower||rolePower.length<=0) resolve(null);
                     RoleSchema.findById(rolePower[0].roleId).then(res => {
                         resolve(res)
                     })
@@ -122,9 +120,9 @@ export class Role {
         },
         delAllPowerbyId(_, { roleId, id }, context) {
             let promise = new Promise<Boolean>((resolve, reject) => {
-                RolePowerSchema.find({ powerId: { $in: id },roleId: roleId  }).remove().then(res => {
+                RolePowerSchema.find({ powerId: { $in: id }, roleId: roleId }).remove().then(res => {
                     resolve(true);
-                }).catch(err => resolve(err)) 
+                }).catch(err => resolve(err))
             });
             return promise;
         }

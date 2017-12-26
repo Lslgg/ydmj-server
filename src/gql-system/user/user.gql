@@ -38,21 +38,20 @@ extend type Query {
 }
 
 extend type Mutation {
-    # 创建用户
-    createUser(user:inputUser):User
-    # 修改用户
-    updateUser(id:String,user:inputUser):User
+    # 创建用户|修改用户
+    saveUser(user:inputUser):User
      # 删除用户
     deleteUser(id:String):Boolean
 }
 
 input inputUser{
+    id:String
     username: String
     name: String
     email:String
     password:String
-    roleId:String,
-    profileId:String,
+    roleId:String
+    profileId:String
     isValid:Boolean
 }
 

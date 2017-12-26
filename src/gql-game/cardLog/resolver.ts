@@ -37,7 +37,7 @@ export class CardLog {
 
     static Mutation: any = {
  
-        createCardLog (_, { cardLog }, context): MongoosePromise<Array<ICardLogModel>> {
+        saveCardLog (_, { cardLog }, context): MongoosePromise<Array<ICardLogModel>> {
             return schema.create(cardLog)
         },
 

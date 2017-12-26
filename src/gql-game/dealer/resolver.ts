@@ -26,21 +26,20 @@ export class Dealer {
         },
 
         getDealerWhere(_, { where, order }, context) {
-            return Dealer.mysql.findWhere(where,order);
+            return Dealer.mysql.findWhere(where, order);
         }
     }
 
     static Mutation = {
-        createDealer(_, { dealer }, context) {
+        saveDealer(_, { dealer }, context) {
+            if (dealer.id) {
+                return Dealer.mysql.update(dealer, dealer.id);
+            }
             return Dealer.mysql.add(dealer);
         },
 
-        updateDealer(_, { id, dealer }, context) {
-            return Dealer.mysql.update(dealer, id);
-        },
-
         deleteDealer(_, { id }, context) {
-            return Dealer.mysql.delete(id);        
-        } 
+            return Dealer.mysql.delete(id);
+        }
     }
 }

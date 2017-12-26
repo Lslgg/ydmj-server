@@ -35,10 +35,8 @@ extend type Query {
 }
 
 extend type Mutation {
-	# 创建权限
-	createPower(power: inputPower): Power
-	# 修改权限
-	updatePower(id: String, power: inputPower): Power
+	# 创建权限|修改权限
+	savePower(power: inputPower): Power
 	# 删除权限
 	deletePower(id: String): Boolean
 	# 批量添加权限
@@ -48,6 +46,7 @@ extend type Mutation {
 }
 
 input inputPower {
+	id:String
 	# 标题
 	title: String
 	# 操作权限
