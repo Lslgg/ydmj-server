@@ -9,6 +9,7 @@ type Power {
 	url: String
 	explain: String
 	type: String
+	menuId:String
 	isValid: Boolean
 	updateAt: Date
 	createAt: Date

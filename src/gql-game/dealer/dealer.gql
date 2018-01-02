@@ -39,6 +39,7 @@ extend type Mutation {
 }
 
 input inputDealer{
+    id:String
     account:String
     openid:String
     password:String

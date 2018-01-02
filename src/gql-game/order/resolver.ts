@@ -10,6 +10,8 @@ export class Order {
 
     static Query = {
         getOrderPage(_, { pageIndex = 1, pageSize = 10, where = " 1=1 ", order = "id" }, context) {
+            if(!context.user) return null;
+
             var sql = `SELECT tr.id,tr.userId,tu.name, td.name dealerName,
                         tr.cards card,tr.cost cost, FROM_UNIXTIME(tr.createTime/1000) createTime,td.id dealerId
                         FROM t_order tr JOIN t_user tu ON tr.userId = tu.id JOIN t_dealers td ON tu.code=td.id
@@ -18,6 +20,8 @@ export class Order {
         },
 
         getOrderCount(_, { where }, context) {
+            if(!context.user) return null;
+
             var sql = `SELECT count(*) count
                     FROM t_order tr JOIN t_user tu ON tr.userId = tu.id JOIN t_dealers td ON tu.code=td.id
                     WHERE tr.state=1  and ${where}`;
@@ -31,6 +35,8 @@ export class Order {
         },
 
         getOrderCardCost(_, { where = " 1=1 " }, context) {
+            if(!context.user) return null;
+
             var sql = `SELECT  
                         COUNT(*) count,
                         SUM(tr.cards) card,

@@ -16,15 +16,15 @@ export class User {
             return RoleSchema.findById(model.roleId);
         },
         Profile(model) {
-            return ProfileSchema.findById(model.profileId);
+            return ProfileSchema.findOne({ userId: model.id });
         }
     }
 
     static Query: any = {
-
         getUsers(_, __, context): Promise<Array<IUserModel>> {
+            if(!context.user) return null;
             let promise = new Promise<Array<IUserModel>>((resolve, reject) => {
-                var users = UserSchema.find().then(res => {
+                UserSchema.find().then(res => {
                     resolve(res);
                 }).catch(err => resolve(null));
             });
@@ -32,38 +32,69 @@ export class User {
         },
 
         getUserById(_, { id }, context): Promise<IUserModel> {
+            if(!context.user) return null;
+
             let promise = new Promise<IUserModel>((resolve, reject) => {
-                var users = UserSchema.findById(id).then(res => {
+                UserSchema.findById(id).then(res => {
                     resolve(res);
                 }).catch(err => resolve(null));
             });
             return promise;
         },
 
-        getUserPage(_, { pageIndex = 1, pageSize = 10, user }, context):
-            DocumentQuery<Array<IUserModel>, IUserModel> {
-            var userInfo = UserSchema.find(user).skip((pageIndex - 1) * pageSize).limit(pageSize)
+        getUserPage(_, { pageIndex = 1, pageSize = 10, user }, context) {
+            if(!context.user) return null;
+            var skip=(pageIndex - 1) * pageSize
+            var userInfo = UserSchema.find(user).skip(skip).limit(pageSize)
             return userInfo;
         },
 
         getUserWhere(_, { user }, context) {
+            if(!context.user) return null;
             var users = UserSchema.find(user);
             return users;
         },
 
         getUserCount(_, { user }, context) {
+            if(!context.user) return 0;
             var count = UserSchema.count(user);
             return count;
         },
 
-        login(_, { user }, context): DocumentQuery<IUserModel, IUserModel> {
-            var users = UserSchema.findOne(user)
-            return users
+        login(_, { user }, context) {
+            if(!user) return null;
+            return new Promise<any>((resolve, reject) => {
+                UserSchema.findOne(user).then(data => {
+                    context.session.user = data;
+                    resolve(data);
+                })
+            })
+        },
+        logOut(_, { }, context) {
+            context.user=null;
+            context.session.user=null;
+            return true;
+        },
+        currentUser(_, { }, context) {
+            if(!context.user) return null;
+            let promise = new Promise<IUserModel>((resolve, reject) => {
+                let user = context.user;
+                if (user) {
+                    UserSchema.findById(user._id).then(res => {
+                        resolve(res);
+                    }).catch(err => resolve(null));
+                }else{
+                    resolve(null);
+                }
+            });
+            return promise;
+
         },
     }
 
     static Mutation: any = {
         saveUser(_, { user }, context) {
+            if(!context.user) return null;
             if (user.id) {
                 return new Promise<IUserModel>((resolve, reject) => {
                     UserSchema.findByIdAndUpdate(user.id, user, (err, res) => {
@@ -76,6 +107,7 @@ export class User {
         },
 
         deleteUser(_, { id }, context): Promise<Boolean> {
+            if(!context.user) return null;
             let promise = new Promise<Boolean>((resolve, reject) => {
                 UserSchema.findByIdAndRemove(id, (err, res) => {
                     resolve(res != null)

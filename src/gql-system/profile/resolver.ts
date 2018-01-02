@@ -12,6 +12,8 @@ export class Profile {
     static Query: any = {
 
         getProfiles(_, __, context): Promise<Array<IProfileModel>> {
+            if(!context.user) return null;
+
             let promise = new Promise<Array<IProfileModel>>((resolve, reject) => {
                 var proFiles = ProfileSchema.find().then(res => {
                     resolve(res);
@@ -21,6 +23,8 @@ export class Profile {
         },
 
         getProfileById(_, { id }, context): Promise<IProfileModel> {
+            if(!context.user) return null;
+
             let promise = new Promise<IProfileModel>((resolve, reject) => {
                 var proFiles = ProfileSchema.findById(id).then(res => {
                     resolve(res);
@@ -29,27 +33,31 @@ export class Profile {
             return promise;
         },
 
-        getProfilePage(_, { pageIndex = 1, pageSize = 10, profile }, context):
-            DocumentQuery<Array<IProfileModel>, IProfileModel> {
-            var proFileInfo = ProfileSchema.find(profile).skip((pageIndex - 1) * pageSize).limit(pageSize)
+        getProfilePage(_, { pageIndex = 1, pageSize = 10, profile }, context) {
+            if(!context.user) return null;
+            var skip=(pageIndex - 1) * pageSize;
+            var proFileInfo = ProfileSchema.find(profile).skip(skip).limit(pageSize)
             return proFileInfo;
         },
 
         getProfileWhere(_, { profile }, context) {
+            if(!context.user) return 0;
+            
             var proFiles = ProfileSchema.find(profile);
             return proFiles;
         },
 
         getProfileCount(_, { profile }, context) {
+            if(!context.user) return null;
+            
             var count = ProfileSchema.count(profile);
 
             return count;
         },
 
         getProfileAggregate(_, { profile }, context): Promise<{}> {
-            /**{ $project: { "card": 1,"phone":1 } },
-                { $match: { card: { $gt: 10, $lte: 970 } } },
-                { $group: { _id: "$_id", total: { $min: "$card" } } }*/
+            if(!context.user) return null;
+
             let promise = new Promise<{}>((resolve, reject) => {
                 ProfileSchema.aggregate([profile]
                 ).then(data => resolve(data))
@@ -66,6 +74,8 @@ export class Profile {
     static Mutation: any = {
 
         saveProfile(_, { profile }, context) {
+            if(!context.user) return null;
+            
             if (profile.id) {
                 return new Promise<IProfileModel>((resolve, reject) => {
                     ProfileSchema.findByIdAndUpdate(profile.id, profile, (err, res) => {
@@ -78,6 +88,8 @@ export class Profile {
         },
 
         deleteProfile(_, { id }, context): Promise<Boolean> {
+            if(!context.user) return null;
+            
             let promise = new Promise<Boolean>((resolve, reject) => {
                 ProfileSchema.findByIdAndRemove(id, (err, res) => {
                     resolve(res != null)

@@ -26,6 +26,8 @@ export class Role {
     static Query: any = {
 
         getRoles(_, __, context): Promise<Array<IRoleModel>> {
+            if(!context.user) return null;
+
             let promise = new Promise<Array<IRoleModel>>((resolve, reject) => {
                 RoleSchema.find().then(res => {
                     resolve(res);
@@ -35,6 +37,8 @@ export class Role {
         },
 
         getRoleById(_, { id }, context): Promise<IRoleModel> {
+            if(!context.user) return null;
+
             let promise = new Promise<IRoleModel>((resolve, reject) => {
                 RoleSchema.findById(id).then(res => {
                     resolve(res);
@@ -43,18 +47,23 @@ export class Role {
             return promise;
         },
 
-        getRolePage(_, { pageIndex = 1, pageSize = 10, role }, context):
-            DocumentQuery<Array<IRoleModel>, IRoleModel> {
-            var userInfo = RoleSchema.find(role).skip((pageIndex - 1) * pageSize).limit(pageSize)
+        getRolePage(_, { pageIndex = 1, pageSize = 10, role }, context) {
+            if(!context.user) return null;
+            var skip=(pageIndex - 1) * pageSize;
+            var userInfo = RoleSchema.find(role).skip(skip).limit(pageSize)
             return userInfo;
         },
 
         getRoleCount(_, { role }, context) {
+            if(!context.user) return 0;
+            
             var count = RoleSchema.count(role);
             return count;
         },
 
         getRoleWhere(_, { role }, context) {
+            if(!context.user) return null;
+            
             var users = RoleSchema.find(role);
             return users;
         },
@@ -62,6 +71,8 @@ export class Role {
 
     static Mutation: any = {
         saveRole(_, { role }, context) {
+            if(!context.user) return null;
+            
             if (role.id) {
                 return new Promise<IRoleModel>((resolve, reject) => {
                     RoleSchema.findByIdAndUpdate(role.id, role, (err, res) => {
@@ -73,6 +84,8 @@ export class Role {
             return RoleSchema.create(role)
         },
         deleteRole(_, { id }, context): Promise<Boolean> {
+            if(!context.user) return null;
+            
             let promise = new Promise<Boolean>((resolve, reject) => {
                 RoleSchema.findByIdAndRemove(id, (err, res) => {
                     resolve(res != null)
@@ -81,6 +94,8 @@ export class Role {
             return promise;
         },
         addRolePower(_, { rolePower }, context) {
+            if(!context.user) return null;
+            
             return new Promise<IRoleModel>((resolve, reject) => {
                 RolePowerSchema.create(rolePower, (err, res) => {
                     if (err != null) reject(err);
@@ -91,6 +106,8 @@ export class Role {
             })
         },
         addAllRolePower(_, { rolePower }, context) {
+            if(!context.user) return null;
+            
             return new Promise<IRoleModel>((resolve, reject) => {
                 RolePowerSchema.create(rolePower, (err, res) => {
                     if (err != null) reject(null);
@@ -103,6 +120,8 @@ export class Role {
         },
 
         delPowerbyRoleId(_, { roleId }, context) {
+            if(!context.user) return null;
+            
             let promise = new Promise<Boolean>((resolve, reject) => {
                 RolePowerSchema.find({ roleId: roleId }).remove().then(res => {
                     resolve(true);
@@ -111,6 +130,8 @@ export class Role {
             return promise;
         },
         delPowerbyId(_, { id }, context) {
+            if(!context.user) return null;
+            
             let promise = new Promise<Boolean>((resolve, reject) => {
                 RolePowerSchema.findByIdAndRemove(id, (err, res) => {
                     resolve(res != null)
@@ -119,6 +140,8 @@ export class Role {
             return promise;
         },
         delAllPowerbyId(_, { roleId, id }, context) {
+            if(!context.user) return null;
+            
             let promise = new Promise<Boolean>((resolve, reject) => {
                 RolePowerSchema.find({ powerId: { $in: id }, roleId: roleId }).remove().then(res => {
                     resolve(true);

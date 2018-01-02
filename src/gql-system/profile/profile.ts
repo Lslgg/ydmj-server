@@ -5,6 +5,7 @@ export interface IProfileModel extends Document {
     card: Number,
     address: String,
     phone: String, 
+    userId:String,
     createdAt: Date,
     updateAt: Date,
 }
@@ -13,6 +14,7 @@ let schema: Schema = new Schema({
     card: Number,
     address: String,
     phone: String, 
+    userId:String,
     createAt: {
         type: Date,
         default: new Date(),

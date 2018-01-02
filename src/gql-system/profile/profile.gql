@@ -4,6 +4,7 @@ type Profile{
     phone:String
     address:String
     card:Int
+    userId:String
     createAt:Date
     updateAt:Date
 }
@@ -35,6 +36,7 @@ input inputProfile{
     phone:String
     address:String
     card:Int
+    userId:String
 }
 
 input searchProfile{

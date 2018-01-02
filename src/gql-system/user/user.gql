@@ -34,6 +34,10 @@ extend type Query {
     getUserWhere(user:searchUser): [User]
     # 用户登录
     login (user:loginUser): User
+    # 用户退出
+    logOut:Boolean,
+    #当前登录用户
+    currentUser:User
    
 }
 

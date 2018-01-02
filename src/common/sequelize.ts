@@ -13,6 +13,7 @@ export class MysqDB {
             dialect: 'mysql',
             pool: { max: 5, min: 0, idle: 30000 },
             operatorsAliases: false,
+            logging:false,
             dialectOptions: {
                 multipleStatements: true
             },
@@ -199,7 +200,4 @@ export class MysqDB {
         return { fields, fieldValues };
     }
 
-    private getxxx(){
-       this.sequelize.Model
-    }
 }
