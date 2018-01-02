@@ -33,7 +33,7 @@ extend type Query {
     # 根据条件查找
     getUserWhere(user:searchUser): [User]
     # 用户登录
-    login (user:loginUser): User
+    login (username:String!,password:String!): User
     # 用户退出
     logOut:Boolean,
     #当前登录用户
@@ -57,11 +57,6 @@ input inputUser{
     roleId:String
     profileId:String
     isValid:Boolean
-}
-
-input loginUser{
-    username:String
-    password:String
 }
 
 input searchUser{
