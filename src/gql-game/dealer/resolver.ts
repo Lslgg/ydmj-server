@@ -9,31 +9,31 @@ export class Dealer {
     }
 
     static Query = {
-        getDealers(_, __, context) {
+        getDealers(parent, __, context) {
             if(!context.user) return null;
 
             return Dealer.mysql.find();
         },
 
-        getDealerById(_, { id }, context) {
+        getDealerById(parent, { id }, context) {
             if(!context.user) return null;
 
             return Dealer.mysql.findById(id);
         },
 
-        getDealerPage(_, { pageIndex = 1, pageSize = 10, where, order }, context) {
+        getDealerPage(parent, { pageIndex = 1, pageSize = 10, where, order }, context) {
             if(!context.user) return null;
 
             return Dealer.mysql.findPage(pageIndex, pageSize, where, order)
         },
 
-        getDealerCount(_, { where }, context) {
+        getDealerCount(parent, { where }, context) {
             if(!context.user) return null;
 
             return Dealer.mysql.findCount(where);
         },
 
-        getDealerWhere(_, { where, order }, context) {
+        getDealerWhere(parent, { where, order }, context) {
             if(!context.user) return null;
 
             return Dealer.mysql.findWhere(where, order);
@@ -41,7 +41,7 @@ export class Dealer {
     }
 
     static Mutation = {
-        saveDealer(_, { dealer }, context) {
+        saveDealer(parent, { dealer }, context) {
             if(!context.user) return null;
 
             if (dealer.id) {
@@ -50,7 +50,7 @@ export class Dealer {
             return Dealer.mysql.add(dealer);
         },
 
-        deleteDealer(_, { id }, context) {
+        deleteDealer(parent, { id }, context) {
             if(!context.user) return null;
 
             return Dealer.mysql.delete(id);

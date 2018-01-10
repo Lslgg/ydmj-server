@@ -5,11 +5,11 @@
   "license": "MIT",
   "scripts": {
     "prestart": "tsc",
-    "build:prod": "tsc && npm run build:gql",
-    "start": "npm run build:prod && node dist/server.js",
-    "start:live": "npm run build:gql && npm run build:live",
-    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./index.ts",
-    "build:gql": "copyfiles -u 1 src/**/*.graphql src/**/*.gql dist/"
+    "start": "node dist/index.js",
+    "build:prod": "tsc && npm run copy:gql",
+    "start:live": "npm run copy:gql && npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts",
+    "copy:gql": "copyfiles -u 1 src/**/*.graphql src/**/*.gql dist/"
   },
   "dependencies": {
     "@types/body-parser": "^1.16.8",
@@ -19,6 +19,7 @@
     "@types/node": "^8.0.53",
     "@types/sequelize": "^4.0.79",
     "apollo-server-express": "^1.3.2",
+    "apollo-upload-server": "^4.0.0-alpha.1",
     "connect-mongo": "^2.0.0",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
@@ -34,6 +35,7 @@
     "graphql-tools": "^2.7.2",
     "graphql-voyager": "^1.0.0-rc.9",
     "lokijs": "^1.5.1",
+    "lowdb": "^1.0.0",
     "mongoose": "^4.13.4",
     "multer": "^1.3.0",
     "mysql2": "^1.5.1",
@@ -41,6 +43,7 @@
     "passport": "^0.4.0",
     "require-text": "0.0.1",
     "sequelize": "^4.28.0",
+    "shortid": "^2.2.8",
     "ts-node": "^3.3.0",
     "typescript": "^2.6.2"
   },

@@ -1,4 +1,4 @@
-import App from './src/server';
+import App from './server';
 
 App.listen(8080, function () {
 	console.log('Now browse to http://localhost:8080/playground');

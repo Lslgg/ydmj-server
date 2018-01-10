@@ -9,29 +9,29 @@ export class Player {
     }
 
     static Query = {
-        getPlayers(_, __, context) {
+        getPlayers(parent, __, context) {
             if(!context.user) return null;
 
             return Player.mysql.find();
         },
-        getPlayerById(_, { id }, context) {
+        getPlayerById(parent, { id }, context) {
             if(!context.user) return null;
 
             return Player.mysql.findById(id);
         },
-        getPlayerPage(_, { pageIndex = 1, pageSize = 10, where, order }, context) {
+        getPlayerPage(parent, { pageIndex = 1, pageSize = 10, where, order }, context) {
             if(!context.user) return null;
 
             order = order ? "cardNum" : order;
             return Player.mysql.findPage(pageIndex, pageSize, where, order)
         },
 
-        getPlayerCount(_, { where }, context) {
+        getPlayerCount(parent, { where }, context) {
             if(!context.user) return null;
 
             return Player.mysql.findCount(where);
         },
-        getPlayerWhere(_, { where, order }, context) {
+        getPlayerWhere(parent, { where, order }, context) {
             if(!context.user) return null;
 
             return Player.mysql.findWhere(where);
@@ -39,7 +39,7 @@ export class Player {
     }
 
     static Mutation = {
-        updatePlayerCard(_, { id, cardNum }, context) {
+        updatePlayerCard(parent, { id, cardNum }, context) {
             if(!context.user) return null;
 
             var upSql = `cardNum=cardNum+${cardNum}`;

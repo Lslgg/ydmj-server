@@ -9,7 +9,7 @@ export class Menu {
 
     static Query: any = {
 
-        getMenus(_, __, context): Promise<Array<IMenuModel>> {
+        getMenus(parent, __, context): Promise<Array<IMenuModel>> {
             if(!context.user) return null;
 
             let promise = new Promise<Array<IMenuModel>>((resolve, reject) => {
@@ -20,7 +20,7 @@ export class Menu {
             return promise;
         },
 
-        getMenuById(_, { id }, context): Promise<IMenuModel> {
+        getMenuById(parent, { id }, context): Promise<IMenuModel> {
             if(!context.user) return null;
 
             let promise = new Promise<IMenuModel>((resolve, reject) => {
@@ -31,7 +31,7 @@ export class Menu {
             return promise;
         },
 
-        getMenuPage(_, { pageIndex = 1, pageSize = 10, menu }, context) {
+        getMenuPage(parent, { pageIndex = 1, pageSize = 10, menu }, context) {
             if(!context.user) return null;
 
             var userInfo = MenuSchema.find(menu)
@@ -39,14 +39,14 @@ export class Menu {
             return userInfo;
         },
 
-        getMenuCount(_, { menu }, context) {
+        getMenuCount(parent, { menu }, context) {
             if(!context.user) return 0;
 
             var count = MenuSchema.count(menu);
             return count;
         },
 
-        getMenuWhere(_, { menu }, context) {
+        getMenuWhere(parent, { menu }, context) {
             if(!context.user) return null;
 
             //var users = MenuSchema.find({"pid":{"$in" : ["5a221555842273172c089eb1","5a2215d3842273172c089eb2"]}});
@@ -55,7 +55,7 @@ export class Menu {
     }
 
     static Mutation: any = {
-        saveMenu(_, { menu }, context) {
+        saveMenu(parent, { menu }, context) {
             if(!context.user) return null;
 
             if (menu.id) {
@@ -69,7 +69,7 @@ export class Menu {
             return MenuSchema.create(menu)
         },
 
-        deleteMenu(_, { id }, context): Promise<Boolean> {
+        deleteMenu(parent, { id }, context): Promise<Boolean> {
             if(!context.user) return null;
 
             let promise = new Promise<Boolean>((resolve, reject) => {

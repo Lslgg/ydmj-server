@@ -25,7 +25,7 @@ export class Role {
 
     static Query: any = {
 
-        getRoles(_, __, context): Promise<Array<IRoleModel>> {
+        getRoles(parent, __, context): Promise<Array<IRoleModel>> {
             if(!context.user) return null;
 
             let promise = new Promise<Array<IRoleModel>>((resolve, reject) => {
@@ -36,7 +36,7 @@ export class Role {
             return promise;
         },
 
-        getRoleById(_, { id }, context): Promise<IRoleModel> {
+        getRoleById(parent, { id }, context): Promise<IRoleModel> {
             if(!context.user) return null;
 
             let promise = new Promise<IRoleModel>((resolve, reject) => {
@@ -47,21 +47,21 @@ export class Role {
             return promise;
         },
 
-        getRolePage(_, { pageIndex = 1, pageSize = 10, role }, context) {
+        getRolePage(parent, { pageIndex = 1, pageSize = 10, role }, context) {
             if(!context.user) return null;
             var skip=(pageIndex - 1) * pageSize;
             var userInfo = RoleSchema.find(role).skip(skip).limit(pageSize)
             return userInfo;
         },
 
-        getRoleCount(_, { role }, context) {
+        getRoleCount(parent, { role }, context) {
             if(!context.user) return 0;
             
             var count = RoleSchema.count(role);
             return count;
         },
 
-        getRoleWhere(_, { role }, context) {
+        getRoleWhere(parent, { role }, context) {
             if(!context.user) return null;
             
             var users = RoleSchema.find(role);
@@ -70,7 +70,7 @@ export class Role {
     }
 
     static Mutation: any = {
-        saveRole(_, { role }, context) {
+        saveRole(parent, { role }, context) {
             if(!context.user) return null;
             
             if (role.id) {
@@ -83,7 +83,7 @@ export class Role {
             }
             return RoleSchema.create(role)
         },
-        deleteRole(_, { id }, context): Promise<Boolean> {
+        deleteRole(parent, { id }, context): Promise<Boolean> {
             if(!context.user) return null;
             
             let promise = new Promise<Boolean>((resolve, reject) => {
@@ -93,7 +93,7 @@ export class Role {
             });
             return promise;
         },
-        addRolePower(_, { rolePower }, context) {
+        addRolePower(parent, { rolePower }, context) {
             if(!context.user) return null;
             
             return new Promise<IRoleModel>((resolve, reject) => {
@@ -105,7 +105,7 @@ export class Role {
                 }).catch(err => { resolve(err) })
             })
         },
-        addAllRolePower(_, { rolePower }, context) {
+        addAllRolePower(parent, { rolePower }, context) {
             if(!context.user) return null;
             
             return new Promise<IRoleModel>((resolve, reject) => {
@@ -119,7 +119,7 @@ export class Role {
             })
         },
 
-        delPowerbyRoleId(_, { roleId }, context) {
+        delPowerbyRoleId(parent, { roleId }, context) {
             if(!context.user) return null;
             
             let promise = new Promise<Boolean>((resolve, reject) => {
@@ -129,7 +129,7 @@ export class Role {
             });
             return promise;
         },
-        delPowerbyId(_, { id }, context) {
+        delPowerbyId(parent, { id }, context) {
             if(!context.user) return null;
             
             let promise = new Promise<Boolean>((resolve, reject) => {
@@ -139,7 +139,7 @@ export class Role {
             });
             return promise;
         },
-        delAllPowerbyId(_, { roleId, id }, context) {
+        delAllPowerbyId(parent, { roleId, id }, context) {
             if(!context.user) return null;
             
             let promise = new Promise<Boolean>((resolve, reject) => {

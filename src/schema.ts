@@ -8,6 +8,8 @@ var Role = requireText('./gql-system/role/role.gql', require);
 var Menu = requireText('./gql-system/menu/menu.gql', require);
 var Power = requireText('./gql-system/power/power.gql', require);
 var Profile = requireText('./gql-system/profile/profile.gql', require);
+var File = requireText('./gql-system/file/file.gql', require);
+
 var Advert = requireText('./gql-game/advert/advert.gql', require);
 var Player = requireText('./gql-game/player/player.gql', require);
 var CardLog = requireText('./gql-game/cardLog/cardLog.gql', require);
@@ -21,7 +23,7 @@ var typeDefs = [
   Menu,Power,Advert,
   Profile,Player,CardLog,
   Dealer,Setting,Order,
-  CardRecord
+  CardRecord,File
 ];
 
 const schema = makeExecutableSchema({

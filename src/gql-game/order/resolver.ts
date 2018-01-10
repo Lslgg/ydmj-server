@@ -9,7 +9,7 @@ export class Order {
     }
 
     static Query = {
-        getOrderPage(_, { pageIndex = 1, pageSize = 10, where = " 1=1 ", order = "id" }, context) {
+        getOrderPage(parent, { pageIndex = 1, pageSize = 10, where = " 1=1 ", order = "id" }, context) {
             if(!context.user) return null;
 
             var sql = `SELECT tr.id,tr.userId,tu.name, td.name dealerName,
@@ -19,7 +19,7 @@ export class Order {
             return Order.mysql.findSql(sql)
         },
 
-        getOrderCount(_, { where }, context) {
+        getOrderCount(parent, { where }, context) {
             if(!context.user) return null;
 
             var sql = `SELECT count(*) count
@@ -34,7 +34,7 @@ export class Order {
             return promise;
         },
 
-        getOrderCardCost(_, { where = " 1=1 " }, context) {
+        getOrderCardCost(parent, { where = " 1=1 " }, context) {
             if(!context.user) return null;
 
             var sql = `SELECT  

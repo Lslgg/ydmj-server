@@ -11,7 +11,7 @@ export class Profile {
 
     static Query: any = {
 
-        getProfiles(_, __, context): Promise<Array<IProfileModel>> {
+        getProfiles(parent, __, context): Promise<Array<IProfileModel>> {
             if(!context.user) return null;
 
             let promise = new Promise<Array<IProfileModel>>((resolve, reject) => {
@@ -22,7 +22,7 @@ export class Profile {
             return promise;
         },
 
-        getProfileById(_, { id }, context): Promise<IProfileModel> {
+        getProfileById(parent, { id }, context): Promise<IProfileModel> {
             if(!context.user) return null;
 
             let promise = new Promise<IProfileModel>((resolve, reject) => {
@@ -33,21 +33,21 @@ export class Profile {
             return promise;
         },
 
-        getProfilePage(_, { pageIndex = 1, pageSize = 10, profile }, context) {
+        getProfilePage(parent, { pageIndex = 1, pageSize = 10, profile }, context) {
             if(!context.user) return null;
             var skip=(pageIndex - 1) * pageSize;
             var proFileInfo = ProfileSchema.find(profile).skip(skip).limit(pageSize)
             return proFileInfo;
         },
 
-        getProfileWhere(_, { profile }, context) {
+        getProfileWhere(parent, { profile }, context) {
             if(!context.user) return 0;
             
             var proFiles = ProfileSchema.find(profile);
             return proFiles;
         },
 
-        getProfileCount(_, { profile }, context) {
+        getProfileCount(parent, { profile }, context) {
             if(!context.user) return null;
             
             var count = ProfileSchema.count(profile);
@@ -55,7 +55,7 @@ export class Profile {
             return count;
         },
 
-        getProfileAggregate(_, { profile }, context): Promise<{}> {
+        getProfileAggregate(parent, { profile }, context): Promise<{}> {
             if(!context.user) return null;
 
             let promise = new Promise<{}>((resolve, reject) => {
@@ -73,7 +73,7 @@ export class Profile {
 
     static Mutation: any = {
 
-        saveProfile(_, { profile }, context) {
+        saveProfile(parent, { profile }, context) {
             if(!context.user) return null;
             
             if (profile.id) {
@@ -87,7 +87,7 @@ export class Profile {
             return ProfileSchema.create(profile)
         },
 
-        deleteProfile(_, { id }, context): Promise<Boolean> {
+        deleteProfile(parent, { id }, context): Promise<Boolean> {
             if(!context.user) return null;
             
             let promise = new Promise<Boolean>((resolve, reject) => {

@@ -9,25 +9,25 @@ export class Setting {
     }
 
     static Query = {
-        getVersionById(_, { id }, context) {
+        getVersionById(parent, { id }, context) {
             if (!context.user) return null;
 
             return Setting.mysql("t_client_version").findById(id);
         },
 
-        getNewsById(_, { id }, context) {
+        getNewsById(parent, { id }, context) {
             if (!context.user) return null;
 
             return Setting.mysql("t_news").findById(id);
         },
 
-        getNoticeById(_, { id }, context) {
+        getNoticeById(parent, { id }, context) {
             if (!context.user) return null;
 
             return Setting.mysql("t_notice").findById(id);
         },
 
-        getTipById(_, { id }, context) {
+        getTipById(parent, { id }, context) {
             if (!context.user) return null;
 
             return Setting.mysql("t_tip").findById(id);
@@ -36,22 +36,22 @@ export class Setting {
     }
 
     static Mutation = {
-        updateVersion(_, { id, version }, context) {
+        updateVersion(parent, { id, version }, context) {
             if (!context.user) return null;
 
             return Setting.mysql("t_client_version").update(version, id);
         },
-        updateNews(_, { id, news }, context) {
+        updateNews(parent, { id, news }, context) {
             if (!context.user) return null;
 
             return Setting.mysql("t_news").update(news, id);
         },
-        updateNotice(_, { id, notice }, context) {
+        updateNotice(parent, { id, notice }, context) {
             if (!context.user) return null;
 
             return Setting.mysql("t_notice").update(notice, id);
         },
-        updateTip(_, { id, tip }, context) {
+        updateTip(parent, { id, tip }, context) {
             if (!context.user) return null;
 
             return Setting.mysql("t_tip").update(tip, id);

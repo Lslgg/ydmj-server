@@ -10,14 +10,14 @@ export class CardRecord {
 
     static Query = {
 
-        getCardRecordPage(_, { pageIndex = 1, pageSize = 10, where = "1=1", order = "id" }, context) {
+        getCardRecordPage(parent, { pageIndex = 1, pageSize = 10, where = "1=1", order = "id" }, context) {
             if(!context.user) return null;
 
             var sql=`SELECT * FROM (${CardRecord.recordSql}) AS record WHERE ${where} ORDER BY ${order}  LIMIT ${(pageIndex - 1) * pageSize}, ${pageSize}`;
             return CardRecord.mysql.findSql(sql);
         },
 
-        getCardRecordCount(_, { where=" 1=1 " }, context) {
+        getCardRecordCount(parent, { where=" 1=1 " }, context) {
             if(!context.user) return null;
             
             var sql=`SELECT count(*) AS count FROM (${CardRecord.recordSql}) AS record WHERE ${where}`;
@@ -31,20 +31,21 @@ export class CardRecord {
             return promise;
         },
 
-        getCardRecordWhere(_, { where=" 1=1 ", order=" id " }, context) {
+        getCardRecordWhere(parent, { where=" 1=1 ", order=" id " }, context) {
             if(!context.user) return null;
             
             var sql=`SELECT * FROM (${CardRecord.recordSql}) AS record WHERE ${where} ORDER BY ${order}`;
             return CardRecord.mysql.findSql(sql);
         },
 
-        getCardRecordStatistice(_, { where=" 1=1 " }, context) {
+        getCardRecordStatistice(parent, { where=" 1=1 " }, context) {
             if(!context.user) return null;
             
             var sql=`SELECT SUM(changeNum) AS count  FROM (${CardRecord.recordSql}) AS record WHERE ${where}`;
             let promise = new Promise((resolve, reject) => {
                 CardRecord.mysql.findSql(sql).then(result => {
                     var count = result[0]["count"];
+                    count=count==null?0:count
                     resolve(count);
                 }).catch(err=>reject(err));
             })

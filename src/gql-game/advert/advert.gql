@@ -3,17 +3,18 @@ type Advert {
 	id: ID
 	# 标题
 	title: String
+	
 	Images: [File]
 	# 活动开始时间
 	startDate: Date
 	# 活动对结束时间
 	endDate: Date
-	# 说明
+	# 说明String
 	explain: String
 	# 活动状态
 	activity: Int
 	# 活动类型
-	type: Int
+	type: String
 	isValid: Boolean
 	updateAt: Date
 	createAt: Date
@@ -43,7 +44,8 @@ input inputAdvert {
 	id:String
 	# 标题
 	title: String
-	imageId: [Int]
+	# 文件id列表
+	imageIds: [String]
 	# 活动开始时间
 	startDate: Date
 	# 活动对结束时间
@@ -53,14 +55,15 @@ input inputAdvert {
 	# 活动状态
 	activity: Int
 	# 活动类型
-	type: Int
+	type: String
+	# 是否有效
 	isValid: Boolean
 }
 
 input searchAdvert {
 	title: RegExp
 	# 活动类型
-	type: Int
+	type: String
 	# 活动开始时间
 	startDate: Date
 	# 活动对结束时间

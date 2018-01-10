@@ -21,7 +21,7 @@ export class User {
     }
 
     static Query: any = {
-        getUsers(_, __, context): Promise<Array<IUserModel>> {
+        getUsers(parent, __, context): Promise<Array<IUserModel>> {
             if (!context.user) return null;
             let promise = new Promise<Array<IUserModel>>((resolve, reject) => {
                 UserSchema.find().then(res => {
@@ -31,7 +31,7 @@ export class User {
             return promise;
         },
 
-        getUserById(_, { id }, context): Promise<IUserModel> {
+        getUserById(parent, { id }, context): Promise<IUserModel> {
             if (!context.user) return null;
 
             let promise = new Promise<IUserModel>((resolve, reject) => {
@@ -42,26 +42,26 @@ export class User {
             return promise;
         },
 
-        getUserPage(_, { pageIndex = 1, pageSize = 10, user }, context) {
+        getUserPage(parent, { pageIndex = 1, pageSize = 10, user }, context) {
             if (!context.user) return null;
             var skip = (pageIndex - 1) * pageSize
             var userInfo = UserSchema.find(user).skip(skip).limit(pageSize)
             return userInfo;
         },
 
-        getUserWhere(_, { user }, context) {
+        getUserWhere(parent, { user }, context) {
             if (!context.user) return null;
             var users = UserSchema.find(user);
             return users;
         },
 
-        getUserCount(_, { user }, context) {
+        getUserCount(parent, { user }, context) {
             if (!context.user) return 0;
             var count = UserSchema.count(user);
             return count;
         },
 
-        login(_, { username, password }, context) {
+        login(parent, { username, password }, context) {
             return new Promise<any>((resolve, reject) => {
                 UserSchema.find({ username, password }).then(data => {
                     if (data.length > 0) {
@@ -75,12 +75,12 @@ export class User {
                 })
             })
         },
-        logOut(_, { }, context) {
+        logOut(parent, { }, context) {
             context.user = null;
             context.session.user = null;
             return true;
         },
-        currentUser(_, { }, context) {
+        currentUser(parent, { }, context) {
             if (!context.user) return null;
             let promise = new Promise<IUserModel>((resolve, reject) => {
                 let user = context.user;
@@ -98,7 +98,7 @@ export class User {
     }
 
     static Mutation: any = {
-        saveUser(_, { user }, context) {
+        saveUser(parent, { user }, context) {
             if (!context.user) return null;
             if (user.id) {
                 return new Promise<IUserModel>((resolve, reject) => {
@@ -111,7 +111,7 @@ export class User {
             return UserSchema.create(user)
         },
 
-        deleteUser(_, { id }, context): Promise<Boolean> {
+        deleteUser(parent, { id }, context): Promise<Boolean> {
             if (!context.user) return null;
             let promise = new Promise<Boolean>((resolve, reject) => {
                 UserSchema.findByIdAndRemove(id, (err, res) => {

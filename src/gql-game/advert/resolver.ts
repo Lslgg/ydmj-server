@@ -1,27 +1,25 @@
 import AdvertSchema, { IAdvertModel } from './advert';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
-import { UploadFile } from '../../common/file/uploadFile';
+import { FileManager } from "../../common/file/fileManager";
 
 export class Advert {
 	constructor() { }
 
 	static Advert: any = {
 		Images(model) {
-			var uploadFile = new UploadFile();
 			let promise = new Promise<Array<any>>((resolve, reject) => {
-				uploadFile.getImgById(model.imageId).then(files => {
-					resolve(files);
-				})
+				let fm = new FileManager();
+				let imgs = fm.getFileByIds(model.imageIds);
+				resolve(imgs);
 			});
 			return promise;
 		}
 	};
 
 	static Query: any = {
-		getAdverts(_, __, context): Promise<Array<IAdvertModel>> {
-			if(!context.user) return null;
+		getAdverts(parent, { }, context): Promise<Array<IAdvertModel>> {
+			if (!context.user) return null;
 
-			var uploadFile = new UploadFile();
 			let promise = new Promise<Array<IAdvertModel>>((resolve, reject) => {
 				AdvertSchema.find().then((res) => {
 					resolve(res);
@@ -30,8 +28,8 @@ export class Advert {
 			return promise;
 		},
 
-		getAdvertById(_, { id }, context): Promise<IAdvertModel> {
-			if(!context.user) return null;
+		getAdvertById(parent, { id }, context): Promise<IAdvertModel> {
+			if (!context.user) return null;
 
 			let promise = new Promise<IAdvertModel>((resolve, reject) => {
 				AdvertSchema.findById(id).then((res) => {
@@ -41,22 +39,22 @@ export class Advert {
 			return promise;
 		},
 
-		getAdvertPage(_, { pageIndex = 1, pageSize = 10, advert }, context) {
-			if(!context.user) return null;
+		getAdvertPage(parent, { pageIndex = 1, pageSize = 10, advert }, context) {
+			if (!context.user) return null;
 
 			var userInfo = AdvertSchema.find(advert).skip((pageIndex - 1) * pageSize).limit(pageSize);
 			return userInfo;
 		},
 
-		getAdvertCount(_, { advert }, context) {
-			if(!context.user) return null;
+		getAdvertCount(parent, { advert }, context) {
+			if (!context.user) return null;
 
 			var count = AdvertSchema.count(advert);
 			return count;
 		},
 
-		getAdvertWhere(_, { advert }, context) {
-			if(!context.user) return null;
+		getAdvertWhere(parent, { advert }, context) {
+			if (!context.user) return null;
 
 			var users = AdvertSchema.find(advert);
 			return users;
@@ -64,8 +62,8 @@ export class Advert {
 	};
 
 	static Mutation: any = {
-		saveAdvert(_, { advert }, context) {
-			if(!context.user) return null;
+		saveAdvert(parent, { advert }, context) {
+			if (!context.user) return null;
 
 			if (advert.id) {
 				return new Promise<IAdvertModel>((resolve, reject) => {
@@ -78,12 +76,13 @@ export class Advert {
 			return AdvertSchema.create(advert);
 		},
 
-		deleteAdvert(_, { id }, context): Promise<Boolean> {
-			if(!context.user) return null;
+		deleteAdvert(parent, { id }, context): Promise<Boolean> {
+			if (!context.user) return null;
 
 			let promise = new Promise<Boolean>((resolve, reject) => {
 				AdvertSchema.findByIdAndRemove(id, (err, res) => {
-					new UploadFile().deleteImg(res.imageId);
+					var fm = new FileManager();
+					fm.delFilds(res.imageIds);
 					resolve(res != null);
 				});
 			});

@@ -10,7 +10,7 @@ export class CardLog {
 
     static Query: any = {
 
-        getCardLogs(_, __, context): Promise<Array<ICardLogModel>> {
+        getCardLogs(parent, __, context): Promise<Array<ICardLogModel>> {
             if(!context.user) return null;
 
             let promise = new Promise<Array<ICardLogModel>>((resolve, reject) => {
@@ -21,7 +21,7 @@ export class CardLog {
             return promise;  
         },
 
-        getCardLogPage(_, { pageIndex = 1, pageSize = 10, cardLog }, context) {
+        getCardLogPage(parent, { pageIndex = 1, pageSize = 10, cardLog }, context) {
             if(!context.user) return null;
 
             var info = schema.find(cardLog)
@@ -29,14 +29,14 @@ export class CardLog {
             return info;
         },
 
-        getCardLogCount(_, { cardLog }, context) {
+        getCardLogCount(parent, { cardLog }, context) {
             if(!context.user) return 0;
 
             var count = schema.count(cardLog);
             return count;
         },
 
-        getCardLogWhere(_, { cardLog }, context) {
+        getCardLogWhere(parent, { cardLog }, context) {
             if(!context.user) return null;
 
             return schema.find(cardLog);
@@ -45,12 +45,12 @@ export class CardLog {
 
     static Mutation: any = {
  
-        saveCardLog (_, { cardLog }, context){
+        saveCardLog (parent, { cardLog }, context){
             if(!context.user) return null;
             return schema.create(cardLog)
         },
 
-        deleteCardLog(_, { id }, context): Promise<Boolean> {
+        deleteCardLog(parent, { id }, context): Promise<Boolean> {
             if(!context.user) return null;
 
             let promise = new Promise<Boolean>((resolve, reject) => {

@@ -3,6 +3,8 @@ import { Role } from './gql-system/role/resolver';
 import { Menu } from './gql-system/menu/resolver';
 import { Power } from './gql-system/power/resolver';
 import { Profile } from './gql-system/profile/resolver';
+import { File } from './gql-system/file/resolver';
+
 import { Advert } from './gql-game/advert/resolver';
 import { Player } from './gql-game/Player/resolver';
 import { CardLog } from './gql-game/cardLog/resolver';
@@ -15,12 +17,13 @@ import { CardRecord } from './gql-game/cardRecord/resolver';
 import Date from './common/scalar/Date';
 import RegExp from './common/scalar/RegExp';
 import JsonObject from './common/scalar/JsonObject';
- 
+import { GraphQLUpload } from 'apollo-upload-server'
+
 export default {
 	Query: {
 		...User.Query,
 		...Role.Query,
-		...Menu.Query, 
+		...Menu.Query,
 		...Power.Query,
 		...Advert.Query,
 		...Profile.Query,
@@ -30,6 +33,7 @@ export default {
 		...Setting.Query,
 		...Order.Query,
 		...CardRecord.Query,
+		...File.Query
 	},
 	Mutation: {
 		...User.Mutation,
@@ -44,10 +48,14 @@ export default {
 		...Setting.Mutation,
 		...Order.Mutation,
 		...CardRecord.Mutation,
-		
+		...File.Mutation
 	},
 	User: User.User,
 	Role: Role.Role,
 	Advert: Advert.Advert,
-	Date,RegExp,JsonObject
+	Power: Power.Power,
+	Upload: GraphQLUpload,
+	Date,
+	RegExp,
+	JsonObject,
 };

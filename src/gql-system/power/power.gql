@@ -10,6 +10,7 @@ type Power {
 	explain: String
 	type: String
 	menuId:String
+	Menu: Menu
 	isValid: Boolean
 	updateAt: Date
 	createAt: Date
