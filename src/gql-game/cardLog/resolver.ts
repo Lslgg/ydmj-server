@@ -11,7 +11,7 @@ export class CardLog {
     static Query: any = {
 
         getCardLogs(parent, __, context): Promise<Array<ICardLogModel>> {
-            if(!context.user) return null;
+            // if(!context.user) return null;
 
             let promise = new Promise<Array<ICardLogModel>>((resolve, reject) => {
                 schema.find().then(res => {
