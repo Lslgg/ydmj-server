@@ -1,0 +1,30 @@
+# 问答
+type Answer {
+   id:ID
+   name:String
+   type:String
+   content:String
+   startDate:Date
+   endDate:Date   
+   isValid: Boolean
+   updateAt:Date
+   createAt:Date
+}
+
+extend type Query{
+    getAnswer:[Answer]
+}
+
+extend type Mutation{
+    saveAnswer(answer:inputAnswer):Answer
+}
+
+input inputAnswer { 
+   id:String
+   name:String
+   type:String
+   content:String
+   startDate:Date
+   endDate:Date   
+   isValid: Boolean   
+}

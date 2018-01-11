@@ -20,7 +20,7 @@ export interface IGoodsModel extends Document {
 }
 
 let schema: Schema = new Schema({
-    id: String,
+    // id: String,
     name: String,
     cost_score: Number,
     rule: String,

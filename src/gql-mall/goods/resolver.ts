@@ -1,6 +1,7 @@
 import GoodsSchema, { IGoodsModel } from './goods';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 import BusinessSchema from '../business/business';
+import GoodsTypeSchema from '../goodsType/goodsType';
 export class Goods{
     constructor(){
   
@@ -10,6 +11,9 @@ export class Goods{
 
         Business(model) {            
             return BusinessSchema.findById(model.business_id);
+        },
+        GoodsType(model) {            
+            return GoodsTypeSchema.findById(model.goodsType_id);
         },
         
     }

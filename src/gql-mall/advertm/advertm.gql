@@ -1,0 +1,34 @@
+# 广告
+type Adverm {
+   id:ID
+   name:String
+   link:String   
+   type:String
+   desc:String
+   imageSrc:String
+   startDate:Date
+   endDate:Date   
+   isValid: Boolean
+   updateAt:Date
+   createAt:Date
+}
+
+extend type Query{
+    getAdvertm:[Adverm]
+}
+
+extend type Mutation{
+    saveAdvertm(adverm:inputAdverm):Adverm
+}
+
+input inputAdverm { 
+   id:String
+   name:String
+   link:String   
+   type:String
+   desc:String
+   imageSrc:String
+   startDate:Date
+   endDate:Date   
+   isValid: Boolean     
+}
