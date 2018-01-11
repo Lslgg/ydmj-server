@@ -18,12 +18,15 @@ var Setting = requireText('./gql-game/setting/setting.gql', require);
 var Order = requireText('./gql-game/order/order.gql', require);
 var CardRecord = requireText('./gql-game/cardRecord/cardRecord.gql', require);
 
+var Business = requireText('./gql-mall/business/business.gql', require);
+
+
 var typeDefs = [
   Base, User, Role, 
   Menu,Power,Advert,
   Profile,Player,CardLog,
   Dealer,Setting,Order,
-  CardRecord,File
+  CardRecord,File,Business
 ];
 
 const schema = makeExecutableSchema({

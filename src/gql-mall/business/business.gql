@@ -1,0 +1,40 @@
+# 商家
+type Business {
+   id:ID
+   user_id:String
+   name:String
+   phone_num:String
+   address:String   
+   b_hours:String
+   brief:String
+   on_shelf:Boolean
+   score:Number
+   imageSrc:String
+   trans_times:Number
+   isValid: String
+   updateAt:Date
+   createAt:Date
+}
+
+extend type Query{
+    getBusiness:[Business]
+}
+
+extend type Mutation{
+    saveBusiness(business:inputBusiness):Business
+}
+
+input inputBusiness {
+   id:ID
+   user_id:String
+   name:String
+   phone_num:String
+   address:String   
+   b_hours:String
+   brief:String
+   on_shelf:Boolean
+   score:Number
+   imageSrc:String
+   trans_times:Number
+   isValid: String   
+}

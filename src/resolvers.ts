@@ -13,6 +13,8 @@ import { Setting } from './gql-game/setting/resolver';
 import { Order } from './gql-game/order/resolver';
 import { CardRecord } from './gql-game/cardRecord/resolver';
 
+import { Business } from './gql-mall/business/resolver';
+
 
 import Date from './common/scalar/Date';
 import RegExp from './common/scalar/RegExp';
@@ -33,7 +35,8 @@ export default {
 		...Setting.Query,
 		...Order.Query,
 		...CardRecord.Query,
-		...File.Query
+		...File.Query,
+		...Business.Query
 	},
 	Mutation: {
 		...User.Mutation,
@@ -48,7 +51,8 @@ export default {
 		...Setting.Mutation,
 		...Order.Mutation,
 		...CardRecord.Mutation,
-		...File.Mutation
+		...File.Mutation,
+		...Business.Mutation
 	},
 	User: User.User,
 	Role: Role.Role,
