@@ -17,7 +17,7 @@ export interface IBusinessModel extends Document {
 }
 
 let schema: Schema = new Schema({        
-    id:String,
+    // id:String,
     user_id:String,
     name:String,
     phone_num:String,

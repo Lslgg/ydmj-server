@@ -1,4 +1,4 @@
-# 商家
+# 商品
 type Goods {
    id:ID   
    name:String
@@ -19,14 +19,14 @@ type Goods {
 }
 
 extend type Query{
-    getBusiness:[Business]
+    getGoods:[Goods]
 }
 
 extend type Mutation{
-    saveBusiness(business:inputBusiness):Business
+    saveGoods(goods:inputGoods):Goods
 }
 
-input inputBusiness {   
+input inputGoods {   
    id:ID   
    name:String
    cost_score:Int

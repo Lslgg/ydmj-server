@@ -10,11 +10,7 @@ export class Business{
 
         User(model) {            
             return UserSchema.findById(model.user_id);
-        },
-
-        // User(model) {
-        //     return BusinessSchema.findOne({ user_id: model.user_id });
-        // }
+        },        
     }
 
     static Query:any={

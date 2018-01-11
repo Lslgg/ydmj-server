@@ -23,8 +23,8 @@ extend type Mutation{
     saveBusiness(business:inputBusiness):Business
 }
 
-input inputBusiness {   
-   id:ID
+input inputBusiness { 
+   id:String     
    user_id:String
    name:String
    phone_num:String

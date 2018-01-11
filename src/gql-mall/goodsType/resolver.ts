@@ -1,17 +1,15 @@
 import GoodsTypeSchema, { IGoodsTypeModel } from './goodsType';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
-// import BusinessSchema from '../business/business';
-export class Goods{
+import BusinessSchema from '../business/business';
+export class GoodsType{
     constructor(){
   
     }
 
-    static Goods: any = {
-
-        // Business(model) {            
-        //     return BusinessSchema.findById(model.business_id);
-        // },
-        
+    static GoodsType: any = {
+        Business(model) {            
+            return BusinessSchema.findById(model.business_id);
+        },        
     }
 
     static Query:any={
@@ -29,8 +27,7 @@ export class Goods{
 
     static Mutation: any = {
         saveGoodsType(parent, { goodsType }, context) {
-            if(!context.user) return null;
-
+            if(!context.user) return null;        
             if (goodsType.id) {
                 return new Promise<IGoodsTypeModel>((resolve, reject) => {
                     GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType, (err, res) => {
