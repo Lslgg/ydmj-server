@@ -2,7 +2,7 @@
 type Business {
    id:ID
    name:String
-  isValid: Boolean
+   isValid: Boolean
    updateAt:Date
    createAt:Date
 }
