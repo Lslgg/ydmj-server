@@ -1,27 +1,23 @@
 import { model, Schema, Document } from 'mongoose';
 
 export interface IBusinessModel extends Document {
-    id:string,
-    name:String
-    address:String
-    phone:String
-    isValid: String,
-    updateAt:Date
-    createAt:Date
+    id: string,
+    name: String,    
+    isValid: Boolean,
+    updateAt: Date,
+    createAt: Date,
 }
 
-let schema: Schema = new Schema({  
-    name:String,
-    address:String,
-    phone:String,
-    isValid: Boolean,
+let schema: Schema = new Schema({        
+    name: String,    
+    isValid: Boolean,    
     createAt: {
-        type: Date, 
+        type: Date,
         default: new Date(),
         required: true
     },
     updateAt: {
-        type: Date, 
+        type: Date,
         default: new Date(),
         required: true
     },

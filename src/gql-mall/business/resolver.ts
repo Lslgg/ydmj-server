@@ -16,7 +16,7 @@ export class Business{
                 }).catch(err => resolve(null));
             })
             return promise;
-        },
+        },        
     }
 
     static Mutation: any = {
