@@ -1,0 +1,44 @@
+# 商家
+type Goods {
+   id:ID   
+   name:String
+   cost_score:Int
+   rule:String
+   explain:String
+   count:Int
+   trans_times:Int
+   goods_type:String             
+   imageSrc:String
+   stock:Int
+   limit:Int
+   Business:Business
+   GoodsType:GoodsType 
+   isValid: Boolean
+   updateAt:Date
+   createAt:Date
+}
+
+extend type Query{
+    getBusiness:[Business]
+}
+
+extend type Mutation{
+    saveBusiness(business:inputBusiness):Business
+}
+
+input inputBusiness {   
+   id:ID   
+   name:String
+   cost_score:Int
+   rule:String
+   explain:String
+   count:Int
+   trans_times:Int
+   goods_type:String             
+   imageSrc:String
+   stock:Int
+   limit:Int
+   business_id:String
+   goodsType_id:String 
+   isValid: Boolean   
+}

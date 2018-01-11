@@ -1,7 +1,15 @@
 # 商家
 type Business {
    id:ID
+   User:User
    name:String
+   phone_num:String
+   address:String
+   b_hours:String  
+   brief:String
+   score:Int
+   imageSrc: String
+   trans_times:Int
    isValid: Boolean
    updateAt:Date
    createAt:Date
@@ -16,6 +24,15 @@ extend type Mutation{
 }
 
 input inputBusiness {   
-   name:String  
+   id:ID
+   user_id:String
+   name:String
+   phone_num:String
+   address:String
+   b_hours:String  
+   brief:String
+   score:Int
+   imageSrc: String
+   trans_times:Int
    isValid: Boolean   
 }

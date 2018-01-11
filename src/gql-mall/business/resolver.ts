@@ -1,9 +1,20 @@
 import BusinessSchema, { IBusinessModel } from './business';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
-
+import UserSchema from '../../gql-system/user/user';
 export class Business{
     constructor(){
   
+    }
+
+    static Business: any = {
+
+        User(model) {            
+            return UserSchema.findById(model.user_id);
+        },
+
+        // User(model) {
+        //     return BusinessSchema.findOne({ user_id: model.user_id });
+        // }
     }
 
     static Query:any={

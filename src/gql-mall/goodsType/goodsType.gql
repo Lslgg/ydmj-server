@@ -1,0 +1,26 @@
+# 商家
+type GoodsType {
+   id:ID   
+   name:String
+   Business:Business
+   isValid: Boolean
+   updateAt:Date
+   createAt:Date
+}
+
+extend type Query{
+    getBusiness:[Business]
+}
+
+extend type Mutation{
+    saveBusiness(business:inputBusiness):Business
+}
+
+input inputBusiness {   
+   id:ID   
+   name:String
+   Business:Business
+   isValid: Boolean
+   updateAt:Date
+   createAt:Date
+}
