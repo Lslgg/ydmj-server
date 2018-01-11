@@ -3,7 +3,6 @@ import { express as middleware } from 'graphql-voyager/middleware';
 import * as Mongoose from 'mongoose';
 import schema from './schema';
 import * as path from "path";
-// import { UploadFile } from './common/file/uploadFile';
 
 var bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
