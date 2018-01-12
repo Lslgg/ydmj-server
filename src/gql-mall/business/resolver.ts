@@ -26,7 +26,7 @@ export class Business{
         },    
         getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
             if (!context.user) return null;
-
+            
             let promise = new Promise<IBusinessModel>((resolve, reject) => {
                 BusinessSchema.findById(id).then(res => {
                     resolve(res);
@@ -37,6 +37,7 @@ export class Business{
 
         getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context) {
             if (!context.user) return null;
+            console.log(context.user);
             var skip = (pageIndex - 1) * pageSize
             var businessInfo = BusinessSchema.find(business).skip(skip).limit(pageSize)
             return businessInfo;
@@ -58,8 +59,8 @@ export class Business{
     static Mutation: any = {
         saveBusiness(parent, { business }, context) {
             if(!context.user) return null;
-
-            if (business.id) {
+            
+            if (business.id && business.id != "0") {
                 return new Promise<IBusinessModel>((resolve, reject) => {
                     BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
                         Object.assign(res, business);

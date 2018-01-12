@@ -8,7 +8,7 @@ export class MysqDB {
 
     constructor(tName: string) {
         this.tName = tName;
-        this.sequelize = new Sequelize("game", "root", "root", {
+        this.sequelize = new Sequelize("game", "root", "123456", {
             host: "localhost",
             dialect: 'mysql',
             pool: { max: 5, min: 0, idle: 30000 },

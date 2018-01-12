@@ -58,7 +58,7 @@ export class Menu {
         saveMenu(parent, { menu }, context) {
             if(!context.user) return null;
 
-            if (menu.id) {
+            if (menu.id && menu.id != "0") {               
                 return new Promise<IMenuModel>((resolve, reject) => {
                     MenuSchema.findByIdAndUpdate(menu.id, menu, (err, res) => {
                         Object.assign(res, menu);

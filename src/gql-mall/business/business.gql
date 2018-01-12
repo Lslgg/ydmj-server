@@ -26,6 +26,8 @@ extend type Query{
     getBusinessCount(business:searchBusiness):Int
     # 根据条件查找
     getBusinessWhere(business:searchBusiness): [Business] 
+
+    
 }
 
 extend type Mutation{
@@ -51,5 +53,5 @@ input inputBusiness {
 
 input searchBusiness{
     id:JsonObject
-    name:JsonObject
+    name:JsonObject    
 }

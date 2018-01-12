@@ -64,7 +64,7 @@ export class Goods{
         saveGoods(parent, { goods }, context) {
             if(!context.user) return null;
 
-            if (goods.id) {
+            if (goods.id && goods.id != "0") {
                 return new Promise<IGoodsModel>((resolve, reject) => {
                     GoodsSchema.findByIdAndUpdate(goods.id, goods, (err, res) => {
                         Object.assign(res, goods);

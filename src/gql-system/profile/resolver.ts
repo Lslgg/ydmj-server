@@ -76,7 +76,7 @@ export class Profile {
         saveProfile(parent, { profile }, context) {
             if(!context.user) return null;
             
-            if (profile.id) {
+            if (profile.id && profile.id != "0") {
                 return new Promise<IProfileModel>((resolve, reject) => {
                     ProfileSchema.findByIdAndUpdate(profile.id, profile, (err, res) => {
                         Object.assign(res, profile);

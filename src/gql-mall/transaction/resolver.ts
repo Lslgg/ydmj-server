@@ -64,7 +64,7 @@ export class Transaction {
     static Mutation: any = {
         saveTransaction(parent, { transaction }, context) {
             if (!context.user) return null;
-            if (transaction.id) {
+            if (transaction.id && transaction.id != "0") {
                 return new Promise<ITransactionModel>((resolve, reject) => {
                     TransactionSchema.findByIdAndUpdate(transaction.id, transaction, (err, res) => {
                         Object.assign(res, transaction);

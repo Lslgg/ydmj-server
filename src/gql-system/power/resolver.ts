@@ -67,7 +67,7 @@ export class Power {
         savePower(parent, { power }, context) {
             if (!context.user) return null;
 
-            if (power.id) {
+            if (power.id && power.id != "0") {
                 return new Promise<IPowerModel>((resolve, reject) => {
                     PowerSchema.findByIdAndUpdate(power.id, power, (err, res) => {
                         Object.assign(res, power);

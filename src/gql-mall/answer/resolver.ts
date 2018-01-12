@@ -50,7 +50,7 @@ export class Answer {
     static Mutation: any = {
         saveAnswer(parent, { answer }, context) {
             if (!context.user) return null;            
-            if (answer.id) {
+            if (answer.id && answer.id != "0") {
                 return new Promise<IAnswerModel>((resolve, reject) => {
                     AnswerSchema.findByIdAndUpdate(answer.id, answer, (err, res) => {
                         Object.assign(res, answer);

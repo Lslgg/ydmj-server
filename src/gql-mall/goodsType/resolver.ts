@@ -57,7 +57,7 @@ export class GoodsType{
     static Mutation: any = {
         saveGoodsType(parent, { goodsType }, context) {
             if(!context.user) return null;        
-            if (goodsType.id) {
+            if (goodsType.id && goodsType.id != "0") {
                 return new Promise<IGoodsTypeModel>((resolve, reject) => {
                     GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType, (err, res) => {
                         Object.assign(res, goodsType);
