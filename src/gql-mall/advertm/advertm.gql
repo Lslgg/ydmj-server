@@ -14,11 +14,23 @@ type Adverm {
 }
 
 extend type Query{
+    # 查询所有广告
     getAdvertm:[Adverm]
+    # 根据ID查找广告
+    getAdvertmById(id:String):Adverm
+    # 分页查找
+    getAdvertmPage(pageIndex: Int, pageSize: Int,advertm:searchAdvertm): [Adverm]
+    # 查找分页总数
+    getAdvertmCount(advertm:searchAdvertm):Int
+    # 根据条件查找
+    getAdvertmWhere(advertm:searchAdvertm): [Adverm]    
 }
 
 extend type Mutation{
+    # 添加修改广告
     saveAdvertm(adverm:inputAdverm):Adverm
+    # 删除广告
+    deleteAdvertm(id:String):Boolean
 }
 
 input inputAdverm { 
@@ -31,4 +43,9 @@ input inputAdverm {
    startDate:Date
    endDate:Date   
    isValid: Boolean     
+}
+
+input searchAdvertm{
+    id:JsonObject
+    name:JsonObject
 }

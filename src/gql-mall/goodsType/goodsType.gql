@@ -9,11 +9,23 @@ type GoodsType {
 }
 
 extend type Query{
+    # 查询所有类别
     getGoodsType:[GoodsType]
+    # 根据ID查找问答
+    getGoodsTypeById(id:String):GoodsType
+    # 分页查找
+    getGoodsTypePage(pageIndex: Int, pageSize: Int,goodsType:searchGoodsType): [GoodsType]
+    # 查找分页总数
+    getGoodsTypeCount(goodsType:searchGoodsType):Int
+    # 根据条件查找
+    getGoodsTypeWhere(goodsType:searchGoodsType): [GoodsType] 
 }
 
 extend type Mutation{
+    # 添加修改商品类别
     saveGoodsType(goodsType:inputGoodsType):GoodsType
+    # 删除商品类别
+    deleteGoodsType(id:String):Boolean
 }
 
 input inputGoodsType {   
@@ -23,4 +35,10 @@ input inputGoodsType {
    isValid: Boolean
    updateAt:Date
    createAt:Date
+}
+
+
+input searchGoodsType{
+    id:JsonObject
+    name:JsonObject
 }

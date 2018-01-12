@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 
-export interface IScoreModel extends Document {
+export interface ITransactionModel extends Document {
     id: string
     trade_code: String
     goods_id: String
@@ -42,4 +42,4 @@ let schema: Schema = new Schema({
     },
 })
 
-export default model<IScoreModel>('Score', schema);
+export default model<ITransactionModel>('Transaction', schema);

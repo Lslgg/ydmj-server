@@ -16,6 +16,35 @@ export class Advertm {
             })
             return promise;
         },
+        getAdvertmById(parent, { id }, context): Promise<IAdvertmModel> {
+            if (!context.user) return null;
+
+            let promise = new Promise<IAdvertmModel>((resolve, reject) => {
+                AdvertmSchema.findById(id).then(res => {
+                    resolve(res);
+                }).catch(err => resolve(null));
+            });
+            return promise;
+        },
+
+        getAdvertmPage(parent, { pageIndex = 1, pageSize = 10, advertm }, context) {
+            if (!context.user) return null;
+            var skip = (pageIndex - 1) * pageSize
+            var advertmInfo = AdvertmSchema.find(advertm).skip(skip).limit(pageSize)
+            return advertmInfo;
+        },
+
+        getAdvertmWhere(parent, { advertm }, context) {
+            if (!context.user) return null;
+            var advertms = AdvertmSchema.find(advertm);
+            return advertms;
+        },
+
+        getAdvertmCount(parent, { user }, context) {
+            if (!context.user) return 0;
+            var count = AdvertmSchema.count(user);
+            return count;
+        },
     }
 
     static Mutation: any = {
@@ -30,6 +59,15 @@ export class Advertm {
                 });
             }
             return AdvertmSchema.create(adverm);
+        },
+        deleteAdvertm(parent, { id }, context): Promise<Boolean> {
+            if (!context.user) return null;
+            let promise = new Promise<Boolean>((resolve, reject) => {
+                AdvertmSchema.findByIdAndRemove(id, (err, res) => {
+                    resolve(res != null)
+                }).catch(err => reject(err));
+            });
+            return promise;
         }
     }
 }

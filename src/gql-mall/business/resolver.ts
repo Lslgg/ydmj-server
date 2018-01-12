@@ -23,7 +23,36 @@ export class Business{
                 }).catch(err => resolve(null));
             })
             return promise;
-        },        
+        },    
+        getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
+            if (!context.user) return null;
+
+            let promise = new Promise<IBusinessModel>((resolve, reject) => {
+                BusinessSchema.findById(id).then(res => {
+                    resolve(res);
+                }).catch(err => resolve(null));
+            });
+            return promise;
+        },
+
+        getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context) {
+            if (!context.user) return null;
+            var skip = (pageIndex - 1) * pageSize
+            var businessInfo = BusinessSchema.find(business).skip(skip).limit(pageSize)
+            return businessInfo;
+        },
+
+        getBusinessWhere(parent, { business }, context) {
+            if (!context.user) return null;
+            var businesses = BusinessSchema.find(business);
+            return businesses;
+        },
+
+        getBusinessCount(parent, { business }, context) {
+            if (!context.user) return 0;
+            var count = BusinessSchema.count(business);
+            return count;
+        },    
     }
 
     static Mutation: any = {
@@ -39,6 +68,15 @@ export class Business{
                 });
             }
             return BusinessSchema.create(business)
+        },
+        deleteBusiness(parent, { id }, context): Promise<Boolean> {
+            if (!context.user) return null;
+            let promise = new Promise<Boolean>((resolve, reject) => {
+                BusinessSchema.findByIdAndRemove(id, (err, res) => {
+                    resolve(res != null)
+                }).catch(err => reject(err));
+            });
+            return promise;
         }
     }
 }

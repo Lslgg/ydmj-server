@@ -22,7 +22,36 @@ export class GoodsType{
                 }).catch(err => resolve(null));
             })
             return promise;
-        },        
+        },  
+        getGoodsTypeById(parent, { id }, context): Promise<IGoodsTypeModel> {
+            if (!context.user) return null;
+
+            let promise = new Promise<IGoodsTypeModel>((resolve, reject) => {
+                GoodsTypeSchema.findById(id).then(res => {
+                    resolve(res);
+                }).catch(err => resolve(null));
+            });
+            return promise;
+        },
+
+        getGoodsTypePage(parent, { pageIndex = 1, pageSize = 10, goodsType }, context) {
+            if (!context.user) return null;
+            var skip = (pageIndex - 1) * pageSize
+            var goodsTypeInfo = GoodsTypeSchema.find(goodsType).skip(skip).limit(pageSize)
+            return goodsTypeInfo;
+        },
+
+        getGoodsTypeWhere(parent, { goodsType }, context) {
+            if (!context.user) return null;
+            var goodsTypeInfo = GoodsTypeSchema.find(goodsType);
+            return goodsTypeInfo;
+        },
+
+        getGoodsTypeCount(parent, { goodsType }, context) {
+            if (!context.user) return 0;
+            var count = GoodsTypeSchema.count(goodsType);
+            return count;
+        },         
     }
 
     static Mutation: any = {
@@ -37,6 +66,15 @@ export class GoodsType{
                 });
             }
             return GoodsTypeSchema.create(goodsType)
+        },
+        deleteGoodsType(parent, { id }, context): Promise<Boolean> {
+            if (!context.user) return null;
+            let promise = new Promise<Boolean>((resolve, reject) => {
+                GoodsTypeSchema.findByIdAndRemove(id, (err, res) => {
+                    resolve(res != null)
+                }).catch(err => reject(err));
+            });
+            return promise;
         }
     }
 }

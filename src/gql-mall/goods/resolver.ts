@@ -28,7 +28,36 @@ export class Goods{
                 }).catch(err => resolve(null));
             })
             return promise;
-        },        
+        },       
+        getGoodsById(parent, { id }, context): Promise<IGoodsModel> {
+            if (!context.user) return null;
+
+            let promise = new Promise<IGoodsModel>((resolve, reject) => {
+                GoodsSchema.findById(id).then(res => {
+                    resolve(res);
+                }).catch(err => resolve(null));
+            });
+            return promise;
+        },
+
+        getGoodsPage(parent, { pageIndex = 1, pageSize = 10, goods }, context) {
+            if (!context.user) return null;
+            var skip = (pageIndex - 1) * pageSize
+            var goodsInfo = GoodsSchema.find(goods).skip(skip).limit(pageSize)
+            return goodsInfo;
+        },
+
+        getGoodsWhere(parent, { goods }, context) {
+            if (!context.user) return null;
+            var goodsInfo = GoodsSchema.find(goods);
+            return goodsInfo;
+        },
+
+        getGoodsCount(parent, { goods }, context) {
+            if (!context.user) return 0;
+            var count = GoodsSchema.count(goods);
+            return count;
+        },    
     }
 
     static Mutation: any = {
@@ -44,6 +73,15 @@ export class Goods{
                 });
             }
             return GoodsSchema.create(goods)
+        },
+        deleteGoods(parent, { id }, context): Promise<Boolean> {
+            if (!context.user) return null;
+            let promise = new Promise<Boolean>((resolve, reject) => {
+                GoodsSchema.findByIdAndRemove(id, (err, res) => {
+                    resolve(res != null)
+                }).catch(err => reject(err));
+            });
+            return promise;
         }
     }
 }
