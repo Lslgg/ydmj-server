@@ -13,7 +13,7 @@ export interface IBusinessModel extends Document {
    trans_times:Number
    isValid: Boolean
    updateAt:Date
-   createAt:Date
+   createAt:Date 
 }
 
 let schema: Schema = new Schema({        
