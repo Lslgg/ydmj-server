@@ -13,7 +13,7 @@ type Role {
 	# 修改时期
 	updateAt: Date
 	# 权限
-	Powers(limit: Int = 10): [Power]
+	Powers(limit: Int = 100): [Power]
 }
 
 extend type Query {
