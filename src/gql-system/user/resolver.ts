@@ -100,7 +100,7 @@ export class User {
     static Mutation: any = {
         saveUser(parent, { user }, context) {
             if (!context.user) return null;
-            if (user.id) {
+            if (user.id && user.id != "0") {
                 return new Promise<IUserModel>((resolve, reject) => {
                     UserSchema.findByIdAndUpdate(user.id, user, (err, res) => {
                         Object.assign(res, user);

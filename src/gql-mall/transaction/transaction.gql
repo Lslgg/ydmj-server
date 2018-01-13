@@ -1,0 +1,58 @@
+# 积分统计
+type Transaction {
+   id:ID   
+   trade_code:String
+   Goods:Goods
+   Business:Business
+   User:User
+   user_name:String
+   start_time:String
+   end_time:String
+   complete_time:Date
+   state:Boolean
+   t_code:String   
+   isValid: Boolean
+   updateAt:Date
+   createAt:Date
+}
+
+extend type Query{
+    # 查询所有
+    getTransaction:[Transaction]
+    # 根据ID查找问答
+    getTransactionById(id:String):Transaction
+    # 分页查找
+    getTransactionPage(pageIndex: Int, pageSize: Int,transaction:searchTransactionType): [Transaction]
+    # 查找分页总数
+    getTransactionCount(transaction:searchTransactionType):Int
+    # 根据条件查找
+    getTransactionWhere(transaction:searchTransactionType): [Transaction] 
+}
+
+extend type Mutation{
+    # 添加修改交易
+    saveTransaction(transaction:inputTransaction):Transaction
+    # 删除交易
+    deleteTransaction(id:String):Boolean
+}
+
+input inputTransaction {   
+   id:String 
+   trade_code:String
+   goods_id:String
+   business_id:String
+   user_id:String
+   user_name:String
+   start_time:String
+   end_time:String
+   complete_time:Date
+   state:Boolean
+   t_code:String   
+   isValid: Boolean  
+}
+
+input searchTransactionType{
+    id:JsonObject
+    name:JsonObject
+    t_code:JsonObject
+}

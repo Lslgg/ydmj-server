@@ -1,0 +1,47 @@
+# 问答
+type Answer {
+   id:ID
+   name:String
+   type:String
+   content:String
+   startDate:Date
+   endDate:Date   
+   isValid: Boolean
+   updateAt:Date
+   createAt:Date
+}
+
+extend type Query{
+    # 查询所有问答
+    getAnswer:[Answer]
+    # 根据ID查找问答
+    getAnswerById(id:String):Answer
+    # 分页查找
+    getAnswerPage(pageIndex: Int, pageSize: Int,answer:searchAnswer): [Answer]
+    # 查找分页总数
+    getAnswerCount(answer:searchAnswer):Int
+    # 根据条件查找
+    getAnswerWhere(answer:searchAnswer): [Answer] 
+}
+
+extend type Mutation{
+    # 添加修改问答
+    saveAnswer(answer:inputAnswer):Answer
+    # 删除问答
+    deleteAnswer(id:String):Boolean
+}
+
+input inputAnswer { 
+   id:String
+   name:String
+   type:String
+   content:String
+   startDate:Date
+   endDate:Date   
+   isValid: Boolean   
+}
+
+input searchAnswer{
+    id:JsonObject
+    name:JsonObject
+}

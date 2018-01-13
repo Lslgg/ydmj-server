@@ -16,15 +16,29 @@ type Business {
 }
 
 extend type Query{
+    # 查找所有商家
     getBusiness:[Business]
+    # 根据ID查找问答
+    getBusinessById(id:String):Business
+    # 分页查找
+    getBusinessPage(pageIndex: Int, pageSize: Int,business:searchBusiness): [Business]
+    # 查找分页总数
+    getBusinessCount(business:searchBusiness):Int
+    # 根据条件查找
+    getBusinessWhere(business:searchBusiness): [Business] 
+
+    
 }
 
 extend type Mutation{
+    # 添加修改商家
     saveBusiness(business:inputBusiness):Business
+    # 删除商家
+    deleteBusiness(id:String):Boolean
 }
 
-input inputBusiness {   
-   id:ID
+input inputBusiness { 
+   id:String     
    user_id:String
    name:String
    phone_num:String
@@ -35,4 +49,9 @@ input inputBusiness {
    imageSrc: String
    trans_times:Int
    isValid: Boolean   
+}
+
+input searchBusiness{
+    id:JsonObject
+    name:JsonObject    
 }

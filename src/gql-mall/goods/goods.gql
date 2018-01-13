@@ -1,4 +1,4 @@
-# 商家
+# 商品
 type Goods {
    id:ID   
    name:String
@@ -19,14 +19,26 @@ type Goods {
 }
 
 extend type Query{
-    getBusiness:[Business]
+    # 查询所有商品
+    getGoods:[Goods]
+    # 根据ID查找问答
+    getGoodsById(id:String):Goods
+    # 分页查找
+    getGoodsPage(pageIndex: Int, pageSize: Int,goods:searchGoods): [Goods]
+    # 查找分页总数
+    getGoodsCount(goods:searchGoods):Int
+    # 根据条件查找
+    getGoodsWhere(goods:searchGoods): [Goods] 
 }
 
 extend type Mutation{
-    saveBusiness(business:inputBusiness):Business
+    # 添加修改商品
+    saveGoods(goods:inputGoods):Goods
+    # 删除商品
+    deleteGoods(id:String):Boolean
 }
 
-input inputBusiness {   
+input inputGoods {   
    id:ID   
    name:String
    cost_score:Int
@@ -41,4 +53,10 @@ input inputBusiness {
    business_id:String
    goodsType_id:String 
    isValid: Boolean   
+}
+
+
+input searchGoods{
+    id:JsonObject
+    name:JsonObject
 }

@@ -1,19 +1,25 @@
 import { model, Schema, Document } from 'mongoose';
 
-export interface IGoodsTypeModel extends Document {
+export interface IAnswerModel extends Document {
     id: string
     name: String
-    business_id:String
+    type: String
+    content: String
+    startDate: Date
+    endDate: Date
     isValid: Boolean
     updateAt: Date
     createAt: Date
 }
 
 let schema: Schema = new Schema({
-    // id: String,
+    // id:string
     name: String,
-    business_id:String,
-    isValid: Boolean, 
+    type: String,
+    content: String,
+    startDate: Date,
+    endDate: Date,
+    isValid: Boolean,
     createAt: {
         type: Date,
         default: new Date(),
@@ -26,4 +32,4 @@ let schema: Schema = new Schema({
     },
 })
 
-export default model<IGoodsTypeModel>('GoodsType', schema);
+export default model<IAnswerModel>('Answer', schema);

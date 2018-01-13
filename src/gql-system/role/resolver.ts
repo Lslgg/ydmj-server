@@ -73,7 +73,7 @@ export class Role {
         saveRole(parent, { role }, context) {
             if(!context.user) return null;
             
-            if (role.id) {
+            if (role.id && role.id != "0") {
                 return new Promise<IRoleModel>((resolve, reject) => {
                     RoleSchema.findByIdAndUpdate(role.id, role, (err, res) => {
                         Object.assign(res, role);
