@@ -60,6 +60,7 @@ input inputUser{
 }
 
 input searchUser{
-    username:JsonObject
+    username:Find
     roleId:JsonObject
+    name:Find
 }

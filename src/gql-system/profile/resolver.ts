@@ -42,16 +42,14 @@ export class Profile {
 
         getProfileWhere(parent, { profile }, context) {
             if(!context.user) return 0;
-            
+            console.log(profile);
             var proFiles = ProfileSchema.find(profile);
             return proFiles;
         },
 
         getProfileCount(parent, { profile }, context) {
-            if(!context.user) return null;
-            
+            if(!context.user) return null;            
             var count = ProfileSchema.count(profile);
-
             return count;
         },
 

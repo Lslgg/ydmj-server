@@ -40,7 +40,9 @@ input inputProfile{
 }
 
 input searchProfile{
-    _id:JsonObject
-    phone:RegExp
+    _id:Find
+    phone:Find
+    address:Find
+    card:Find
 }
 

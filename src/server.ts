@@ -18,10 +18,10 @@ var { makeExecutableSchema } = require('graphql-tools');
 const expressPlayground = require('graphql-playground-middleware-express').default;
 import { apolloUploadExpress } from 'apollo-upload-server';
 
-class Server {
+class Server { 
 	public app: express.Application;
 
-	constructor() {
+	constructor() { 
 		this.app = express();
 		this.config();
 		this.routes();

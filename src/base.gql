@@ -19,3 +19,7 @@ scalar JsonObject
 
 # 文件上传
 scalar Upload
+
+
+# 查找
+scalar Find
