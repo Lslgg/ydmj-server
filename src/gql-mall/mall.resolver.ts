@@ -9,8 +9,7 @@ export class MallResolver {
     constructor() {
 
     }
-    static Mall: any = {
-        Business: Business.Business,
+    static Mall: any = {        
         GoodsType: GoodsType.GoodsType,
         Goods: Goods.Goods,
         // Transaction: Transaction.Transaction,

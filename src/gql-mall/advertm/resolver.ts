@@ -48,17 +48,17 @@ export class Advertm {
     }
 
     static Mutation: any = {
-        saveAdvertm(parent, { adverm }, context) {
+        saveAdvertm(parent, { advertm }, context) {
             if (!context.user) return null;
-            if (adverm.id && adverm.id != "0") {
+            if (advertm.id && advertm.id != "0") {
                 return new Promise<IAdvertmModel>((resolve, reject) => {
-                    AdvertmSchema.findByIdAndUpdate(adverm.id, adverm, (err, res) => {
-                        Object.assign(res, adverm);
+                    AdvertmSchema.findByIdAndUpdate(advertm.id, advertm, (err, res) => {
+                        Object.assign(res, advertm);
                         resolve(res);
                     })
                 });
             }
-            return AdvertmSchema.create(adverm);
+            return AdvertmSchema.create(advertm);
         },
         deleteAdvertm(parent, { id }, context): Promise<Boolean> {
             if (!context.user) return null;

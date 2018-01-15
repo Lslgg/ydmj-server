@@ -1,11 +1,11 @@
 # 广告
-type Adverm {
+type Advertm {
    id:ID
-   name:String
-   link:String   
+   title:String
    type:String
-   desc:String
-   imageSrc:String
+   link:String      
+   Images: [File]
+   explain:String   
    startDate:Date
    endDate:Date   
    isValid: Boolean
@@ -15,37 +15,37 @@ type Adverm {
 
 extend type Query{
     # 查询所有广告
-    getAdvertm:[Adverm]
+    getAdvertm:[Advertm]
     # 根据ID查找广告
-    getAdvertmById(id:String):Adverm
+    getAdvertmById(id:String):Advertm
     # 分页查找
-    getAdvertmPage(pageIndex: Int, pageSize: Int,advertm:searchAdvertm): [Adverm]
+    getAdvertmPage(pageIndex: Int, pageSize: Int,advertm:searchAdvertm): [Advertm]
     # 查找分页总数
     getAdvertmCount(advertm:searchAdvertm):Int
     # 根据条件查找
-    getAdvertmWhere(advertm:searchAdvertm): [Adverm]    
+    getAdvertmWhere(advertm:searchAdvertm): [Advertm]    
 }
 
 extend type Mutation{
     # 添加修改广告
-    saveAdvertm(adverm:inputAdverm):Adverm
+    saveAdvertm(advertm:inputAdvertm):Advertm
     # 删除广告
     deleteAdvertm(id:String):Boolean
 }
 
-input inputAdverm { 
+input inputAdvertm { 
    id:String
-   name:String
-   link:String   
+   title:String
    type:String
-   desc:String
-   imageSrc:String
+   link:String      
+   imageIds: [String]
+   explain:String   
    startDate:Date
    endDate:Date   
-   isValid: Boolean     
+   isValid: Boolean   
 }
 
 input searchAdvertm{
     id:JsonObject
-    name:JsonObject
+    title:JsonObject
 }

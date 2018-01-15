@@ -6,12 +6,6 @@ export class Business{
   
     }
 
-    static Business: any = {
-
-        User(model) {            
-            return UserSchema.findById(model.user_id);
-        },        
-    }
 
     static Query:any={
         getBusiness(parent, {}, context): Promise<Array<IBusinessModel>> {
@@ -62,12 +56,14 @@ export class Business{
             
             if (business.id && business.id != "0") {
                 return new Promise<IBusinessModel>((resolve, reject) => {
-                    BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
+                    BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {                        
                         Object.assign(res, business);
                         resolve(res);
                     })
                 });
-            }
+            }                        
+            business.trans_times = 0;
+            business.score = 0;
             return BusinessSchema.create(business)
         },
         deleteBusiness(parent, { id }, context): Promise<Boolean> {

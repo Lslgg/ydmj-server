@@ -2,11 +2,11 @@ import { model, Schema, Document } from 'mongoose';
 
 export interface IAdvertmModel extends Document {
     id: string
-    name: String
-    link: String
+    title: String
     type: String
-    desc: String
-    imageSrc: String
+    link: String
+    imageIds:[string]
+    explain: String
     startDate: Date
     endDate: Date
     isValid: Boolean
@@ -15,12 +15,12 @@ export interface IAdvertmModel extends Document {
 }
 
 let schema: Schema = new Schema({
-    // id:string
-    name: String,
-    link: String,
+    // id:string    
+    title: String,
     type: String,
-    desc: String,
-    imageSrc: String,
+    link: String,
+    imageIds:[String],
+    explain: String,
     startDate: Date,
     endDate: Date,
     isValid: Boolean,
