@@ -60,12 +60,8 @@ input inputUser{
 }
 
 input searchUser{
-    username:mongoFind
-    roleId:Comparison
-    email:Comparison
-    name:Comparison
-}
-
-input mongoFind{
-    eq:String
+    username:Json
+    roleId:Json
+    email:Json
+    name:Json
 }
