@@ -2,9 +2,9 @@ import { GraphQLScalarType, GraphQLError } from 'graphql';
 import { Kind } from 'graphql/language';
 
 export default new GraphQLScalarType({
-    name: 'Find',
-    description: 
-    `\`Mongodb Comparison 查询 \` scalar字段(不加$) \n
+    name: 'Comparison',
+    description:
+        `\`Mongodb Comparison 查询 \` scalar字段(不加$) \n
     语法: 
         等于 {eq:"admin"}
         in查询 {in:[1.,2,3]}
@@ -22,6 +22,7 @@ export default new GraphQLScalarType({
         return value; // sent to the client
     },
     parseLiteral(ast) {
+
         if (ast.kind === Kind.OBJECT) {
             var strList = [];
             if (ast.fields.length == 0) return JSON.parse("{}");
@@ -56,9 +57,10 @@ export default new GraphQLScalarType({
             info = JSON.parse(info);
             return info;
         }
-        
-        if(ast.kind===Kind.STRING||
-            ast.kind===Kind.INT||ast.kind===Kind.BOOLEAN){
+
+
+        if (ast.kind === Kind.STRING ||
+            ast.kind === Kind.INT || ast.kind === Kind.BOOLEAN) {
             console.log(ast.value)
             return ast.value;
         }

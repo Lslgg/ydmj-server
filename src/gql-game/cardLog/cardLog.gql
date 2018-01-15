@@ -46,9 +46,9 @@ input inputCardLog{
 
 input searchCardLog{
     # 用户
-    userName:JsonObject
+    userName:Json
     # 玩家名
-    playName:JsonObject
+    playName:Json
     # 创建时间
-    createAt:JsonObject
+    createAt:Json
 }

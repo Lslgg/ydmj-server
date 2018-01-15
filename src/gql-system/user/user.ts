@@ -31,7 +31,7 @@ let UserSchema: Schema = new Schema({
     createAt: {
         type: Date,
         default: new Date(),
-        required: true
+        required: true 
     },
     updateAt: {
         type: Date,

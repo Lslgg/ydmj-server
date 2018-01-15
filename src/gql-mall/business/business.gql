@@ -51,6 +51,6 @@ input inputBusiness {
 }
 
 input searchBusiness{
-    id:JsonObject
-    name:JsonObject    
+    id:Json
+    name:Json    
 }

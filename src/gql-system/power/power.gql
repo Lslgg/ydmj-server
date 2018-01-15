@@ -62,7 +62,7 @@ input inputPower {
 }
 
 input searchPower {
-	_id:JsonObject
+	_id:Json
 	title: RegExp
 	code: RegExp
 	url: RegExp

@@ -51,6 +51,7 @@ export class User {
 
         getUserWhere(parent, { user }, context) {
             if (!context.user) return null;
+            console.log(user);
             var users = UserSchema.find(user);
             return users;
         },
@@ -59,7 +60,7 @@ export class User {
             if (!context.user) return 0;
             var count = UserSchema.count(user);
             return count;
-        },
+        }, 
 
         login(parent, { username, password }, context) {
             return new Promise<any>((resolve, reject) => {

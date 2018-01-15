@@ -39,6 +39,6 @@ input inputGoodsType {
 
 
 input searchGoodsType{
-    id:JsonObject
-    name:JsonObject
+    id:Json
+    name:Json
 }
