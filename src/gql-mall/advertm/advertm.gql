@@ -46,6 +46,6 @@ input inputAdverm {
 }
 
 input searchAdvertm{
-    id:JsonObject
-    name:JsonObject
+    id:Json
+    name:Json
 }

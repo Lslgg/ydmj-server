@@ -52,7 +52,7 @@ input inputTransaction {
 }
 
 input searchTransactionType{
-    id:JsonObject
-    name:JsonObject
-    t_code:JsonObject
+    id:Json
+    name:Json
+    t_code:Json
 }

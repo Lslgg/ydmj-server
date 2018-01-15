@@ -60,5 +60,5 @@ input inputRolePower {
 }
 
 input searchRole {
-	roleName: JsonObject
+	roleName: Json
 }

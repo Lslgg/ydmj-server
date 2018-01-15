@@ -60,7 +60,12 @@ input inputUser{
 }
 
 input searchUser{
-    username:Find
-    roleId:JsonObject
-    name:Find
+    username:mongoFind
+    roleId:Comparison
+    email:Comparison
+    name:Comparison
+}
+
+input mongoFind{
+    eq:String
 }
