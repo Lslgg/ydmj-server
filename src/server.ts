@@ -82,13 +82,17 @@ class Server {
 	private setCors() {
 		return {
 			credentials: true,
-			origin: ["http://localhost:4200", "http://localhost:3000"],
+			origin: [
+				 "http://localhost:4200",
+				 "http://localhost:3000",
+				 "http://localhost:8083"
+			],
 			headers: [
 				"Access-Control-Allow-Origin",
 				"Access-Control-Allow-Headers",
 				"Origin, X-Requested-With, Content-Type",
 				"CORELATION_ID"
-			]
+			] 
 		}
 	}
 }
