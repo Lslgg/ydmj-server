@@ -1,14 +1,13 @@
 # 商家
 type Business {
-   id:ID
-   User:User
+   id:ID   
    name:String
    phone_num:String
    address:String
    b_hours:String  
    brief:String
    score:Int
-   imageSrc: String
+   Images: [File]
    trans_times:Int
    isValid: Boolean
    updateAt:Date
@@ -46,12 +45,13 @@ input inputBusiness {
    b_hours:String  
    brief:String
    score:Int
-   imageSrc: String
+   imageIds: [String]
    trans_times:Int
    isValid: Boolean   
+   
 }
 
 input searchBusiness{
-    id:JsonObject
-    name:JsonObject    
+    id:Json
+    name:Json    
 }

@@ -1,6 +1,7 @@
 import Date from './Date';
+import Comparison from './Comparison';
 import RegExp from './RegExp';
-import JsonObject from './JsonObject';
+import Json from './Json';
 import { GraphQLUpload } from 'apollo-upload-server';
 
 export class Scalar{
@@ -8,10 +9,11 @@ export class Scalar{
 
     }
 
-    static Scalar:any={
+    static Scalar:any={ 
+        Comparison,
         Date,
         RegExp,
-        JsonObject,
+        Json,
         Upload:GraphQLUpload
-    }
+    } 
 }

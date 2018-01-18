@@ -42,6 +42,6 @@ input inputAnswer {
 }
 
 input searchAnswer{
-    id:JsonObject
-    name:JsonObject
+    id:Json
+    name:Json
 }

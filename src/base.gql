@@ -15,7 +15,10 @@ scalar Date
 scalar RegExp
 
 #Json 格式
-scalar JsonObject
+scalar Json
 
 # 文件上传
 scalar Upload
+
+# 查找
+scalar Comparison

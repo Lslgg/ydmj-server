@@ -3,7 +3,7 @@ type Advert {
 	id: ID
 	# 标题
 	title: String
-	
+	# 广告图片
 	Images: [File]
 	# 活动开始时间
 	startDate: Date

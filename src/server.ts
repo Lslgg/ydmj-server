@@ -17,11 +17,12 @@ const { graphqlExpress, graphiqlExpress } = require('apollo-server-express')
 var { makeExecutableSchema } = require('graphql-tools');
 const expressPlayground = require('graphql-playground-middleware-express').default;
 import { apolloUploadExpress } from 'apollo-upload-server';
+import { UploadFile } from './common/file_server/uploadFile';
 
-class Server {
+class Server { 
 	public app: express.Application;
 
-	constructor() {
+	constructor() { 
 		this.app = express();
 		this.config();
 		this.routes();
@@ -61,6 +62,9 @@ class Server {
 
 	private routes(): void {
 
+		var uploadFileRouter = new UploadFile().router();
+		this.app.use('/', uploadFileRouter);
+
 		this.app.use('/graphql',apolloUploadExpress(),
 			graphqlExpress(req => {
 				let context = {
@@ -70,7 +74,6 @@ class Server {
 				return { schema, context }
 			})
 		);
-
 		this.app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 		this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 		this.app.use('/voyager', middleware({ endpointUrl: '/graphql' }));
@@ -79,13 +82,17 @@ class Server {
 	private setCors() {
 		return {
 			credentials: true,
-			origin: ["http://localhost:4200", "http://localhost:3000"],
+			origin: [
+				 "http://localhost:4200",
+				 "http://localhost:3000",
+				 "http://localhost:8083"
+			],
 			headers: [
 				"Access-Control-Allow-Origin",
 				"Access-Control-Allow-Headers",
 				"Origin, X-Requested-With, Content-Type",
 				"CORELATION_ID"
-			]
+			] 
 		}
 	}
 }
