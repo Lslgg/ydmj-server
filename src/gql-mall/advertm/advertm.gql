@@ -5,7 +5,7 @@ type Adverm {
    link:String   
    type:String
    desc:String
-   imageSrc:String
+   Images: [File]
    startDate:Date
    endDate:Date   
    isValid: Boolean
@@ -39,7 +39,7 @@ input inputAdverm {
    link:String   
    type:String
    desc:String
-   imageSrc:String
+   imageIds: [String]
    startDate:Date
    endDate:Date   
    isValid: Boolean     
