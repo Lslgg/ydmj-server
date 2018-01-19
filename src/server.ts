@@ -62,6 +62,7 @@ class Server {
 
 	private routes(): void {
 
+		//富文本图片上传
 		var uploadFileRouter = new UploadFile().router();
 		this.app.use('/', uploadFileRouter);
 
