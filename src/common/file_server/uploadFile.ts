@@ -38,6 +38,19 @@ export class UploadFile {
 		router = express.Router();
 
 		//上传图片
+		router.post('/upload', this.upload.single('file'), async (req, res) => {
+			try {
+				const col = await loadCollection(this.COLLECTION_NAME, this.db);
+				const data = col.insert(req.file);
+				this.db.saveDatabase();
+				const web = "http://" + req.hostname + ":" + req.app.settings.port + "/";
+				res.send({ location: web + data.path})
+			} catch (err) {
+				res.sendStatus(400);
+			}
+		});
+
+		//上传图片2
 		router.post('/profile', this.upload.single('avatar'), async (req, res) => {
 			try {
 				const col = await loadCollection(this.COLLECTION_NAME, this.db);
@@ -49,6 +62,7 @@ export class UploadFile {
 				res.sendStatus(400);
 			}
 		});
+
 
 		//根据图片名字删除图片
 		router.post('/delimg/:id', async (req, res) => {
@@ -67,7 +81,6 @@ export class UploadFile {
 				res.sendStatus(400);
 			}
 		});
-
 
 		return router;
 	}
