@@ -10,7 +10,6 @@ export class MallResolver {
 
     }
     static Mall: any = {
-        Business: Business.Business,
         GoodsType: GoodsType.GoodsType,
         Goods: Goods.Goods,
         // Transaction: Transaction.Transaction,

@@ -6,13 +6,6 @@ export class Business{
   
     }
 
-    static Business: any = {
-
-        User(model) {            
-            return UserSchema.findById(model.user_id);
-        },        
-    }
-
     static Query:any={
         getBusiness(parent, {}, context): Promise<Array<IBusinessModel>> {
             if(!context.user) return null;
