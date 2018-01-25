@@ -30,7 +30,23 @@ class Server {
 
 	private config() {
 		//设置静态文件
-		this.app.use("/uploads", express.static(path.join(__dirname, '../uploads')));
+		var options = {
+			dotfiles: 'ignore',
+			etag: false,
+			extensions: ['htm', 'html'],
+			index: false,
+			maxAge: '1d',
+			redirect: false,
+			setHeaders: function (res, path, stat) {
+			  res.set('x-timestamp', Date.now())
+			}
+		  }
+		  
+		this.app.use("/uploads", express.static(path.join(__dirname, '../uploads'),options));
+
+		//设置网站
+		this.app.use("/", express.static(path.join(__dirname, '../web')));
+		
 		
 		//设置mongodb连接
 		const MONGO_URI = 'mongodb://localhost/webSite';

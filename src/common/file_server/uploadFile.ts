@@ -38,13 +38,13 @@ export class UploadFile {
 		router = express.Router();
 
 		//上传图片
-		router.post('/upload', this.upload.single('upload'), async (req, res) => {
+		router.post('/upload', this.upload.single('file'), async (req, res) => {
 			try {
 				const col = await loadCollection(this.COLLECTION_NAME, this.db);
 				const data = col.insert(req.file);
 				this.db.saveDatabase();
 				const web = "http://" + req.hostname + ":" + req.app.settings.port + "/";
-				res.send({ link: web + data.path });
+				res.send({ location: web + data.path})
 			} catch (err) {
 				res.sendStatus(400);
 			}
@@ -81,7 +81,6 @@ export class UploadFile {
 				res.sendStatus(400);
 			}
 		});
-
 
 		return router;
 	}
