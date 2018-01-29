@@ -19,10 +19,10 @@ const expressPlayground = require('graphql-playground-middleware-express').defau
 import { apolloUploadExpress } from 'apollo-upload-server';
 import { UploadFile } from './common/file_server/uploadFile';
 
-class Server { 
+class Server {
 	public app: express.Application;
 
-	constructor() { 
+	constructor() {
 		this.app = express();
 		this.config();
 		this.routes();
@@ -38,22 +38,22 @@ class Server {
 			maxAge: '1d',
 			redirect: false,
 			setHeaders: function (res, path, stat) {
-			  res.set('x-timestamp', Date.now())
+				res.set('x-timestamp', Date.now())
 			}
-		  }
-		  
-		this.app.use("/uploads", express.static(path.join(__dirname, '../uploads'),options));
+		}
+
+		this.app.use("/uploads", express.static(path.join(__dirname, '../uploads'), options));
 
 		//设置网站
 		this.app.use("/", express.static(path.join(__dirname, '../web')));
-		
-		
+
+
 		//设置mongodb连接
 		const MONGO_URI = 'mongodb://localhost/webSite';
 		Mongoose.connect(MONGO_URI || process.env.MONGO_URI, { useMongoClient: true });
 		this.app.use(bodyParser.urlencoded({ extended: false }));
 		this.app.use(bodyParser.json());
-		
+
 		//设置cors 跨域
 		const corsOption = this.setCors();
 		this.app.use(cors(corsOption));
@@ -82,7 +82,7 @@ class Server {
 		var uploadFileRouter = new UploadFile().router();
 		this.app.use('/', uploadFileRouter);
 
-		this.app.use('/graphql',apolloUploadExpress(),
+		this.app.use('/graphql', apolloUploadExpress(),
 			graphqlExpress(req => {
 				let context = {
 					session: req.session,
@@ -100,17 +100,17 @@ class Server {
 		return {
 			credentials: true,
 			origin: [
-				 "http://localhost:4200",
-				 "http://localhost:3000",
-				 "http://localhost:8083",
-				 "http://localhost:8100"
+				"http://localhost:4200",
+				"http://localhost:3000",
+				"http://localhost:8083",
+				"http://localhost:8100"
 			],
 			headers: [
 				"Access-Control-Allow-Origin",
 				"Access-Control-Allow-Headers",
 				"Origin, X-Requested-With, Content-Type",
 				"CORELATION_ID"
-			] 
+			]
 		}
 	}
 }
