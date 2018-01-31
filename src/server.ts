@@ -11,6 +11,7 @@ const expressValidator = require('express-validator');
 var session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 var cors = require('cors');
+var compression = require('compression');
 
 var graphqlHTTP = require('express-graphql');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express')
@@ -18,6 +19,7 @@ var { makeExecutableSchema } = require('graphql-tools');
 const expressPlayground = require('graphql-playground-middleware-express').default;
 import { apolloUploadExpress } from 'apollo-upload-server';
 import { UploadFile } from './common/file_server/uploadFile';
+import { Engine } from 'apollo-engine';
 
 class Server {
 	public app: express.Application;
@@ -47,6 +49,7 @@ class Server {
 		//设置网站
 		this.app.use("/", express.static(path.join(__dirname, '../web')));
 
+		this.app.use(compression());
 
 		//设置mongodb连接
 		const MONGO_URI = 'mongodb://localhost/webSite';
@@ -88,12 +91,31 @@ class Server {
 					session: req.session,
 					user: req.session.user
 				}
-				return { schema, context }
+				return {
+					schema,
+					context,
+					tracing: true,
+					cacheControl: true
+				}
 			})
 		);
 		this.app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 		this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 		this.app.use('/voyager', middleware({ endpointUrl: '/graphql' }));
+
+		const engineApiKey = "service:Lslgg-2168:PuscHUcy97IzjB-0WSJ5Nw";
+		const engine = new Engine({
+			engineConfig: {
+				apiKey: engineApiKey
+			},
+			graphqlPort:8080,
+			endpoint: '/graphql',
+			dumpTraffic: true
+		});
+
+		engine.start();
+
+		this.app.use(engine.expressMiddleware());
 	}
 
 	private setCors() {
