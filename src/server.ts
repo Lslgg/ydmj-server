@@ -49,7 +49,6 @@ class Server {
 		//设置网站
 		this.app.use("/", express.static(path.join(__dirname, '../web')));
 
-		this.app.use(compression());
 
 		//设置mongodb连接
 		const MONGO_URI = 'mongodb://localhost/webSite';
@@ -80,7 +79,6 @@ class Server {
 	}
 
 	private routes(): void {
-
 		//富文本图片上传
 		var uploadFileRouter = new UploadFile().router();
 		this.app.use('/', uploadFileRouter);
@@ -102,19 +100,21 @@ class Server {
 		this.app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 		this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 		this.app.use('/voyager', middleware({ endpointUrl: '/graphql' }));
+		//使用graphql apollo engine 如果不使用注释删除就可以
+		this.setEngine();
 
-		const engineApiKey = "service:Lslgg-2168:PuscHUcy97IzjB-0WSJ5Nw";
+	}
+
+	//graphql apollo engine
+	private setEngine() {
+		this.app.use(compression());
 		const engine = new Engine({
-			engineConfig: {
-				apiKey: engineApiKey
-			},
-			graphqlPort:8080,
+			engineConfig: path.join(__dirname, './config.json'),
+			graphqlPort: 8080,
 			endpoint: '/graphql',
 			dumpTraffic: true
 		});
-
 		engine.start();
-
 		this.app.use(engine.expressMiddleware());
 	}
 
