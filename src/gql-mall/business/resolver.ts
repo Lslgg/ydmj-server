@@ -1,15 +1,29 @@
 import BusinessSchema, { IBusinessModel } from './business';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 import UserSchema from '../../gql-system/user/user';
-export class Business{
-    constructor(){
-  
+import { FileManager } from '../../common/file/fileManager';
+
+
+export class Business {
+
+    constructor() {
+
     }
 
+    static Business: any = {
+        Images(model) {
+            let promise = new Promise<Array<any>>((resolve, reject) => {
+                let fm = new FileManager();
+                let imgs = fm.getFileByIds(model.imageIds);
+                resolve(imgs);
+            });
+            return promise;
+        }
+    };
 
-    static Query:any={
-        getBusiness(parent, {}, context): Promise<Array<IBusinessModel>> {
-            if(!context.user) return null;
+    static Query: any = {
+        getBusiness(parent, { }, context): Promise<Array<IBusinessModel>> {
+            if (!context.user) return null;
 
             let promise = new Promise<Array<IBusinessModel>>((resolve, reject) => {
                 BusinessSchema.find().then(res => {
@@ -17,10 +31,10 @@ export class Business{
                 }).catch(err => resolve(null));
             })
             return promise;
-        },    
+        },
         getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
             if (!context.user) return null;
-            
+
             let promise = new Promise<IBusinessModel>((resolve, reject) => {
                 BusinessSchema.findById(id).then(res => {
                     resolve(res);
@@ -47,21 +61,21 @@ export class Business{
             if (!context.user) return 0;
             var count = BusinessSchema.count(business);
             return count;
-        },    
+        },
     }
 
     static Mutation: any = {
         saveBusiness(parent, { business }, context) {
-            if(!context.user) return null;
-            
+            if (!context.user) return null;
+
             if (business.id && business.id != "0") {
                 return new Promise<IBusinessModel>((resolve, reject) => {
-                    BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {                        
+                    BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
                         Object.assign(res, business);
                         resolve(res);
                     })
                 });
-            }                        
+            }
             business.trans_times = 0;
             business.score = 0;
             return BusinessSchema.create(business)

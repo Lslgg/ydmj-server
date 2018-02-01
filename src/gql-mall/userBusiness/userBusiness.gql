@@ -1,0 +1,43 @@
+# 商家
+type UserBusiness{
+    id:ID
+    User:User
+    Business:Business    
+}
+
+
+extend type Query{
+    # 查找所有商家
+    getUserBusiness:[UserBusiness]
+    # 根据ID查找问答
+    getUserBusinessById(id:String):UserBusiness    
+    # 查找分页总数
+    getUserBusinessCount(userBusiness:searchUserBusiness):Int
+    # 根据条件查找
+    getUserBusinessWhere(userBusiness:searchUserBusiness): [UserBusiness] 
+        
+}
+
+extend type Mutation{
+    # 添加修改商家
+    saveUserBusiness(userBusiness:inputUserBusiness):UserBusiness
+    
+    # 商家
+    saveAllUserBusiness(userBusiness:[inputUserBusiness]):Boolean
+
+    # 删除商家
+    deleteUserBusiness(id:String):Boolean
+    # 商家用户关系表
+    saveUserBusiness(userBusiness:[inputUserBusiness]):UserBusiness
+}
+
+input inputUserBusiness {
+    id:ID   
+	userId: String
+	businessId: String
+}
+
+input searchUserBusiness{
+    userId:Json
+    businessId:Json    
+}

@@ -1,17 +1,12 @@
 # 积分统计
 type Transaction {
    id:ID   
-   trade_code:String
+   code:String
    Goods:Goods
    Business:Business
    User:User
-   user_name:String
-   start_time:String
-   end_time:String
-   complete_time:Date
-   state:Boolean
-   t_code:String   
-   isValid: Boolean
+   startTime:Date
+   endTime:Date
    updateAt:Date
    createAt:Date
 }
@@ -37,18 +32,13 @@ extend type Mutation{
 }
 
 input inputTransaction {   
-   id:String 
-   trade_code:String
-   goods_id:String
-   business_id:String
-   user_id:String
-   user_name:String
-   start_time:String
-   end_time:String
-   complete_time:Date
-   state:Boolean
-   t_code:String   
-   isValid: Boolean  
+   id:String  
+   code:String
+   goodsId:String
+   businessId:String
+   userId:String
+   startTime:Date
+   endTime:Date  
 }
 
 input searchTransactionType{

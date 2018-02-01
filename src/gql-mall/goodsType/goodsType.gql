@@ -3,7 +3,6 @@ type GoodsType {
    id:ID   
    name:String
    Business:Business
-   isValid: Boolean
    updateAt:Date
    createAt:Date
 }
@@ -11,7 +10,7 @@ type GoodsType {
 extend type Query{
     # 查询所有类别
     getGoodsType:[GoodsType]
-    # 根据ID查找问答
+    # 根据ID查找类别
     getGoodsTypeById(id:String):GoodsType
     # 分页查找
     getGoodsTypePage(pageIndex: Int, pageSize: Int,goodsType:searchGoodsType): [GoodsType]
@@ -19,6 +18,7 @@ extend type Query{
     getGoodsTypeCount(goodsType:searchGoodsType):Int
     # 根据条件查找
     getGoodsTypeWhere(goodsType:searchGoodsType): [GoodsType] 
+
 }
 
 extend type Mutation{
@@ -31,8 +31,7 @@ extend type Mutation{
 input inputGoodsType {   
    id:ID   
    name:String
-   business_id:String
-   isValid: Boolean
+   businessId:String
    updateAt:Date
    createAt:Date
 }

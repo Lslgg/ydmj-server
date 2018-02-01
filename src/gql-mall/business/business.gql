@@ -2,13 +2,13 @@
 type Business {
    id:ID   
    name:String
-   phone_num:String
    address:String
-   b_hours:String  
+   phone:String
+   hours:String  
    brief:String
-   score:Int
    Images: [File]
-   trans_times:Int
+   times:Int
+   score:Int   
    isValid: Boolean
    updateAt:Date
    createAt:Date
@@ -24,8 +24,7 @@ extend type Query{
     # 查找分页总数
     getBusinessCount(business:searchBusiness):Int
     # 根据条件查找
-    getBusinessWhere(business:searchBusiness): [Business] 
-
+    getBusinessWhere(business:searchBusiness): [Business]     
     
 }
 
@@ -36,18 +35,18 @@ extend type Mutation{
     deleteBusiness(id:String):Boolean
 }
 
+
 input inputBusiness { 
-   id:String        
+   id:String
    name:String
-   phone_num:String
    address:String
-   b_hours:String  
+   phone:String
+   hours:String  
    brief:String
-   score:Int
    imageIds: [String]
-   trans_times:Int
-   isValid: Boolean   
-   
+   times:Int
+   score:Int   
+   isValid: Boolean
 }
 
 input searchBusiness{

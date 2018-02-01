@@ -3,8 +3,7 @@ import { model, Schema, Document } from 'mongoose';
 export interface IGoodsTypeModel extends Document {
     id: string
     name: String
-    business_id:String
-    isValid: Boolean
+    businessId:String    
     updateAt: Date
     createAt: Date
 }
@@ -12,8 +11,7 @@ export interface IGoodsTypeModel extends Document {
 let schema: Schema = new Schema({
     // id: String,
     name: String,
-    business_id:String,
-    isValid: Boolean, 
+    businessId:String,    
     createAt: {
         type: Date,
         default: new Date(),

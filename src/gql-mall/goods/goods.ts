@@ -2,37 +2,33 @@ import { model, Schema, Document } from 'mongoose';
 
 export interface IGoodsModel extends Document {
     id: string
+    businessId: String
+    goodsTypeId: String
     name: String
-    cost_score: Number
-    rule: String
+    score: Number
+    phone: String
+    address: String
+    ruler: String
     explain: String
-    count: Number
-    trans_times: Number
-    goods_type: String
-    imageSrc: String
     stock: Number
-    limit: Number
-    business_id: String
-    goodsType_id: String
+    times: Number
     isValid: Boolean
     updateAt: Date
     createAt: Date
 }
 
 let schema: Schema = new Schema({
-    // id: String,
+    // id: String,    
+    businessId: String,
+    goodsTypeId: String,
     name: String,
-    cost_score: Number,
-    rule: String,
+    score: Number,
+    phone: String,
+    address: String,
+    ruler: String,
     explain: String,
-    count: Number,
-    trans_times: Number,
-    goods_type: String,
-    imageSrc: String,
     stock: Number,
-    limit: Number,
-    business_id: String,
-    goodsType_id: String,
+    times: Number,
     isValid: Boolean,
     createAt: {
         type: Date,

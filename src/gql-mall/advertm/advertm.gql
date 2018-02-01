@@ -48,7 +48,4 @@ input inputAdvertm {
 input searchAdvertm{
     id:Json
     title:Json
-
-    id:Json
-    name:Json
 }

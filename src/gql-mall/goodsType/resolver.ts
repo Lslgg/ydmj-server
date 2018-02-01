@@ -1,14 +1,16 @@
 import GoodsTypeSchema, { IGoodsTypeModel } from './goodsType';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 import BusinessSchema from '../business/business';
+
 export class GoodsType{
+
     constructor(){
   
     }
 
     static GoodsType: any = {
         Business(model) {            
-            return BusinessSchema.findById(model.business_id);
+            return BusinessSchema.findById(model.businessId);
         },        
     }
 
