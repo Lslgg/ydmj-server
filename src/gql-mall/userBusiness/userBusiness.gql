@@ -2,15 +2,19 @@
 type UserBusiness{
     id:ID
     User:User
-    Business:Business    
+    Business:Business  
+    updateAt:Date
+    createAt:Date  
 }
 
 
 extend type Query{
-    # 查找所有商家
+    # 查找所有用户商家
     getUserBusiness:[UserBusiness]
     # 根据ID查找问答
     getUserBusinessById(id:String):UserBusiness    
+    # 分页查找
+    getUserBusinessPage(pageIndex: Int, pageSize: Int,userBusiness:searchUserBusiness): [UserBusiness]
     # 查找分页总数
     getUserBusinessCount(userBusiness:searchUserBusiness):Int
     # 根据条件查找
@@ -19,22 +23,21 @@ extend type Query{
 }
 
 extend type Mutation{
-    # 添加修改商家
+
+    # 添加修改用户商家
     saveUserBusiness(userBusiness:inputUserBusiness):UserBusiness
     
-    # 商家
+    # 用户商家
     saveAllUserBusiness(userBusiness:[inputUserBusiness]):Boolean
 
-    # 删除商家
-    deleteUserBusiness(id:String):Boolean
-    # 商家用户关系表
-    saveUserBusiness(userBusiness:[inputUserBusiness]):UserBusiness
+    # 删除用户商家
+    deleteUserBusiness(id:String):Boolean    
 }
 
 input inputUserBusiness {
-    id:ID   
-	userId: String
-	businessId: String
+    id:String
+    userId:String
+    businessId:String  
 }
 
 input searchUserBusiness{

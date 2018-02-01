@@ -4,11 +4,15 @@ export interface IUserBusinessModel extends Document {
     id: string
     userId: String
     businessId: String
+    updateAt: Date
+    createAt: Date
 }
 
-let schema: Schema = new Schema({      
+let schema: Schema = new Schema({
     userId: String,
-    businessId: String
+    businessId: String,
+    updateAt: Date,
+    createAt: Date,
 })
 
 

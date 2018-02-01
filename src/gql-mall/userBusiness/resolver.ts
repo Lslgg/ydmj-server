@@ -47,6 +47,13 @@ export class UserBusiness {
             return userBusinessInfo;
         },
 
+        getUserBusinessPage(parent, { pageIndex = 1, pageSize = 10, userbusiness }, context) {
+            if (!context.user) return null;
+            var skip = (pageIndex - 1) * pageSize
+            var userBusinessInfo = UserBusinessSchema.find(userbusiness).skip(skip).limit(pageSize)
+            return userBusinessInfo;
+        },
+
         getUserBusinessCount(parent, { userBusiness }, context) {
             if (!context.user) return 0;
             var count = UserBusinessSchema.count(userBusiness);
@@ -58,12 +65,12 @@ export class UserBusiness {
         // }
     }
 
-    static Mutation: any = {       
+    static Mutation: any = {
         saveAllUserBusiness(parent, { userBusiness }, context) {
             if (!context.user) return null;
             let promise = new Promise<Boolean>((resolve, reject) => {
                 UserBusinessSchema.create(userBusiness).then(info => {
-                    resolve(info.length>0);
+                    resolve(info.length > 0);
                 });
             });
             return promise;

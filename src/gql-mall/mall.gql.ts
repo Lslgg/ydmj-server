@@ -5,6 +5,7 @@ var GoodsType = requireText('./goodsType/goodsType.gql', require);
 var Answer = requireText('./answer/answer.gql', require);
 var Advertm = requireText('./advertm/advertm.gql', require);
 var Transaction = requireText('./transaction/transaction.gql', require);
+var UserBusiness = requireText('./userBusiness/userBusiness.gql', require);
 
 export const MallSchema = [ 
     Business,
@@ -13,4 +14,5 @@ export const MallSchema = [
     Answer,
     Advertm,
     Transaction,
+    UserBusiness,
 ];
