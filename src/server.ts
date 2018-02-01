@@ -11,17 +11,20 @@ const expressValidator = require('express-validator');
 var session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 var cors = require('cors');
+var compression = require('compression');
 
 var graphqlHTTP = require('express-graphql');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express')
 var { makeExecutableSchema } = require('graphql-tools');
 const expressPlayground = require('graphql-playground-middleware-express').default;
 import { apolloUploadExpress } from 'apollo-upload-server';
+import { UploadFile } from './common/file_server/uploadFile';
+import { Engine } from 'apollo-engine';
 
-class Server { 
+class Server {
 	public app: express.Application;
 
-	constructor() { 
+	constructor() {
 		this.app = express();
 		this.config();
 		this.routes();
@@ -29,14 +32,30 @@ class Server {
 
 	private config() {
 		//设置静态文件
-		this.app.use("/uploads", express.static(path.join(__dirname, '../uploads')));
-		
+		var options = {
+			dotfiles: 'ignore',
+			etag: false,
+			extensions: ['htm', 'html'],
+			index: false,
+			maxAge: '1d',
+			redirect: false,
+			setHeaders: function (res, path, stat) {
+				res.set('x-timestamp', Date.now())
+			}
+		}
+
+		this.app.use("/uploads", express.static(path.join(__dirname, '../uploads'), options));
+
+		//设置网站
+		this.app.use("/", express.static(path.join(__dirname, '../web')));
+
+
 		//设置mongodb连接
 		const MONGO_URI = 'mongodb://localhost/webSite';
 		Mongoose.connect(MONGO_URI || process.env.MONGO_URI, { useMongoClient: true });
 		this.app.use(bodyParser.urlencoded({ extended: false }));
 		this.app.use(bodyParser.json());
-		
+
 		//设置cors 跨域
 		const corsOption = this.setCors();
 		this.app.use(cors(corsOption));
@@ -60,26 +79,54 @@ class Server {
 	}
 
 	private routes(): void {
+		//富文本图片上传
+		var uploadFileRouter = new UploadFile().router();
+		this.app.use('/', uploadFileRouter);
 
-		this.app.use('/graphql',apolloUploadExpress(),
+		this.app.use('/graphql', apolloUploadExpress(),
 			graphqlExpress(req => {
 				let context = {
 					session: req.session,
 					user: req.session.user
 				}
-				return { schema, context }
+				return {
+					schema,
+					context,
+					tracing: true,
+					cacheControl: true
+				}
 			})
 		);
-
 		this.app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 		this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 		this.app.use('/voyager', middleware({ endpointUrl: '/graphql' }));
+		//使用graphql apollo engine 如果不使用注释删除就可以
+		this.setEngine();
+
+	}
+
+	//graphql apollo engine
+	private setEngine() {
+		this.app.use(compression());
+		const engine = new Engine({
+			engineConfig: path.join(__dirname, './config.json'),
+			graphqlPort: 8080,
+			endpoint: '/graphql',
+			dumpTraffic: true
+		});
+		engine.start();
+		this.app.use(engine.expressMiddleware());
 	}
 
 	private setCors() {
 		return {
 			credentials: true,
-			origin: ["http://localhost:4200", "http://localhost:3000"],
+			origin: [
+				"http://localhost:4200",
+				"http://localhost:3000",
+				"http://localhost:8083",
+				"http://localhost:8100"
+			],
 			headers: [
 				"Access-Control-Allow-Origin",
 				"Access-Control-Allow-Headers",

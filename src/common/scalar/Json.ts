@@ -18,7 +18,11 @@ export default new GraphQLScalarType({
                 [ast],
             );
         }
-        let json =JSON.parse(ast.value);
-        return  json;
+        try{
+            let json =JSON.parse(ast.value);
+            return  json;
+        }catch{
+            return ast.value;
+        }
     },
 });
