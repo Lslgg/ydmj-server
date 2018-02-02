@@ -60,18 +60,35 @@ export class UserBusiness {
             return count;
         },
 
-        // getBusinessCount(parent, { business }, context) {
-
-        // }
     }
 
     static Mutation: any = {
-        saveAllUserBusiness(parent, { userBusiness }, context) {
+        saveUserBusiness(parent, { userBusiness }, context) {
+            if (!context.user) return null;
+            if (userBusiness.id && userBusiness.id != "0") {
+                return new Promise<IUserBusinessModel>((resolve, reject) => {
+                    UserBusinessSchema.findByIdAndUpdate(userBusiness.id, userBusiness, (err, res) => {
+                        Object.assign(res, userBusiness);
+                        resolve(res);
+                    })
+                });
+            }
+            var info = UserBusinessSchema.find(userBusiness);
+
+            return UserBusinessSchema.create(userBusiness);
+        },
+        saveUserBusinessAll(parent, { userBusiness }, context) {
+            if (!context.user) return null;
+
+            return UserBusinessSchema.create(userBusiness);
+        },
+        deleteUserBusinessAll(parent, { userBusiness }, context): Promise<Boolean> {
             if (!context.user) return null;
             let promise = new Promise<Boolean>((resolve, reject) => {
-                UserBusinessSchema.create(userBusiness).then(info => {
-                    resolve(info.length > 0);
-                });
+                if (!userBusiness) resolve(false);
+                UserBusinessSchema.find(userBusiness).remove((err, res) => {
+                    resolve(res != null)
+                })
             });
             return promise;
         },
