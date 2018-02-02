@@ -32,50 +32,13 @@ class Server {
 
 	private config() {
 		//设置静态文件
-		var options = {
-			dotfiles: 'ignore',
-			etag: false,
-			extensions: ['htm', 'html'],
-			index: false,
-			maxAge: '1d',
-			redirect: false,
-			setHeaders: function (res, path, stat) {
-				res.set('x-timestamp', Date.now())
-			}
-		}
-
-		this.app.use("/uploads", express.static(path.join(__dirname, '../uploads'), options));
-
-		//设置网站
-		this.app.use("/", express.static(path.join(__dirname, '../web')));
-
-
+		this.setStatic();
 		//设置mongodb连接
-		const MONGO_URI = 'mongodb://localhost/webSite';
-		Mongoose.connect(MONGO_URI || process.env.MONGO_URI, { useMongoClient: true });
-		this.app.use(bodyParser.urlencoded({ extended: false }));
-		this.app.use(bodyParser.json());
-
+		this.setMongodbInit();
 		//设置cors 跨域
-		const corsOption = this.setCors();
-		this.app.use(cors(corsOption));
-
+		this.setCors();
 		//设置Session
-		this.app.use(passport.initialize());
-		this.app.use(passport.session());
-		this.app.use(expressValidator())
-		this.app.use(cookieParser())
-		this.app.use(
-			session({
-				secret: 'jufengyd',
-				key: 'token',
-				resave: false,
-				saveUninitialized: false,
-				store: new MongoStore({
-					mongooseConnection: Mongoose.connection
-				})
-			})
-		);
+		this.setSession();
 	}
 
 	private routes(): void {
@@ -97,12 +60,61 @@ class Server {
 				}
 			})
 		);
+		
 		this.app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 		this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 		this.app.use('/voyager', middleware({ endpointUrl: '/graphql' }));
-		//使用graphql apollo engine 如果不使用注释删除就可以
-		this.setEngine();
 
+		//使用graphql apollo engine 如果不使用注释删除就可以
+		//this.setEngine();
+
+	}
+
+	//设置mongodb初始化
+	private setMongodbInit() {
+		const MONGO_URI = 'mongodb://localhost/webSite';
+		Mongoose.connect(MONGO_URI || process.env.MONGO_URI, { useMongoClient: true });
+		this.app.use(bodyParser.urlencoded({ extended: false }));
+		this.app.use(bodyParser.json());
+	}
+
+	//设置静态文件目录
+	private setStatic() {
+		var options = {
+			dotfiles: 'ignore',
+			etag: false,
+			extensions: ['htm', 'html'],
+			index: false,
+			maxAge: '1d',
+			redirect: false,
+			setHeaders: function (res, path, stat) {
+				res.set('x-timestamp', Date.now())
+			}
+		}
+
+		this.app.use("/uploads", express.static(path.join(__dirname, '../uploads'), options));
+
+		//设置网站
+		this.app.use("/", express.static(path.join(__dirname, '../web')));
+	}
+
+	//设置session
+	private setSession() {
+		this.app.use(passport.initialize());
+		this.app.use(passport.session());
+		this.app.use(expressValidator())
+		this.app.use(cookieParser())
+		this.app.use(
+			session({
+				secret: 'jufengyd',
+				key: 'token',
+				resave: false,
+				saveUninitialized: false,
+				store: new MongoStore({
+					mongooseConnection: Mongoose.connection
+				})
+			})
+		);
 	}
 
 	//graphql apollo engine
@@ -118,8 +130,9 @@ class Server {
 		this.app.use(engine.expressMiddleware());
 	}
 
+	//设置跨域
 	private setCors() {
-		return {
+		var corsOption = {
 			credentials: true,
 			origin: [
 				"http://localhost:4200",
@@ -134,6 +147,7 @@ class Server {
 				"CORELATION_ID"
 			]
 		}
+		this.app.use(cors(corsOption));
 	}
 }
 
