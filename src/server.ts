@@ -55,12 +55,13 @@ class Server {
 				return {
 					schema,
 					context,
-					tracing: true,
-					cacheControl: true
+					// 使用graphql apollo engine 如果不使用注释删除就可以
+					//tracing: true,
+					//cacheControl: true
 				}
 			})
 		);
-		
+
 		this.app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 		this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 		this.app.use('/voyager', middleware({ endpointUrl: '/graphql' }));
