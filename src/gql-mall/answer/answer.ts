@@ -5,8 +5,6 @@ export interface IAnswerModel extends Document {
     name: String
     type: String
     content: String
-    startDate: Date
-    endDate: Date
     isValid: Boolean
     updateAt: Date
     createAt: Date
@@ -17,8 +15,6 @@ let schema: Schema = new Schema({
     name: String,
     type: String,
     content: String,
-    startDate: Date,
-    endDate: Date,
     isValid: Boolean,
     createAt: {
         type: Date,

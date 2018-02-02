@@ -1,9 +1,22 @@
 import AdvertmSchema, { IAdvertmModel } from './advertm';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
+import { FileManager } from '../../common/file/fileManager';
 export class Advertm {
+
     constructor() {
 
     }
+
+    static Advertm: any = {
+        Images(model) {
+            let promise = new Promise<Array<any>>((resolve, reject) => {
+                let fm = new FileManager();
+                let imgs = fm.getFileByIds(model.imageIds);
+                resolve(imgs);
+            });
+            return promise;
+        }
+    };
 
     static Query: any = {
         getAdvertm(parent, { }, context): Promise<Array<IAdvertmModel>> {

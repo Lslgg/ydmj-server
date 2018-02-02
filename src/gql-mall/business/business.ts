@@ -3,28 +3,28 @@ import { model, Schema, Document } from 'mongoose';
 export interface IBusinessModel extends Document {
     id: string
     name: String
-    phone_num: String
     address: String
-    b_hours: String
+    phone: String
+    hours: String
     brief: String
+    imageIds: [String]
+    times: Number
     score: Number
-    imageIds: [string]
-    trans_times: Number
     isValid: Boolean
     updateAt: Date
     createAt: Date
 }
 
 let schema: Schema = new Schema({
-    // id:String,    
+    // id:String,        
     name: String,
-    phone_num: String,
     address: String,
-    b_hours: String,
+    phone: String,
+    hours: String,
     brief: String,
-    score: Number,
     imageIds: [String],
-    trans_times: Number,
+    times: Number,
+    score: Number,
     isValid: Boolean,
     createAt: {
         type: Date,
@@ -37,5 +37,6 @@ let schema: Schema = new Schema({
         required: true
     },
 })
+
 
 export default model<IBusinessModel>('Business', schema);

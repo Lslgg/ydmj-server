@@ -2,34 +2,24 @@ import { model, Schema, Document } from 'mongoose';
 
 export interface ITransactionModel extends Document {
     id: string
-    trade_code: String
-    goods_id: String
-    business_id: String
-    user_id: String
-    user_name: String
-    start_time: String
-    end_time: String
-    complete_time: Date
-    state: Boolean
-    t_code: String
-    isValid: Boolean
+    code: String
+    goodsId: String
+    businessId: String
+    userId: String
+    startTime: Date
+    endTime: Date
     updateAt: Date
     createAt: Date
 }
 
 let schema: Schema = new Schema({
-    // id: String,    
-    trade_code: String,
-    goods_id: String,
-    business_id: String,
-    user_id: String,
-    user_name: String,
-    start_time: String,
-    end_time: String,
-    complete_time: Date,
-    state: Boolean,
-    t_code: String,
-    isValid: Boolean,
+    // id: String,        
+    code: String,
+    goodsId: String,
+    businessId: String,
+    userId: String,
+    startTime: Date,
+    endTime: Date,
     createAt: {
         type: Date,
         default: new Date(),

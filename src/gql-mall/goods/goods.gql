@@ -1,21 +1,19 @@
 # 商品
 type Goods {
-   id:ID   
-   name:String
-   cost_score:Int
-   rule:String
-   explain:String
-   count:Int
-   trans_times:Int
-   goods_type:String             
-   imageSrc:String
-   stock:Int
-   limit:Int
-   Business:Business
-   GoodsType:GoodsType 
-   isValid: Boolean
-   updateAt:Date
-   createAt:Date
+    id:ID   
+    Business:Business
+    GoodsType:GoodsType
+    name:String
+    score:Int
+    phone:String
+    address:String
+    ruler:String
+    explain:String
+    stock:Int
+    times:Int
+    isValid:Boolean
+    updateAt:Date
+    createAt:Date
 }
 
 extend type Query{
@@ -39,20 +37,20 @@ extend type Mutation{
 }
 
 input inputGoods {   
-   id:ID   
-   name:String
-   cost_score:Int
-   rule:String
-   explain:String
-   count:Int
-   trans_times:Int
-   goods_type:String             
-   imageSrc:String
-   stock:Int
-   limit:Int
-   business_id:String
-   goodsType_id:String 
-   isValid: Boolean   
+    id:String  
+    businessId:String
+    goodsTypeId:String
+    name:String
+    score:Int
+    phone:String
+    address:String
+    ruler:String
+    explain:String
+    stock:Int
+    times:Int
+    isValid:Boolean
+    updateAt:Date
+    createAt:Date
 }
 
 
