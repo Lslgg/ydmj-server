@@ -72,9 +72,7 @@ export class UserBusiness {
                         resolve(res);
                     })
                 });
-            }
-            var info = UserBusinessSchema.find(userBusiness);
-
+            }            
             return UserBusinessSchema.create(userBusiness);
         },
         saveUserBusinessAll(parent, { userBusiness }, context) {
@@ -82,16 +80,16 @@ export class UserBusiness {
 
             return UserBusinessSchema.create(userBusiness);
         },
-        deleteUserBusinessAll(parent, { userBusiness }, context): Promise<Boolean> {
-            if (!context.user) return null;
+        deleteUserBusinessAll(parent, {id }, context): Promise<Boolean> {
+            if(!context.user) return null;
+            
             let promise = new Promise<Boolean>((resolve, reject) => {
-                if (!userBusiness) resolve(false);
-                UserBusinessSchema.find(userBusiness).remove((err, res) => {
-                    resolve(res != null)
-                })
+                UserBusinessSchema.find({ _id: { $in: id } }).remove().then(res => {
+                    resolve(true);
+                }).catch(err => resolve(err))
             });
             return promise;
-        },
+        },        
         deleteUserBusiness(parent, { id }, context): Promise<Boolean> {
             if (!context.user) return null;
             let promise = new Promise<Boolean>((resolve, reject) => {

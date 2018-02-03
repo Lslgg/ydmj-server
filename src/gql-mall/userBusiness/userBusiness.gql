@@ -31,7 +31,7 @@ extend type Mutation{
     # 删除用户商家
     deleteUserBusiness(id:String):Boolean    
     # 批量删除用户商家
-    deleteUserBusinessAll(userBusiness:searchUserBusiness):Boolean        
+    deleteUserBusinessAll(id:[String]):Boolean        
 }
 
 input inputUserBusiness {
