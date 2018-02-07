@@ -5,8 +5,6 @@ type Goods {
     GoodsType:GoodsType
     name:String
     score:Int
-    phone:String
-    address:String
     ruler:String
     explain:String
     stock:Int
@@ -42,8 +40,6 @@ input inputGoods {
     goodsTypeId:String
     name:String
     score:Int
-    phone:String
-    address:String
     ruler:String
     explain:String
     stock:Int
