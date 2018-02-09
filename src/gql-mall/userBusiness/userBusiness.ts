@@ -11,8 +11,16 @@ export interface IUserBusinessModel extends Document {
 let schema: Schema = new Schema({
     userId: String,
     businessId: String,
-    updateAt: Date,
-    createAt: Date,
+    createAt: {
+        type: Date,
+        default: new Date(),
+        required: true
+    },
+    updateAt: {
+        type: Date,
+        default: new Date(),
+        required: true
+    },
 })
 
 

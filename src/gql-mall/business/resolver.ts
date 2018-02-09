@@ -1,6 +1,7 @@
 import BusinessSchema, { IBusinessModel } from './business';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
-import UserSchema from '../../gql-system/user/user';
+import RoleSchema from '../../gql-system/role/role';
+import UserBusinessSchema from '../userBusiness/userBusiness';
 import { FileManager } from '../../common/file/fileManager';
 
 
@@ -22,33 +23,55 @@ export class Business {
     };
 
     static Query: any = {
-        getBusiness(parent, { }, context): Promise<Array<IBusinessModel>> {
+        getBusiness(parent, { }, context) {
             if (!context.user) return null;
-
-            let promise = new Promise<Array<IBusinessModel>>((resolve, reject) => {
-                BusinessSchema.find().then(res => {
-                    resolve(res);
-                }).catch(err => resolve(null));
-            })
-            return promise;
+            // 管理员返回所有商家
+            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                return BusinessSchema.find().then((businessList) => {
+                    return businessList;
+                });
+            } else {
+                // 普通商家只返回自己的商家
+                return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                    var businessIdList: Array<String> = [];
+                    for (var i = 0; i < info.length; i++) {
+                        businessIdList.push(info[i].businessId);
+                    }
+                    return BusinessSchema.find({ _id: { $in: businessIdList } }).then(info => {
+                        return info;
+                    });
+                });
+            }
         },
-        getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
+        getBusinessById(parent, { id }, context) {
             if (!context.user) return null;
-
-            let promise = new Promise<IBusinessModel>((resolve, reject) => {
-                BusinessSchema.findById(id).then(res => {
-                    resolve(res);
-                }).catch(err => resolve(null));
-            });
-            return promise;
+            // 查找当前用户商家            
+            return BusinessSchema.findById(id).then(res => {
+                return res;
+            }).catch(err => { return null });
         },
 
         getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context) {
             if (!context.user) return null;
-            console.log(context.user);
-            var skip = (pageIndex - 1) * pageSize
-            var businessInfo = BusinessSchema.find(business).skip(skip).limit(pageSize)
-            return businessInfo;
+            var skip = (pageIndex - 1) * pageSize;
+            // 管理员返回所有商家
+            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                return BusinessSchema.find(business).skip(skip).limit(pageSize).then((businessList) => {
+                    return businessList;
+                });
+            } else {
+                // 普通商家只返回自己的商家
+                return UserBusinessSchema.find({ userId: context.user._id }).skip(skip).limit(pageSize).then((info) => {
+                    var businessIdList: Array<String> = [];
+                    for (var i = 0; i < info.length; i++) {
+                        businessIdList.push(info[i].businessId);
+                    }
+                    business._id = businessIdList;
+                    return BusinessSchema.find(business).then(info => {
+                        return info;
+                    });
+                });
+            }
         },
 
         getBusinessWhere(parent, { business }, context) {
@@ -59,8 +82,24 @@ export class Business {
 
         getBusinessCount(parent, { business }, context) {
             if (!context.user) return 0;
-            var count = BusinessSchema.count(business);
-            return count;
+            // 管理员统计所有            
+            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                var count = BusinessSchema.count(business);
+                return count;
+            } else {
+                // 非管理员统计自己的商家
+                return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                    var businessIdList: Array<String> = [];
+                    for (var i = 0; i < info.length; i++) {
+                        businessIdList.push(info[i].businessId);
+                    }
+                    business._id = businessIdList;
+                    var count = BusinessSchema.count(business);
+                    return count;
+                });
+            }
+
+
         },
     }
 
@@ -69,25 +108,42 @@ export class Business {
             if (!context.user) return null;
 
             if (business.id && business.id != "0") {
-                return new Promise<IBusinessModel>((resolve, reject) => {
-                    BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
-                        Object.assign(res, business);
-                        resolve(res);
-                    })
+
+                return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                    var flag = false;
+                    for (var i = 0; i < info.length; i++) {
+                        if (info[i].businessId == business.id) {
+                            flag = true;
+                        }
+                    }
+                    // 判断该商家是否为该用户
+                    if (flag) {
+                        return BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
+                            Object.assign(res, business);
+                            return res;
+                        })
+                    } else {
+                        return null;
+                    }
                 });
             }
-            business.trans_times = 0;
+            // 只有管理员能添加商家
+            if (context.user.roleId != '5a0d0122c61a4b1b30171148') {
+                return null;
+            }
+            business.times = 0;
             business.score = 0;
-            return BusinessSchema.create(business)
+            return BusinessSchema.create(business);
         },
-        deleteBusiness(parent, { id }, context): Promise<Boolean> {
+        deleteBusiness(parent, { id }, context) {
             if (!context.user) return null;
-            let promise = new Promise<Boolean>((resolve, reject) => {
-                BusinessSchema.findByIdAndRemove(id, (err, res) => {
-                    resolve(res != null)
-                }).catch(err => reject(err));
+            // 非管理员不能使用删除商家
+            if (context.user.roleId != '5a0d0122c61a4b1b30171148') return null;
+            return BusinessSchema.findByIdAndRemove(id, (err, res) => {
+                return res;
+            }).catch(err => {
+                return err;
             });
-            return promise;
         }
     }
 }

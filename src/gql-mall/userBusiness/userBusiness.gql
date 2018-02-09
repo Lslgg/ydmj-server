@@ -25,22 +25,23 @@ extend type Query{
 extend type Mutation{
 
     # 添加修改用户商家
-    saveUserBusiness(userBusiness:inputUserBusiness):UserBusiness
-    
-    # 用户商家
-    saveAllUserBusiness(userBusiness:[inputUserBusiness]):Boolean
-
+    saveUserBusiness(userBusiness:inputUserBusiness):UserBusiness    
+    # 批量添加用户商家
+	saveUserBusinessAll(userBusiness:[inputUserBusiness]):[UserBusiness]    
     # 删除用户商家
     deleteUserBusiness(id:String):Boolean    
+    # 批量删除用户商家
+    deleteUserBusinessAll(id:[String]):Boolean        
 }
 
 input inputUserBusiness {
     id:String
     userId:String
-    businessId:String  
+    businessId:String
 }
 
 input searchUserBusiness{
+    _id:Json
     userId:Json
     businessId:Json    
 }

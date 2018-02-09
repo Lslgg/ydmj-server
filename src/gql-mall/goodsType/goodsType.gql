@@ -40,4 +40,5 @@ input inputGoodsType {
 input searchGoodsType{
     id:Json
     name:Json
+    businessId:Json
 }

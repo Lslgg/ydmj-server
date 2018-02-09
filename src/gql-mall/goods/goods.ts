@@ -6,8 +6,6 @@ export interface IGoodsModel extends Document {
     goodsTypeId: String
     name: String
     score: Number
-    phone: String
-    address: String
     ruler: String
     explain: String
     stock: Number
@@ -23,8 +21,6 @@ let schema: Schema = new Schema({
     goodsTypeId: String,
     name: String,
     score: Number,
-    phone: String,
-    address: String,
     ruler: String,
     explain: String,
     stock: Number,
