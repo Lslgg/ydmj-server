@@ -5,6 +5,8 @@ type Answer {
    type:String
    content:String
    isValid: Boolean
+    startDate: Date
+    endDate: Date
    updateAt:Date
    createAt:Date
 }
@@ -34,7 +36,9 @@ input inputAnswer {
    name:String
    type:String
    content:String   
-   isValid: Boolean   
+   isValid: Boolean  
+    startDate: Date
+    endDate: Date
 }
 
 input searchAnswer{

@@ -63,6 +63,9 @@ export class Advertm {
     static Mutation: any = {
         saveAdvertm(parent, { advertm }, context) {
             if (!context.user) return null;
+            if (context.user.roleId != '5a0d0122c61a4b1b30171148') {
+                return null;
+            }
             if (advertm.id && advertm.id != "0") {
                 return new Promise<IAdvertmModel>((resolve, reject) => {
                     AdvertmSchema.findByIdAndUpdate(advertm.id, advertm, (err, res) => {
@@ -75,6 +78,9 @@ export class Advertm {
         },
         deleteAdvertm(parent, { id }, context): Promise<Boolean> {
             if (!context.user) return null;
+            if (context.user.roleId != '5a0d0122c61a4b1b30171148') {
+                return null;
+            }
             let promise = new Promise<Boolean>((resolve, reject) => {
                 AdvertmSchema.findByIdAndRemove(id, (err, res) => {
                     resolve(res != null)

@@ -1,7 +1,8 @@
 import GoodsSchema, { IGoodsModel } from './goods';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 import BusinessSchema, { IBusinessModel } from '../business/business';
-import GoodsTypeSchema, { IGoodsTypeModel } from '../goodsType/goodsType';
+import GoodsTypeSchema from '../goodsType/goodsType';
+import UserBusinessSchema from '../userBusiness/userBusiness';
 export class Goods {
     constructor() {
 
@@ -17,15 +18,24 @@ export class Goods {
     }
 
     static Query: any = {
-        getGoods(parent, { }, context): Promise<Array<IGoodsModel>> {
+        getGoods(parent, { }, context) {
             if (!context.user) return null;
 
-            let promise = new Promise<Array<IGoodsModel>>((resolve, reject) => {
-                GoodsSchema.find().then(res => {
-                    resolve(res);
-                }).catch(err => resolve(null));
-            })
-            return promise;
+            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                return GoodsSchema.find().then(res => {
+                    return res;
+                }).catch(err => { return null; });
+            } else {
+                return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                    var businessIdList: Array<String> = [];
+                    for (var i = 0; i < info.length; i++) {
+                        businessIdList.push(info[i].businessId);
+                    }
+                    return GoodsSchema.find({ _id: { in: businessIdList } }).then(res => {
+                        return res;
+                    }).catch(err => { return null; });
+                });
+            }
         },
         getGoodsById(parent, { id }, context): Promise<IGoodsModel> {
             if (!context.user) return null;
@@ -41,8 +51,25 @@ export class Goods {
         getGoodsPage(parent, { pageIndex = 1, pageSize = 10, goods }, context) {
             if (!context.user) return null;
             var skip = (pageIndex - 1) * pageSize
-            var goodsInfo = GoodsSchema.find(goods).skip(skip).limit(pageSize)
-            return goodsInfo;
+
+            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                var goodsInfo = GoodsSchema.find(goods).skip(skip).limit(pageSize);
+                return goodsInfo;
+            } else {
+                return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                    var businessIdList: Array<String> = [];
+                    for (var i = 0; i < info.length; i++) {
+                        businessIdList.push(info[i].businessId);
+                    }
+                    if (!goods.businessId) {
+                        goods.businessId = businessIdList;
+                    }
+                    var goodsInfo = GoodsSchema.find(goods).skip(skip).limit(pageSize);
+                    return goodsInfo;
+                });
+            }
+
+
         },
 
         getGoodsWhere(parent, { goods }, context) {

@@ -6,7 +6,7 @@ export interface ITransactionModel extends Document {
     goodsId: String
     businessId: String
     userId: String
-    startTime: Date
+    state: Number
     endTime: Date
     updateAt: Date
     createAt: Date
@@ -18,7 +18,7 @@ let schema: Schema = new Schema({
     goodsId: String,
     businessId: String,
     userId: String,
-    startTime: Date,
+    state: Number,
     endTime: Date,
     createAt: {
         type: Date,

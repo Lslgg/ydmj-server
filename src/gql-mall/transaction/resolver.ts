@@ -10,13 +10,13 @@ export class Transaction {
 
     static Transaction: any = {
         Business(model) {
-            return BusinessSchema.findById(model.business_id);
+            return BusinessSchema.findById(model.businessId);
         },
         Goods(model) {
-            return GoodsSchema.findById(model.goods_id);
+            return GoodsSchema.findById(model.goodsId);
         },
         User(model) {
-            return UserSchema.findById(model.user_id);
+            return UserSchema.findById(model.userId);
         },
     }
 

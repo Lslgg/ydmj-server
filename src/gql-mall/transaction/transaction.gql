@@ -5,7 +5,7 @@ type Transaction {
    Goods:Goods
    Business:Business
    User:User
-   startTime:Date
+   state:Int      
    endTime:Date
    updateAt:Date
    createAt:Date
@@ -17,11 +17,11 @@ extend type Query{
     # 根据ID查找问答
     getTransactionById(id:String):Transaction
     # 分页查找
-    getTransactionPage(pageIndex: Int, pageSize: Int,transaction:searchTransactionType): [Transaction]
+    getTransactionPage(pageIndex: Int, pageSize: Int,transaction:searchTransaction): [Transaction]
     # 查找分页总数
-    getTransactionCount(transaction:searchTransactionType):Int
+    getTransactionCount(transaction:searchTransaction):Int
     # 根据条件查找
-    getTransactionWhere(transaction:searchTransactionType): [Transaction] 
+    getTransactionWhere(transaction:searchTransaction): [Transaction] 
 }
 
 extend type Mutation{
@@ -37,12 +37,13 @@ input inputTransaction {
    goodsId:String
    businessId:String
    userId:String
-   startTime:Date
+   state:Int      
    endTime:Date  
 }
 
-input searchTransactionType{
+input searchTransaction{
     id:Json
     name:Json
-    t_code:Json
+    code:Json
+    goodsId:Json
 }

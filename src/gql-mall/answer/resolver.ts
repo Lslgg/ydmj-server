@@ -50,6 +50,9 @@ export class Answer {
     static Mutation: any = {
         saveAnswer(parent, { answer }, context) {
             if (!context.user) return null;
+            if (context.user.roleId != '5a0d0122c61a4b1b30171148') {
+                return null;
+            }
             if (answer.id && answer.id != "0") {
                 return new Promise<IAnswerModel>((resolve, reject) => {
                     AnswerSchema.findByIdAndUpdate(answer.id, answer, (err, res) => {
@@ -62,6 +65,9 @@ export class Answer {
         },
         deleteAnswer(parent, { id }, context): Promise<Boolean> {
             if (!context.user) return null;
+            if (context.user.roleId != '5a0d0122c61a4b1b30171148') {
+                return null;
+            }
             let promise = new Promise<Boolean>((resolve, reject) => {
                 AnswerSchema.findByIdAndRemove(id, (err, res) => {
                     resolve(res != null)

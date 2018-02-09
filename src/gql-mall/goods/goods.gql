@@ -52,5 +52,6 @@ input inputGoods {
 
 input searchGoods{
     id:Json
-    name:Json
+    name:RegExp
+    businessId:Json
 }
