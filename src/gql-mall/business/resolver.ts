@@ -3,6 +3,8 @@ import { DocumentQuery, MongoosePromise } from 'mongoose';
 import RoleSchema from '../../gql-system/role/role';
 import UserBusinessSchema from '../userBusiness/userBusiness';
 import { FileManager } from '../../common/file/fileManager';
+import { resolve } from 'url';
+import { reject } from 'bluebird';
 
 
 export class Business {
@@ -23,117 +25,142 @@ export class Business {
     };
 
     static Query: any = {
-        getBusiness(parent, { }, context) {
-            if (!context.user) return null;
+        getBusiness(parent, { }, context): Promise<Array<IBusinessModel>> {
             // 管理员返回所有商家
-            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
-                return BusinessSchema.find().then((businessList) => {
-                    return businessList;
-                });
-            } else {
-                // 普通商家只返回自己的商家
-                return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    return BusinessSchema.find({ _id: { $in: businessIdList } }).then(info => {
-                        return info;
+            return new Promise<Array<IBusinessModel>>((resolve, reject) => {
+                if (!context.user) resolve(null);
+                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                    BusinessSchema.find().then((businessList) => {
+                        resolve(businessList);
                     });
-                });
-            }
+                } else {
+                    // 普通商家只返回自己的商家
+                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                        var businessIdList: Array<String> = [];
+                        for (var i = 0; i < info.length; i++) {
+                            businessIdList.push(info[i].businessId);
+                        }
+                        BusinessSchema.find({ _id: { $in: businessIdList } }).then(info => {
+                            resolve(info);
+                        });
+                    });
+                }
+            });
+
         },
-        getBusinessById(parent, { id }, context) {
-            if (!context.user) return null;
-            // 查找当前用户商家            
-            return BusinessSchema.findById(id).then(res => {
-                return res;
-            }).catch(err => { return null });
+        getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
+            // 查找当前用户商家       
+            if (context.user) return null;
+
+			let promise = new Promise<IBusinessModel>((resolve, reject) => {
+				BusinessSchema.findById(id).then((res) => {
+					resolve(res);
+				}).catch(err => resolve(null));
+			});
+			return promise;
+
         },
 
-        getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context) {
-            if (!context.user) return null;
-            var skip = (pageIndex - 1) * pageSize;
-            // 管理员返回所有商家
-            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
-                return BusinessSchema.find(business).skip(skip).limit(pageSize).then((businessList) => {
-                    return businessList;
-                });
-            } else {
-                // 普通商家只返回自己的商家
-                return UserBusinessSchema.find({ userId: context.user._id }).skip(skip).limit(pageSize).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    business._id = businessIdList;
-                    return BusinessSchema.find(business).then(info => {
-                        return info;
+        getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context): Promise<Array<IBusinessModel>> {
+            return new Promise<Array<IBusinessModel>>((resolve, reject) => {
+                if (context.user) resolve(null);
+                var skip = (pageIndex - 1) * pageSize;
+                // 管理员返回所有商家
+                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                    BusinessSchema.find(business).skip(skip).limit(pageSize).then((businessList) => {
+                        resolve(businessList);
                     });
-                });
-            }
+                } else {
+                    // 普通商家只返回自己的商家
+                    UserBusinessSchema.find({ userId: context.user._id }).skip(skip).limit(pageSize).then((info) => {
+                        var businessIdList: Array<String> = [];
+                        for (var i = 0; i < info.length; i++) {
+                            businessIdList.push(info[i].businessId);
+                        }
+                        business._id = businessIdList;
+                        BusinessSchema.find(business).then(info => {
+                            resolve(info);
+                        });
+                    });
+                }
+            });
         },
 
         getBusinessWhere(parent, { business }, context) {
-            if (!context.user) return null;
-            var businesses = BusinessSchema.find(business);
-            return businesses;
+            if (context.user) return null;
+            return BusinessSchema.find(business).then(info => {
+                return info;
+            });
+
         },
 
-        getBusinessCount(parent, { business }, context) {
-            if (!context.user) return 0;
-            // 管理员统计所有            
-            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
-                var count = BusinessSchema.count(business);
-                return count;
-            } else {
-                // 非管理员统计自己的商家
-                return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    business._id = businessIdList;
+        getBusinessCount(parent, { business }, context): Promise<Number> {
+
+            return new Promise<Number>((resolve, reject) => {
+                if (context.user) resolve(null);
+                // 管理员统计所有                            
+                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     var count = BusinessSchema.count(business);
-                    return count;
-                });
-            }
+                    resolve(count);
+                } else {
+                    // 非管理员统计自己的商家
+                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                        var businessIdList: Array<String> = [];
+                        for (var i = 0; i < info.length; i++) {
+                            businessIdList.push(info[i].businessId);
+                        }
+                        business._id = businessIdList;
+                        var count = BusinessSchema.count(business);
+                        resolve(count);
+                    });
+                }
+            });
+
 
 
         },
     }
 
     static Mutation: any = {
-        saveBusiness(parent, { business }, context) {
+        saveBusiness(parent, { business }, context): Promise<any> {
             if (!context.user) return null;
-
-            if (business.id && business.id != "0") {
-
-                return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var flag = false;
-                    for (var i = 0; i < info.length; i++) {
-                        if (info[i].businessId == business.id) {
-                            flag = true;
-                        }
-                    }
-                    // 判断该商家是否为该用户
-                    if (flag) {
-                        return BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
+            return new Promise<any>((resolve, reject) => {
+                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                    if (business.id && business.id != "0") {
+                        BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
                             Object.assign(res, business);
-                            return res;
-                        })
-                    } else {
-                        return null;
+                            resolve(res);
+                        });
                     }
-                });
-            }
-            // 只有管理员能添加商家
-            if (context.user.roleId != '5a0d0122c61a4b1b30171148') {
-                return null;
-            }
-            business.times = 0;
-            business.score = 0;
-            return BusinessSchema.create(business);
+                    business.times = 0;
+                    business.score = 0;
+                    BusinessSchema.create(business).then((info) => {
+                        resolve(info);
+                    });
+                    
+                } else {
+                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                        var flag = false;
+                        for (var i = 0; i < info.length; i++) {
+                            if (info[i].businessId == business.id) {
+                                flag = true;
+                            }
+                        }
+                        if (flag) {
+                            if (business.id && business.id != "0") {
+                                BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
+                                    Object.assign(res, business);
+                                    resolve(res);
+                                });
+                            } else {
+                                resolve(null);
+                            }
+                        } else {
+                            resolve(null);
+                        }
+                    });
+                }
+            });
         },
         deleteBusiness(parent, { id }, context) {
             if (!context.user) return null;

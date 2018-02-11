@@ -21,14 +21,21 @@ extend type Query{
     # 查找分页总数
     getTransactionCount(transaction:searchTransaction):Int
     # 根据条件查找
-    getTransactionWhere(transaction:searchTransaction): [Transaction] 
+    # getTransactionWhere(transaction:searchTransaction): [Transaction] 
+    # 交易
+    doTransact(code:String):Int,
+
+    isTransaction(userId:String, businessId:String, goodsId:String):Boolean
 }
 
 extend type Mutation{
     # 添加修改交易
-    saveTransaction(transaction:inputTransaction):Transaction
+    saveTranUser:Boolean
+    saveTranBusiness:Boolean    
+    saveTranGoods(userId:String, businessId:String, goodsId:String):Boolean           
     # 删除交易
-    deleteTransaction(id:String):Boolean
+    # deleteTransaction(id:String):Boolean
+
 }
 
 input inputTransaction {   

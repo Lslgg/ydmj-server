@@ -16,25 +16,27 @@ export class GoodsType {
     }
 
     static Query: any = {
-        getGoodsType(parent, { }, context) {
-            if (!context.user) return null;
-            // 管理员返回所有
-            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
-                return GoodsTypeSchema.find().then(res => {
-                    return res;
-                }).catch(err => { return err; });
-            } else {
-                // 商家返回自己的类别
-                return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    return GoodsTypeSchema.find({ businessId: { $in: businessIdList } }).then(res => {
-                        return res;
-                    }).catch(err => { return err; });
-                });
-            }
+        getGoodsType(parent, { }, context): Promise<Array<IGoodsTypeModel>> {
+            return new Promise<Array<IGoodsTypeModel>>((resolve, reject) => {
+                if (!context.user) resolve(null);
+                // 管理员返回所有
+                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                    GoodsTypeSchema.find().then(res => {
+                        resolve(res);
+                    }).catch(err => { resolve(err); });
+                } else {
+                    // 商家返回自己的类别
+                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                        var businessIdList: Array<String> = [];
+                        for (var i = 0; i < info.length; i++) {
+                            businessIdList.push(info[i].businessId);
+                        }
+                        GoodsTypeSchema.find({ businessId: { $in: businessIdList } }).then(res => {
+                            resolve(res);
+                        }).catch(err => { resolve(err); });
+                    });
+                }
+            });
         },
         getGoodsTypeById(parent, { id }, context): Promise<IGoodsTypeModel> {
             if (!context.user) return null;
@@ -48,124 +50,135 @@ export class GoodsType {
         },
 
         getGoodsTypePage(parent, { pageIndex = 1, pageSize = 10, goodsType }, context) {
-            if (!context.user) return null;
-            var skip = (pageIndex - 1) * pageSize;
-            // 管理员返回所有
-            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
-                return GoodsTypeSchema.find(goodsType).skip(skip).limit(pageSize).then(res => {
-                    return res;
-                }).catch(err => { return err; });
-            } else {
-                // 商家返回自己的类别     
-                return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    if (!goodsType.businessId) {
-                        goodsType.businessId = businessIdList;
-                    }
-                    return GoodsTypeSchema.find(goodsType).skip(skip).limit(pageSize).then(res => {
-                        return res;
-                    }).catch(err => { return err; });
-                });
-            }
+            return new Promise<Array<IGoodsTypeModel>>((resolve, reject) => {
+                if (!context.user) resolve(null);
+                var skip = (pageIndex - 1) * pageSize;
+                // 管理员返回所有
+                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                    GoodsTypeSchema.find(goodsType).skip(skip).limit(pageSize).then(res => {
+                        resolve(res);
+                    }).catch(err => { resolve(err); });
+                } else {
+                    // 商家返回自己的类别
+                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                        var businessIdList: Array<String> = [];
+                        for (var i = 0; i < info.length; i++) {
+                            businessIdList.push(info[i].businessId);
+                        }
+                        if (!goodsType.businessId) {
+                            goodsType.businessId = businessIdList;
+                        }
+                        GoodsTypeSchema.find(goodsType).skip(skip).limit(pageSize).then(res => {
+                            resolve(res);
+                        }).catch(err => { resolve(err); });
+                    });
+                }
+            });
         },
 
         getGoodsTypeWhere(parent, { goodsType }, context) {
             // if (!context.user) return null;
-            var goodsTypeInfo = GoodsTypeSchema.find(goodsType);                
+            var goodsTypeInfo = GoodsTypeSchema.find(goodsType);
             return goodsTypeInfo;
         },
 
-        getGoodsTypeCount(parent, { goodsType }, context) {
-            if (!context.user) return 0;
-            // 管理员统计所有
-            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
-                var count = GoodsTypeSchema.count(goodsType);
-                return count;
-            } else {
-                // 商家统计自己的
-                return GoodsTypeSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    if (!goodsType.businessId) {
-                        goodsType.businessId = businessIdList;
-                    }
+        getGoodsTypeCount(parent, { goodsType }, context): Promise<Number> {
+            return new Promise<Number>((resolve, reject) => {
+                if (!context.user) return null;
+                // 管理员统计所有
+                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     var count = GoodsTypeSchema.count(goodsType);
-                    return count;
-                });
-            }
+                    resolve(count);
+                } else {
+                    // 商家统计自己的
+                    GoodsTypeSchema.find({ userId: context.user._id }).then((info) => {
+                        var businessIdList: Array<String> = [];
+                        for (var i = 0; i < info.length; i++) {
+                            businessIdList.push(info[i].businessId);
+                        }
+                        if (!goodsType.businessId) {
+                            goodsType.businessId = businessIdList;
+                        }
+                        var count = GoodsTypeSchema.count(goodsType);
+                        resolve(count);
+                    });
+                }
+            });
 
         },
     }
 
     static Mutation: any = {
-        saveGoodsType(parent, { goodsType }, context) {
-            if (!context.user) return null;
-            if (!goodsType.businessId) return null;
-            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
-                if (goodsType.id && goodsType.id != "0") {
-
-                    GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType, (err, res) => {
-                        Object.assign(res, goodsType);
-                        return res;
-                    })
-                }
-                return GoodsTypeSchema.create(goodsType);
-            } else {
-                return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var flag = false;
-                    for (var i = 0; i < info.length; i++) {
-                        if (info[i].businessId == goodsType.businessId) {
-                            flag = true;
-                        }
-                    }
-                    // 判断该类别是否为该用户
-                    if (flag) {
-                        if (goodsType.id && goodsType.id != "0") {
-                            GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType, (err, res) => {
-                                Object.assign(res, goodsType);
-                                return res;
-                            })
-                        }
-                        return GoodsTypeSchema.create(goodsType);
+        saveGoodsType(parent, { goodsType }, context): Promise<IGoodsTypeModel> {
+            return new Promise<IGoodsTypeModel>((resolve, reject) => {
+                if (!context.user) return null;
+                if (!goodsType.businessId) return null;
+                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                    if (goodsType.id && goodsType.id != "0") {
+                        GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType, (err, res) => {
+                            Object.assign(res, goodsType);
+                            resolve(res);
+                        })
                     } else {
-                        return null;
+                        var goodsType = GoodsTypeSchema.create(goodsType);
+                        resolve(goodsType);
                     }
-                });
-            }
 
-        },
-
-        deleteGoodsType(parent, { id }, context) {
-            if (!context.user) return null;
-
-            if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
-                GoodsTypeSchema.findByIdAndRemove(id, (err, res) => {
-                    return (res != null);
-                }).catch(err => { return err; });
-            } else {
-                return GoodsTypeSchema.findById(id).then((goodstype) => {
-                    return UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                } else {
+                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
                         var flag = false;
                         for (var i = 0; i < info.length; i++) {
-                            if (info[i].businessId == goodstype.businessId) {
+                            if (info[i].businessId == goodsType.businessId) {
                                 flag = true;
                             }
                         }
+                        // 判断该类别是否为该用户
                         if (flag) {
-                            return GoodsTypeSchema.findByIdAndRemove(id, (err, res) => {
-                                return (res != null);
-                            }).catch(err => { return err; });
+                            if (goodsType.id && goodsType.id != "0") {
+                                GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType, (err, res) => {
+                                    Object.assign(res, goodsType);
+                                    resolve(res);
+                                })
+                            } else {
+                                var goodsType = GoodsTypeSchema.create(goodsType);
+                                resolve(goodsType);
+                            }                            
                         } else {
-                            return false;
+                            return null;
                         }
                     });
-                });
-            }
+                }
+            });
+        },
+        deleteGoodsType(parent, { id }, context): Promise<Boolean> {
+            return new Promise<Boolean>((resolve, reject) => {
+                if (!context.user) resolve(null);
+
+                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                    GoodsTypeSchema.findByIdAndRemove(id, (err, res) => {
+                        resolve(res != null);
+                    }).catch(err => { resolve(err); });
+                } else {
+                    GoodsTypeSchema.findById(id).then((goodstype) => {
+                        UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                            var flag = false;
+                            for (var i = 0; i < info.length; i++) {
+                                if (info[i].businessId == goodstype.businessId) {
+                                    flag = true;
+                                }
+                            }
+                            if (flag) {
+                                GoodsTypeSchema.findByIdAndRemove(id, (err, res) => {
+                                    resolve(res != null);
+                                }).catch(err => { resolve(err); });
+                            } else {
+                                resolve(false);
+                            }
+                        });
+                    });
+                }
+            });
+
         }
     }
 }
