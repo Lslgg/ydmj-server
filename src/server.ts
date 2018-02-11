@@ -122,7 +122,7 @@ class Server {
 	private setEngine() {
 		this.app.use(compression());
 		const engine = new Engine({
-			engineConfig: path.join(__dirname, './config.json'),
+			engineConfig: path.join(__dirname, './engineConfig.json'),
 			graphqlPort: 8080,
 			endpoint: '/graphql',
 			dumpTraffic: true
@@ -139,14 +139,15 @@ class Server {
 				"http://localhost:4200",
 				"http://localhost:3000",
 				"http://localhost:8083",
-				"http://localhost:8100"
+				"http://localhost:8100",
+				"http://localhost:3000"
 			],
 			headers: [
 				"Access-Control-Allow-Origin",
 				"Access-Control-Allow-Headers",
 				"Origin, X-Requested-With, Content-Type",
 				"CORELATION_ID"
-			]
+			] 
 		}
 		this.app.use(cors(corsOption));
 	}
