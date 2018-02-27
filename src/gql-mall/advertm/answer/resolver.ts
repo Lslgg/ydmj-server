@@ -52,9 +52,9 @@ export class Answer {
             if (!context.user) return null;
             if (context.user.roleId != '5a0d0122c61a4b1b30171148') {
                 return null;
-            }            
+            }
             if (answer.id && answer.id != "0") {
-                return new Promise<IAnswerModel>((resolve, reject) => {                    
+                return new Promise<IAnswerModel>((resolve, reject) => {
                     AnswerSchema.findByIdAndUpdate(answer.id, answer, (err, res) => {
                         Object.assign(res, answer);
                         resolve(res);

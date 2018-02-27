@@ -6,13 +6,15 @@ var Answer = requireText('./answer/answer.gql', require);
 var Advertm = requireText('./advertm/advertm.gql', require);
 var Transaction = requireText('./transaction/transaction.gql', require);
 var UserBusiness = requireText('./userBusiness/userBusiness.gql', require);
+var TransLog = requireText('./transLog/transLog.gql', require);
 
-export const MallSchema = [ 
+export const MallSchema = [
     Business,
     GoodsType,
-    Goods,  
+    Goods,
     Answer,
     Advertm,
     Transaction,
     UserBusiness,
+    TransLog
 ];

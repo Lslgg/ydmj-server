@@ -5,6 +5,7 @@ import GoodsSchema from '../goods/goods';
 import { User } from '../../gql-system/user/resolver';
 import UserSchema from '../../gql-system/user/user';
 import UserBusinessSchema from '../userBusiness/userBusiness';
+import TransLogSchema from '../transLog/transLog';
 export class Transaction {
     constructor() {
 
@@ -62,7 +63,6 @@ export class Transaction {
                         }
                     }).catch(err => resolve(null));
                 });
-
             });
         },
 
@@ -111,77 +111,95 @@ export class Transaction {
                 }
             });
         },
-        doTransact(parent, { code }, context): Promise<Number> {
-            if (!context.user) return null;
-            return new Promise<Number>((resolve, reject) => {
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    TransactionSchema.findOne({ code: code }).then((trans) => {
-                        if (!trans || !trans.code) {
-                            resolve(-1);
-                        }
-                        var flag = false;
-                        for (var i = 0; i < info.length; i++) {
-                            if (info[i].businessId == trans.businessId) {
-                                flag = true;
-                            }
-                        }
-                        if (!flag)
-                            resolve(4);
-                        else if (trans.state == 1) {
-                            resolve(1);
-                        } else if (new Date(trans.endTime).getTime() < new Date().getTime()) {
-                            resolve(2);
-                        } else if (trans.state == 0) {
-                            trans.state = 1;
-                            TransactionSchema.findByIdAndUpdate(trans.id, trans, (err, res) => {
-                                if (res) {
-                                    resolve(3);
-                                } else {
-                                    resolve(4);
-                                }
-                            })
-                        } else {
-                            resolve(4);
-                        }
-                    });
-                });
-            });
-        },
-        isTransaction(parent, { userId, businessId, goodsId }, context) {
-            if (!context.user) return null;
-        }
     }
 
     static Mutation: any = {
-        saveTranUser(parent, { }, context) {
-            return new Promise<Boolean>(async (resolve, reject) => {
-                resolve(true);
+        async saveTransaction(parent, { userId, businessId, goodsId }, context): Promise<Boolean> {
+            var user = await UserSchema.findById(userId).then(async res => {
+                return res;
             });
-        },
-        saveTranBusiness(parent, {  }, context) {
-            var user2 = { 
-                name: "11111111",
-                username: "11111111",
-                email: "11111@qq.com",
-                password: "1111111"
-            }
-            var user = {
-                name: {name:"lslgg",age:12},
-                username: "222222",
-                email: "222222@qq.com",
-                password: "222222"
-            }
-            return new Promise<Boolean>(async (resolve, reject) => {
-                UserSchema.create(user2).then(result => {
-                    resolve(false);
-                    UserSchema.create(user).then(result => {
-                        resolve(true);
-                    }).catch(error=> reject(error))
-                }).catch(error=> reject(error))
+            var goods = await GoodsSchema.findById(goodsId).then(async res => {
+                return res;
             });
-        },
-        saveTranGoods(parent, { userId, businessId, goodsId }, context) {
+            var business = await BusinessSchema.findById(businessId).then(async res => {
+                return res;
+            });
 
+            if (!user || !goods || !business) return false;
+            if (goods.stock <= 0 || !goods.isValid || !business.isValid) return false;
+
+
+            var flag;
+            // -----------------------------------------------
+            // 用户积分减少
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "扣除用户积分" }).then(async info => {
+                return info ? true : false;
+            });
+            // 记录日志是否成功
+            if (!flag) return false;
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "扣除用户积分成功" }).then(async info => {
+                return info ? true : false;
+            });
+            // 记录日志是否成功
+            if (!flag) return false;
+            // -----------------------------------------------
+            // 商家积分增加，交易次数+1            
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商家信息" }).then(async info => {
+                return info ? true : false;
+            });
+            // 记录日志是否成功
+            if (!flag) return false;
+            var times = parseInt(business.times + '') + 1;
+            var score = parseInt(business.score + '') + parseInt(goods.score + '');
+            flag = BusinessSchema.findByIdAndUpdate(businessId, { times: times, score: score, }).then(async info => {
+                return info ? true : false;
+            });
+            // 修改商家是否成功
+            if (!flag) return false;
+
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商家信息成功，原交易次数：" + business.times + "原积分：" + business.score + "商品积分：" + goods.score }).then(async info => {
+                return info ? true : false;
+            });
+            // 记录日志是否成功
+            if (!flag) return false;
+            // -----------------------------------------------
+            // 商品库存-1，交易次数+1            
+            // 记录日志是否成功            
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商品信息" }).then(async info => {
+                return info ? true : false;
+            });
+            if (!flag) return false;
+            times = parseInt(goods.times + '') + 1;
+            var stock = parseInt(goods.stock + '') - 1;
+            flag = GoodsSchema.findByIdAndUpdate(goodsId, { times: times, stock: stock, }).then(async info => {
+                return info ? true : false;
+            });
+            if (!flag) return false;
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商品信息成功！原交易次数：" + goods.times + "原库存:" + goods.stock }).then(async info => {
+                return info ? true : false;
+            });
+            // 记录日志是否成功
+            if (!flag) return false;
+            // -----------------------------------------------
+            // 添加交易            
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "添加交易信息" }).then(async info => {
+                return info ? true : false;
+            });
+            if (!flag) return false;
+            var validTime = goods.validTime;
+            var date: Date = new Date();
+            var endTime = parseFloat(date.getTime() + '') + parseFloat(validTime + '');
+            var endDate = new Date(endTime);
+            var code = endTime.toString(16);
+            flag = await TransactionSchema.create({ code: code, goodsId: goodsId, businessId: businessId, userId: userId, state: 0, endTime: endDate }).then(info => {
+                return info ? true : false;
+            });
+            if (!flag) return false;
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "添加交易信息成功！" }).then(async info => {
+                return info ? true : false;
+            });
+            if (!flag) return false;
+            return true;
         }
     }
 }

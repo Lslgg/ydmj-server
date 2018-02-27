@@ -2,6 +2,7 @@ import GoodsTypeSchema, { IGoodsTypeModel } from './goodsType';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
 import BusinessSchema from '../business/business';
 import UserBusinessSchema from '../userBusiness/userBusiness';
+import goods from '../goods/goods';
 
 export class GoodsType {
 
@@ -75,16 +76,24 @@ export class GoodsType {
                 }
             });
         },
-
+        
         getGoodsTypeWhere(parent, { goodsType }, context) {
             // if (!context.user) return null;
             var goodsTypeInfo = GoodsTypeSchema.find(goodsType);
             return goodsTypeInfo;
         },
+        getGoodsTypeByIdIn(parent, { id }, context) {
+            // if (!context.user) return null;                        
+            var ninfo = id.split(',');                        
+            var goodsTypeInfo = GoodsTypeSchema.find({businessId:{$in:ninfo}});
+            return goodsTypeInfo;
+        },
 
         getGoodsTypeCount(parent, { goodsType }, context): Promise<Number> {
             return new Promise<Number>((resolve, reject) => {
-                if (!context.user) return null;
+                if (!context.user) {
+                    resolve(null); return;
+                };
                 // 管理员统计所有
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     var count = GoodsTypeSchema.count(goodsType);
@@ -109,21 +118,23 @@ export class GoodsType {
     }
 
     static Mutation: any = {
-        saveGoodsType(parent, { goodsType }, context): Promise<IGoodsTypeModel> {
-            return new Promise<IGoodsTypeModel>((resolve, reject) => {
-                if (!context.user) return null;
-                if (!goodsType.businessId) return null;
+        saveGoodsType(parent, { goodsType }, context): Promise<any> {
+            if (!context.user) return null;
+
+            return new Promise<any>((resolve, reject) => {
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     if (goodsType.id && goodsType.id != "0") {
                         GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType, (err, res) => {
                             Object.assign(res, goodsType);
                             resolve(res);
+                            return;
                         })
                     } else {
-                        var goodsType = GoodsTypeSchema.create(goodsType);
-                        resolve(goodsType);
+                        GoodsTypeSchema.create(goodsType).then(info => {
+                            resolve(info);
+                            return;
+                        });
                     }
-
                 } else {
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
                         var flag = false;
@@ -138,11 +149,14 @@ export class GoodsType {
                                 GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType, (err, res) => {
                                     Object.assign(res, goodsType);
                                     resolve(res);
+                                    return;
                                 })
                             } else {
-                                var goodsType = GoodsTypeSchema.create(goodsType);
-                                resolve(goodsType);
-                            }                            
+                                GoodsTypeSchema.create(goodsType).then(info => {
+                                    resolve(info);
+                                    return;
+                                });
+                            }
                         } else {
                             return null;
                         }

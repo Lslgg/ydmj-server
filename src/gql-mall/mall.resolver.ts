@@ -6,6 +6,7 @@ import { Answer } from './answer/resolver';
 import { Advertm } from './advertm/resolver';
 import { Transaction } from './transaction/resolver';
 import { UserBusiness } from './userBusiness/resolver';
+import { TransLog } from './transLog/resolver';
 
 export class MallResolver {
 
@@ -19,6 +20,7 @@ export class MallResolver {
         Advertm: Advertm.Advertm,
         Transaction: Transaction.Transaction,
         UserBusiness: UserBusiness.UserBusiness,
+        TransLog: TransLog.TransLog,
     }
 
     static Query: any = {
@@ -29,6 +31,7 @@ export class MallResolver {
         ...Advertm.Query,
         ...Transaction.Query,
         ...UserBusiness.Query,
+        ...TransLog.Query,
     }
 
     static Mutation: any = {
@@ -39,5 +42,6 @@ export class MallResolver {
         ...Advertm.Mutation,
         ...Transaction.Mutation,
         ...UserBusiness.Mutation,
+        ...TransLog.Mutation,
     }
 }

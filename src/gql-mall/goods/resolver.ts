@@ -95,13 +95,13 @@ export class Goods {
             if (!context.user) return null;
             return new Promise<any>((resolve, reject) => {
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
-
                     if (goods.id && goods.id != "0") {
                         GoodsSchema.findByIdAndUpdate(goods.id, goods, (err, res) => {
                             Object.assign(res, goods);
                             resolve(res);
                         });
-                    } else {                        
+                    } else {        
+                        goods.times = 0;                
                         GoodsSchema.create(goods).then((info) => {
                             resolve(info);
                         });                        
@@ -121,6 +121,7 @@ export class Goods {
                                     resolve(res);
                                 });
                             } else {
+                                goods.times = 0;
                                 GoodsSchema.create(goods).then((info) => {
                                     resolve(info);
                                 });   

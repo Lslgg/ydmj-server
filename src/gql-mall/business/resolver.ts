@@ -50,27 +50,27 @@ export class Business {
         },
         getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
             // 查找当前用户商家       
-            if (context.user) return null;
+            if (!context.user) return null;
 
-			let promise = new Promise<IBusinessModel>((resolve, reject) => {
-				BusinessSchema.findById(id).then((res) => {
-					resolve(res);
-				}).catch(err => resolve(null));
-			});
-			return promise;
+            let promise = new Promise<IBusinessModel>((resolve, reject) => {
+                BusinessSchema.findById(id).then((res) => {
+                    resolve(res);
+                }).catch(err => resolve(null));
+            });
+            return promise;
 
         },
 
-        getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context): Promise<Array<IBusinessModel>> {
-            return new Promise<Array<IBusinessModel>>((resolve, reject) => {
-                if (context.user) resolve(null);
+        getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context): Promise<Array<IBusinessModel>> {            
+            if (!context.user) return null;
+            return new Promise<Array<IBusinessModel>>((resolve, reject) => {                
                 var skip = (pageIndex - 1) * pageSize;
-                // 管理员返回所有商家
-                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
-                    BusinessSchema.find(business).skip(skip).limit(pageSize).then((businessList) => {
+                // 管理员返回所有商家              
+                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {                    
+                    BusinessSchema.find(business).skip(skip).limit(pageSize).then((businessList) => {                        
                         resolve(businessList);
                     });
-                } else {
+                } else {                    
                     // 普通商家只返回自己的商家
                     UserBusinessSchema.find({ userId: context.user._id }).skip(skip).limit(pageSize).then((info) => {
                         var businessIdList: Array<String> = [];
@@ -83,11 +83,11 @@ export class Business {
                         });
                     });
                 }
-            });
+            });            
         },
 
         getBusinessWhere(parent, { business }, context) {
-            if (context.user) return null;
+            if (!context.user) return null;
             return BusinessSchema.find(business).then(info => {
                 return info;
             });
@@ -97,7 +97,7 @@ export class Business {
         getBusinessCount(parent, { business }, context): Promise<Number> {
 
             return new Promise<Number>((resolve, reject) => {
-                if (context.user) resolve(null);
+                if (!context.user) resolve(null);
                 // 管理员统计所有                            
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     var count = BusinessSchema.count(business);
@@ -137,7 +137,7 @@ export class Business {
                     BusinessSchema.create(business).then((info) => {
                         resolve(info);
                     });
-                    
+
                 } else {
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
                         var flag = false;

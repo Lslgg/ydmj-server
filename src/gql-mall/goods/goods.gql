@@ -9,7 +9,7 @@ type Goods {
     explain:String
     stock:Int
     times:Int
-    validTime:Int
+    validTime:Float
     isValid:Boolean
     updateAt:Date
     createAt:Date
@@ -45,7 +45,7 @@ input inputGoods {
     explain:String
     stock:Int
     times:Int
-    validTime:Int
+    validTime:Float
     isValid:Boolean
     updateAt:Date
     createAt:Date
