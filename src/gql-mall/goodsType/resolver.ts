@@ -18,13 +18,14 @@ export class GoodsType {
 
     static Query: any = {
         getGoodsType(parent, { }, context): Promise<Array<IGoodsTypeModel>> {
-            return new Promise<Array<IGoodsTypeModel>>((resolve, reject) => {
-                if (!context.user) resolve(null);
+            if (!context.user) return null;
+            return new Promise<Array<IGoodsTypeModel>>((resolve, reject) => {                
                 // 管理员返回所有
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     GoodsTypeSchema.find().then(res => {
                         resolve(res);
-                    }).catch(err => { resolve(err); });
+                        return;
+                    }).catch(err => { resolve(err);return; });
                 } else {
                     // 商家返回自己的类别
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
@@ -32,7 +33,7 @@ export class GoodsType {
                         for (var i = 0; i < info.length; i++) {
                             businessIdList.push(info[i].businessId);
                         }
-                        GoodsTypeSchema.find({ businessId: { $in: businessIdList } }).then(res => {
+                        GoodsTypeSchema.find({ businessId: { $in : businessIdList } }).then(res => {
                             resolve(res);
                         }).catch(err => { resolve(err); });
                     });
@@ -44,21 +45,22 @@ export class GoodsType {
 
             let promise = new Promise<IGoodsTypeModel>((resolve, reject) => {
                 GoodsTypeSchema.findById(id).then(res => {
-                    resolve(res);
-                }).catch(err => resolve(null));
+                    resolve(res);return;
+                }).catch(err => { resolve(null);return;});
             });
             return promise;
         },
 
         getGoodsTypePage(parent, { pageIndex = 1, pageSize = 10, goodsType }, context) {
-            return new Promise<Array<IGoodsTypeModel>>((resolve, reject) => {
-                if (!context.user) resolve(null);
+            if (!context.user) return null;
+            return new Promise<Array<IGoodsTypeModel>>((resolve, reject) => {                
                 var skip = (pageIndex - 1) * pageSize;
                 // 管理员返回所有
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     GoodsTypeSchema.find(goodsType).skip(skip).limit(pageSize).then(res => {
                         resolve(res);
-                    }).catch(err => { resolve(err); });
+                        return;
+                    }).catch(err => { resolve(err); return;});
                 } else {
                     // 商家返回自己的类别
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
@@ -71,25 +73,27 @@ export class GoodsType {
                         }
                         GoodsTypeSchema.find(goodsType).skip(skip).limit(pageSize).then(res => {
                             resolve(res);
-                        }).catch(err => { resolve(err); });
+                            return;
+                        }).catch(err => { resolve(err);return; });
                     });
                 }
             });
         },
         
         getGoodsTypeWhere(parent, { goodsType }, context) {
-            // if (!context.user) return null;
+            if (!context.user) return null;
             var goodsTypeInfo = GoodsTypeSchema.find(goodsType);
             return goodsTypeInfo;
         },
         getGoodsTypeByIdIn(parent, { id }, context) {
-            // if (!context.user) return null;                        
+            if (!context.user) return null;                        
             var ninfo = id.split(',');                        
             var goodsTypeInfo = GoodsTypeSchema.find({businessId:{$in:ninfo}});
             return goodsTypeInfo;
         },
 
         getGoodsTypeCount(parent, { goodsType }, context): Promise<Number> {
+            if (!context.user) return null;
             return new Promise<Number>((resolve, reject) => {
                 if (!context.user) {
                     resolve(null); return;
@@ -98,6 +102,7 @@ export class GoodsType {
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     var count = GoodsTypeSchema.count(goodsType);
                     resolve(count);
+                    return;
                 } else {
                     // 商家统计自己的
                     GoodsTypeSchema.find({ userId: context.user._id }).then((info) => {
@@ -110,6 +115,7 @@ export class GoodsType {
                         }
                         var count = GoodsTypeSchema.count(goodsType);
                         resolve(count);
+                        return;
                     });
                 }
             });
@@ -165,13 +171,13 @@ export class GoodsType {
             });
         },
         deleteGoodsType(parent, { id }, context): Promise<Boolean> {
-            return new Promise<Boolean>((resolve, reject) => {
-                if (!context.user) resolve(null);
-
+            if (!context.user) return null;
+            return new Promise<Boolean>((resolve, reject) => {            
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     GoodsTypeSchema.findByIdAndRemove(id, (err, res) => {
                         resolve(res != null);
-                    }).catch(err => { resolve(err); });
+                        return;
+                    }).catch(err => { resolve(err); return;});
                 } else {
                     GoodsTypeSchema.findById(id).then((goodstype) => {
                         UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
@@ -184,7 +190,8 @@ export class GoodsType {
                             if (flag) {
                                 GoodsTypeSchema.findByIdAndRemove(id, (err, res) => {
                                     resolve(res != null);
-                                }).catch(err => { resolve(err); });
+                                    return;
+                                }).catch(err => { resolve(err); return;});
                             } else {
                                 resolve(false);
                             }

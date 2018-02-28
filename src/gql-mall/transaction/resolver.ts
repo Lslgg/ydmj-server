@@ -25,11 +25,12 @@ export class Transaction {
 
     static Query: any = {
         getTransaction(parent, { }, context): Promise<Array<ITransactionModel>> {
-            return new Promise<Array<ITransactionModel>>((resolve, reject) => {
-                if (!context.user) return null;
+            if (!context.user) return null;
+            return new Promise<Array<ITransactionModel>>((resolve, reject) => {                
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     TransactionSchema.find().then(res => {
                         resolve(res);
+                        return;
                     }).catch(err => resolve(null));
                 } else {
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
@@ -39,31 +40,33 @@ export class Transaction {
                         }
                         TransactionSchema.find({ business: { $in: businessIdList } }).then(res => {
                             resolve(res);
+                            return;
                         }).catch(err => { resolve(err); });
                     });
                 }
             });
         },
         getTransactionById(parent, { id }, context): Promise<ITransactionModel> {
-            if (!context.user) return null;
+            return; 
+            // if (!context.user) return null;
 
-            return new Promise<ITransactionModel>((resolve, reject) => {
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    TransactionSchema.findById(id).then(res => {
-                        var flag = false;
-                        for (var i = 0; i < info.length; i++) {
-                            if (info[i].businessId == res.businessId) {
-                                flag = true;
-                            }
-                        }
-                        if (flag) {
-                            resolve(res);
-                        } else {
-                            resolve(null);
-                        }
-                    }).catch(err => resolve(null));
-                });
-            });
+            // return new Promise<ITransactionModel>((resolve, reject) => {
+            //     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+            //         TransactionSchema.findById(id).then(res => {
+            //             var flag = false;
+            //             for (var i = 0; i < info.length; i++) {
+            //                 if (info[i].businessId == res.businessId) {
+            //                     flag = true;
+            //                 }
+            //             }
+            //             if (flag) {
+            //                 resolve(res);
+            //             } else {
+            //                 resolve(null);
+            //             }
+            //         }).catch(err => resolve(null));
+            //     });
+            // });
         },
 
         getTransactionPage(parent, { pageIndex = 1, pageSize = 10, transaction }, context): Promise<Array<ITransactionModel>> {
@@ -73,7 +76,8 @@ export class Transaction {
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     TransactionSchema.find(transaction).skip(skip).limit(pageSize).then(res => {
                         resolve(res);
-                    }).catch(err => { resolve(err); });
+                        return;
+                    }).catch(err => { resolve(err); return;});
                 } else {
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
                         var businessIdList: Array<String> = [];
@@ -85,7 +89,8 @@ export class Transaction {
                         }
                         TransactionSchema.find({ business: { $in: businessIdList } }).skip(skip).limit(pageSize).then(res => {
                             resolve(res);
-                        }).catch(err => { resolve(err); });
+                            return;
+                        }).catch(err => { resolve(err); return;});
                     });
                 }
             });
@@ -96,6 +101,7 @@ export class Transaction {
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     var count = TransactionSchema.count(transaction);
                     resolve(count);
+                    return;
                 } else {
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
                         var businessIdList: Array<String> = [];
@@ -107,6 +113,7 @@ export class Transaction {
                         }
                         var count = TransactionSchema.count(transaction);
                         resolve(count);
+                        return;
                     });
                 }
             });

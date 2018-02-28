@@ -21,11 +21,12 @@ export class Goods {
 
     static Query: any = {
         getGoods(parent, { }, context): Promise<Array<IGoodsModel>> {
-            return new Promise<Array<IGoodsModel>>((resolve, reject) => {
-                if (!context.user) resolve(null);
+            if (!context.user) return null;
+            return new Promise<Array<IGoodsModel>>((resolve, reject) => {                
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     GoodsSchema.find().then(res => {
                         resolve(res);
+                        return;
                     }).catch(err => { resolve(null); });
                 } else {
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
@@ -35,6 +36,7 @@ export class Goods {
                         }
                         GoodsSchema.find({ businessId: { $in: businessIdList } }).then(res => {
                             resolve(res);
+                            return;
                         }).catch(err => { resolve(null) });
                     });
                 }
@@ -46,19 +48,21 @@ export class Goods {
             let promise = new Promise<IGoodsModel>((resolve, reject) => {
                 GoodsSchema.findById(id).then(res => {
                     resolve(res);
+                    return;
                 }).catch(err => resolve(null));
             });
             return promise;
         },
 
         getGoodsPage(parent, { pageIndex = 1, pageSize = 10, goods }, context): Promise<Array<IGoodsModel>> {
-            return new Promise<Array<IGoodsModel>>((resolve, reject) => {
-                if (!context.user) resolve(null);
-                var skip = (pageIndex - 1) * pageSize
+            if (!context.user) return null;
+            return new Promise<Array<IGoodsModel>>((resolve, reject) => {                
+                var skip = (pageIndex - 1) * pageSize;
 
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     GoodsSchema.find(goods).skip(skip).limit(pageSize).then((goodsInfo) => {
                         resolve(goodsInfo);
+                        return;
                     });                    
                 } else {
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
@@ -71,6 +75,7 @@ export class Goods {
                         }
                         GoodsSchema.find(goods).skip(skip).limit(pageSize).then((goodsInfo) => {
                             resolve(goodsInfo);
+                            return;
                         });
                     });
                 }
@@ -99,11 +104,13 @@ export class Goods {
                         GoodsSchema.findByIdAndUpdate(goods.id, goods, (err, res) => {
                             Object.assign(res, goods);
                             resolve(res);
+                            return;
                         });
                     } else {        
                         goods.times = 0;                
                         GoodsSchema.create(goods).then((info) => {
                             resolve(info);
+                            return;
                         });                        
                     }
                 } else {
@@ -119,15 +126,18 @@ export class Goods {
                                 GoodsSchema.findByIdAndUpdate(goods.id, goods, (err, res) => {
                                     Object.assign(res, goods);
                                     resolve(res);
+                                    return;
                                 });
                             } else {
                                 goods.times = 0;
                                 GoodsSchema.create(goods).then((info) => {
                                     resolve(info);
+                                    return;
                                 });   
                             }
                         } else {
                             resolve(null);
+                            return;
                         }
                     });
                 }
@@ -139,7 +149,8 @@ export class Goods {
                 if (!context.user) resolve(null);
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     GoodsSchema.findByIdAndRemove(id, (err, res) => {
-                        resolve(res != null)
+                        resolve(res != null);
+                        return;
                     }).catch(err => reject(err));
                 } else {
                     var flag = false;
@@ -152,10 +163,12 @@ export class Goods {
                             }
                             if (flag) {
                                 GoodsSchema.findByIdAndRemove(id, (err, res) => {
-                                    resolve(res != null)
+                                    resolve(res != null);
+                                    return;
                                 }).catch(err => reject(err));
                             } else {
                                 resolve(false);
+                                return;
                             }
                         });
                     });

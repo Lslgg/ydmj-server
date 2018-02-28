@@ -26,12 +26,14 @@ export class Business {
 
     static Query: any = {
         getBusiness(parent, { }, context): Promise<Array<IBusinessModel>> {
+            if (!context.user) return null;
             // 管理员返回所有商家
             return new Promise<Array<IBusinessModel>>((resolve, reject) => {
                 if (!context.user) resolve(null);
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     BusinessSchema.find().then((businessList) => {
                         resolve(businessList);
+                        return;
                     });
                 } else {
                     // 普通商家只返回自己的商家
@@ -42,6 +44,7 @@ export class Business {
                         }
                         BusinessSchema.find({ _id: { $in: businessIdList } }).then(info => {
                             resolve(info);
+                            return;
                         });
                     });
                 }
@@ -55,6 +58,7 @@ export class Business {
             let promise = new Promise<IBusinessModel>((resolve, reject) => {
                 BusinessSchema.findById(id).then((res) => {
                     resolve(res);
+                    return;
                 }).catch(err => resolve(null));
             });
             return promise;
@@ -69,6 +73,7 @@ export class Business {
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {                    
                     BusinessSchema.find(business).skip(skip).limit(pageSize).then((businessList) => {                        
                         resolve(businessList);
+                        return;
                     });
                 } else {                    
                     // 普通商家只返回自己的商家
@@ -80,6 +85,7 @@ export class Business {
                         business._id = businessIdList;
                         BusinessSchema.find(business).then(info => {
                             resolve(info);
+                            return;
                         });
                     });
                 }
@@ -102,6 +108,7 @@ export class Business {
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     var count = BusinessSchema.count(business);
                     resolve(count);
+                    return;
                 } else {
                     // 非管理员统计自己的商家
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
@@ -112,6 +119,7 @@ export class Business {
                         business._id = businessIdList;
                         var count = BusinessSchema.count(business);
                         resolve(count);
+                        return;
                     });
                 }
             });
@@ -130,12 +138,14 @@ export class Business {
                         BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
                             Object.assign(res, business);
                             resolve(res);
+                            return;
                         });
                     }
                     business.times = 0;
                     business.score = 0;
                     BusinessSchema.create(business).then((info) => {
                         resolve(info);
+                        return;
                     });
 
                 } else {
@@ -151,12 +161,15 @@ export class Business {
                                 BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
                                     Object.assign(res, business);
                                     resolve(res);
+                                    return;
                                 });
                             } else {
                                 resolve(null);
+                                return;
                             }
                         } else {
                             resolve(null);
+                            return;
                         }
                     });
                 }

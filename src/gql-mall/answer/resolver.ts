@@ -12,6 +12,7 @@ export class Answer {
             let promise = new Promise<Array<IAnswerModel>>((resolve, reject) => {
                 AnswerSchema.find().then(res => {
                     resolve(res);
+                    return;
                 }).catch(err => resolve(null));
             })
             return promise;
@@ -22,6 +23,7 @@ export class Answer {
             let promise = new Promise<IAnswerModel>((resolve, reject) => {
                 AnswerSchema.findById(id).then(res => {
                     resolve(res);
+                    return;
                 }).catch(err => resolve(null));
             });
             return promise;
@@ -58,6 +60,7 @@ export class Answer {
                     AnswerSchema.findByIdAndUpdate(answer.id, answer, (err, res) => {
                         Object.assign(res, answer);
                         resolve(res);
+                        return;
                     })
                 });
             }
@@ -70,7 +73,8 @@ export class Answer {
             }
             let promise = new Promise<Boolean>((resolve, reject) => {
                 AnswerSchema.findByIdAndRemove(id, (err, res) => {
-                    resolve(res != null)
+                    resolve(res != null);
+                    return;
                 }).catch(err => reject(err));
             });
             return promise;

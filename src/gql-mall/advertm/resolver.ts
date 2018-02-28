@@ -25,6 +25,7 @@ export class Advertm {
             let promise = new Promise<Array<IAdvertmModel>>((resolve, reject) => {
                 AdvertmSchema.find().then(res => {
                     resolve(res);
+                    return;
                 }).catch(err => resolve(null));
             })
             return promise;
@@ -35,6 +36,7 @@ export class Advertm {
             let promise = new Promise<IAdvertmModel>((resolve, reject) => {
                 AdvertmSchema.findById(id).then(res => {
                     resolve(res);
+                    return;
                 }).catch(err => resolve(null));
             });
             return promise;
@@ -71,6 +73,7 @@ export class Advertm {
                     AdvertmSchema.findByIdAndUpdate(advertm.id, advertm, (err, res) => {
                         Object.assign(res, advertm);
                         resolve(res);
+                        return;
                     })
                 });
             }
@@ -83,7 +86,8 @@ export class Advertm {
             }
             let promise = new Promise<Boolean>((resolve, reject) => {
                 AdvertmSchema.findByIdAndRemove(id, (err, res) => {
-                    resolve(res != null)
+                    resolve(res != null);
+                    return;
                 }).catch(err => reject(err));
             });
             return promise;

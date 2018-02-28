@@ -24,14 +24,16 @@ export class TransLog {
 
     static Query: any = {
         getTransLog(parent, { }, context): Promise<Array<ITransLogModel>> {
-            return new Promise<Array<ITransLogModel>>((resolve, reject) => {
-                if (!context.user) return null;
+            if (!context.user) return null;
+            return new Promise<Array<ITransLogModel>>((resolve, reject) => {                
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     TransLogSchema.find().then(res => {
                         resolve(res);
-                    }).catch(err => resolve(null));
+                        return;
+                    }).catch(err => {resolve(null);return;});
                 } else {
                     resolve(null);
+                    return;
                 }
             });
         },
@@ -41,8 +43,10 @@ export class TransLog {
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     var count = TransLogSchema.count(transLog);
                     resolve(count);
+                    return;
                 } else {
                     resolve(null);
+                    return;
                 }
             });
         },
@@ -53,6 +57,7 @@ export class TransLog {
             return new Promise((resolve, reject) => {
                 TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: info }).then((info) => {
                     resolve(info);
+                    return;
                 });
             });
 
