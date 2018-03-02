@@ -22,6 +22,7 @@ extend type Query{
     getTransactionCount(transaction:searchTransaction):Int
     # 根据条件查找
     # getTransactionWhere(transaction:searchTransaction): [Transaction]         
+    doTransact(code:String):Int
 }
 
 extend type Mutation{

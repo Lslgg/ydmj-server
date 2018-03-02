@@ -6,6 +6,8 @@ import { User } from '../../gql-system/user/resolver';
 import UserSchema from '../../gql-system/user/user';
 import UserBusinessSchema from '../userBusiness/userBusiness';
 import TransLogSchema from '../transLog/transLog';
+import { resolve } from 'dns';
+import { reject } from 'bluebird';
 export class Transaction {
     constructor() {
 
@@ -26,7 +28,7 @@ export class Transaction {
     static Query: any = {
         getTransaction(parent, { }, context): Promise<Array<ITransactionModel>> {
             if (!context.user) return null;
-            return new Promise<Array<ITransactionModel>>((resolve, reject) => {                
+            return new Promise<Array<ITransactionModel>>((resolve, reject) => {
                 if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
                     TransactionSchema.find().then(res => {
                         resolve(res);
@@ -47,7 +49,7 @@ export class Transaction {
             });
         },
         getTransactionById(parent, { id }, context): Promise<ITransactionModel> {
-            return; 
+            return;
             // if (!context.user) return null;
 
             // return new Promise<ITransactionModel>((resolve, reject) => {
@@ -77,7 +79,7 @@ export class Transaction {
                     TransactionSchema.find(transaction).skip(skip).limit(pageSize).then(res => {
                         resolve(res);
                         return;
-                    }).catch(err => { resolve(err); return;});
+                    }).catch(err => { resolve(err); return; });
                 } else {
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
                         var businessIdList: Array<String> = [];
@@ -90,7 +92,7 @@ export class Transaction {
                         TransactionSchema.find({ business: { $in: businessIdList } }).skip(skip).limit(pageSize).then(res => {
                             resolve(res);
                             return;
-                        }).catch(err => { resolve(err); return;});
+                        }).catch(err => { resolve(err); return; });
                     });
                 }
             });
@@ -118,10 +120,36 @@ export class Transaction {
                 }
             });
         },
+        doTransact(parent, { code }, context): Promise<Number> {
+            if (!context.user) return null;
+            return new Promise<Number>((resolve, reject) => {
+                TransactionSchema.find({ code: code }).then(info => {
+                    if (!info || !info[0]) { resolve(-1); return; }
+                    if (info[0].state == 1) { resolve(1); return; }
+                    var endTime = info[0].endTime.getTime();
+                    var crTime = new Date().getTime();
+                    if (endTime > crTime) { resolve(2); return; }
+                    info[0].state = 1;
+                    var flag;
+                    TransactionSchema.findByIdAndUpdate(info[0].id, info[0]).then(info => {
+                        if (info) {
+                            resolve(3);
+                            return;
+                        } else {
+                            resolve(4);
+                            return;
+                        }
+                    });
+                });
+            });
+
+        },
     }
 
     static Mutation: any = {
+
         async saveTransaction(parent, { userId, businessId, goodsId }, context): Promise<Boolean> {
+            if (!context.user) return null;
             var user = await UserSchema.findById(userId).then(async res => {
                 return res;
             });
