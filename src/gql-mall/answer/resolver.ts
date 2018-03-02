@@ -1,5 +1,6 @@
 import AnswerSchema, { IAnswerModel } from './answer';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
+import { resolve, reject } from 'bluebird';
 export class Answer {
     constructor() {
 
@@ -29,48 +30,56 @@ export class Answer {
             return promise;
         },
 
-        getAnswerPage(parent, { pageIndex = 1, pageSize = 10, answer }, context) {
+        getAnswerPage(parent, { pageIndex = 1, pageSize = 10, answer }, context): Promise<IAnswerModel[]> {
             if (!context.user) return null;
-            var skip = (pageIndex - 1) * pageSize
-            var advertmInfo = AnswerSchema.find(answer).skip(skip).limit(pageSize)
-            return advertmInfo;
+            return new Promise<IAnswerModel[]>((resolve, reject) => {
+                var skip = (pageIndex - 1) * pageSize
+                var advertmInfo = AnswerSchema.find(answer).skip(skip).limit(pageSize)
+                resolve(advertmInfo);
+                return;
+            });
         },
 
-        getAnswerWhere(parent, { answer }, context) {
+        getAnswerWhere(parent, { answer }, context): Promise<IAnswerModel[]> {
             if (!context.user) return null;
-            var answers = AnswerSchema.find(answer);
-            return answers;
+            return new Promise<IAnswerModel[]>((resolve, reject) => {
+                var answers = AnswerSchema.find(answer);
+                resolve(answer);
+                return;
+            });
         },
 
-        getAnswerCount(parent, { answer }, context) {
-            if (!context.user) return 0;
-            var count = AnswerSchema.count(answer);
-            return count;
+        getAnswerCount(parent, { answer }, context): Promise<Number> {
+            if (!context.user) return null;
+            return new Promise<Number>((resolve, reject) => {
+                var count = AnswerSchema.count(answer);
+                resolve(count);
+                return;
+            });
         },
     }
 
     static Mutation: any = {
-        saveAnswer(parent, { answer }, context) {
-            if (!context.user) return null;
-            if (context.user.roleId != '5a0d0122c61a4b1b30171148') {
-                return null;
-            }            
-            if (answer.id && answer.id != "0") {
-                return new Promise<IAnswerModel>((resolve, reject) => {                    
+        saveAnswer(parent, { answer }, context): Promise<any> {
+            if (!context.user || !context.session.isManger) return null;
+
+            return new Promise<any>((resolve, reject) => {
+                if (answer.id && answer.id != "0") {
                     AnswerSchema.findByIdAndUpdate(answer.id, answer, (err, res) => {
                         Object.assign(res, answer);
                         resolve(res);
                         return;
                     })
+                    return;
+                }
+                AnswerSchema.create(answer).then(info => {
+                    resolve(info);
+                    return;
                 });
-            }
-            return AnswerSchema.create(answer);
+            });
         },
         deleteAnswer(parent, { id }, context): Promise<Boolean> {
-            if (!context.user) return null;
-            if (context.user.roleId != '5a0d0122c61a4b1b30171148') {
-                return null;
-            }
+            if (!context.user || !context.session.isManger) return null;
             let promise = new Promise<Boolean>((resolve, reject) => {
                 AnswerSchema.findByIdAndRemove(id, (err, res) => {
                     resolve(res != null);

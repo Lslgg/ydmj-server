@@ -14,6 +14,8 @@ type Role {
 	updateAt: Date
 	# 权限
 	Powers(limit: Int = 100): [Power]
+	# 是否管理员
+	isDefault:Boolean
 }
 
 extend type Query {
@@ -52,13 +54,15 @@ input inputRole {
 	desc: String
 	code:String
 	isValid: Boolean
+	isDefault:Boolean
 }
 
 input inputRolePower {
 	roleId: String
-	powerId: String
+	powerId: String	
 }
 
 input searchRole {
 	roleName: Json
+	isDefault:Json
 }

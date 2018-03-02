@@ -29,12 +29,12 @@ export class Business {
             if (!context.user) return null;
             // 管理员返回所有商家
             return new Promise<Array<IBusinessModel>>((resolve, reject) => {
-                if (!context.user) resolve(null);
-                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                if (context.session.isManger) {
                     BusinessSchema.find().then((businessList) => {
                         resolve(businessList);
                         return;
                     });
+                    return;
                 } else {
                     // 普通商家只返回自己的商家
                     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
@@ -65,17 +65,18 @@ export class Business {
 
         },
 
-        getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context): Promise<Array<IBusinessModel>> {            
+        getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context): Promise<IBusinessModel[]> {
             if (!context.user) return null;
-            return new Promise<Array<IBusinessModel>>((resolve, reject) => {                
+            return new Promise<IBusinessModel[]>((resolve, reject) => {
                 var skip = (pageIndex - 1) * pageSize;
                 // 管理员返回所有商家              
-                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {                    
-                    BusinessSchema.find(business).skip(skip).limit(pageSize).then((businessList) => {                        
+                if (context.session.isManger) {
+                    BusinessSchema.find(business).skip(skip).limit(pageSize).then((businessList) => {
                         resolve(businessList);
                         return;
                     });
-                } else {                    
+                    return;
+                } else {
                     // 普通商家只返回自己的商家
                     UserBusinessSchema.find({ userId: context.user._id }).skip(skip).limit(pageSize).then((info) => {
                         var businessIdList: Array<String> = [];
@@ -89,15 +90,17 @@ export class Business {
                         });
                     });
                 }
-            });            
+            });
         },
 
-        getBusinessWhere(parent, { business }, context) {
+        getBusinessWhere(parent, { business }, context): Promise<IBusinessModel[]> {
             if (!context.user) return null;
-            return BusinessSchema.find(business).then(info => {
-                return info;
+            return new Promise<IBusinessModel[]>((resolve, reject) => {
+                BusinessSchema.find(business).then(info => {
+                    resolve(info);
+                    return;
+                });
             });
-
         },
 
         getBusinessCount(parent, { business }, context): Promise<Number> {
@@ -105,7 +108,7 @@ export class Business {
             return new Promise<Number>((resolve, reject) => {
                 if (!context.user) resolve(null);
                 // 管理员统计所有                            
-                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                if (context.session.isManger) {
                     var count = BusinessSchema.count(business);
                     resolve(count);
                     return;
@@ -123,9 +126,6 @@ export class Business {
                     });
                 }
             });
-
-
-
         },
     }
 
@@ -133,13 +133,14 @@ export class Business {
         saveBusiness(parent, { business }, context): Promise<any> {
             if (!context.user) return null;
             return new Promise<any>((resolve, reject) => {
-                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                if (context.session.isManger) {
                     if (business.id && business.id != "0") {
                         BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
                             Object.assign(res, business);
                             resolve(res);
                             return;
                         });
+                        return;
                     }
                     business.times = 0;
                     business.score = 0;
@@ -147,43 +148,41 @@ export class Business {
                         resolve(info);
                         return;
                     });
-
-                } else {
-                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                        var flag = false;
-                        for (var i = 0; i < info.length; i++) {
-                            if (info[i].businessId == business.id) {
-                                flag = true;
-                            }
-                        }
-                        if (flag) {
-                            if (business.id && business.id != "0") {
-                                BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
-                                    Object.assign(res, business);
-                                    resolve(res);
-                                    return;
-                                });
-                            } else {
-                                resolve(null);
-                                return;
-                            }
-                        } else {
-                            resolve(null);
-                            return;
-                        }
-                    });
+                    return;
                 }
+                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                    var flag = false;
+                    for (var i = 0; i < info.length; i++) {
+                        if (info[i].businessId == business.id) {
+                            flag = true;
+                        }
+                    }
+                    if (!flag) {
+                        resolve(null);
+                        return;
+                    }
+                    if (business.id && business.id != "0") {
+                        BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
+                            Object.assign(res, business);
+                            resolve(res);
+                            return;
+                        });
+                        return;
+                    }                    
+                });
             });
         },
-        deleteBusiness(parent, { id }, context) {
-            if (!context.user) return null;
-            // 非管理员不能使用删除商家
-            if (context.user.roleId != '5a0d0122c61a4b1b30171148') return null;
-            return BusinessSchema.findByIdAndRemove(id, (err, res) => {
-                return res;
-            }).catch(err => {
-                return err;
-            });
+        deleteBusiness(parent, { id }, context):Promise<Boolean> {
+            if (!context.user || !context.session.isManger) return null;
+            return new Promise<Boolean>((resolve,reject) => {
+                BusinessSchema.findByIdAndRemove(id, (err, res) => {
+                    resolve(res != null);
+                    return;
+                }).catch(err => {
+                    resolve(err);
+                    return;
+                });
+            });            
         }
     }
 }

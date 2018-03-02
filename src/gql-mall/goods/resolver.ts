@@ -22,24 +22,25 @@ export class Goods {
     static Query: any = {
         getGoods(parent, { }, context): Promise<Array<IGoodsModel>> {
             if (!context.user) return null;
-            return new Promise<Array<IGoodsModel>>((resolve, reject) => {                
-                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+            return new Promise<Array<IGoodsModel>>((resolve, reject) => {
+                if (context.session.isManger) {
                     GoodsSchema.find().then(res => {
                         resolve(res);
                         return;
                     }).catch(err => { resolve(null); });
-                } else {
-                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                        var businessIdList: Array<String> = [];
-                        for (var i = 0; i < info.length; i++) {
-                            businessIdList.push(info[i].businessId);
-                        }
-                        GoodsSchema.find({ businessId: { $in: businessIdList } }).then(res => {
-                            resolve(res);
-                            return;
-                        }).catch(err => { resolve(null) });
-                    });
+                    return;
                 }
+                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                    var businessIdList: Array<String> = [];
+                    for (var i = 0; i < info.length; i++) {
+                        businessIdList.push(info[i].businessId);
+                    }
+                    GoodsSchema.find({ businessId: { $in: businessIdList } }).then(res => {
+                        resolve(res);
+                        return;
+                    }).catch(err => { resolve(null) });
+                });
+
             });
         },
         getGoodsById(parent, { id }, context): Promise<IGoodsModel> {
@@ -54,44 +55,50 @@ export class Goods {
             return promise;
         },
 
-        getGoodsPage(parent, { pageIndex = 1, pageSize = 10, goods }, context): Promise<Array<IGoodsModel>> {
+        getGoodsPage(parent, { pageIndex = 1, pageSize = 10, goods }, context): Promise<IGoodsModel[]> {
             if (!context.user) return null;
-            return new Promise<Array<IGoodsModel>>((resolve, reject) => {                
+            return new Promise<IGoodsModel[]>((resolve, reject) => {
                 var skip = (pageIndex - 1) * pageSize;
 
-                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                if (context.session.isManger) {
                     GoodsSchema.find(goods).skip(skip).limit(pageSize).then((goodsInfo) => {
                         resolve(goodsInfo);
                         return;
-                    });                    
-                } else {
-                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                        var businessIdList: Array<String> = [];
-                        for (var i = 0; i < info.length; i++) {
-                            businessIdList.push(info[i].businessId);
-                        }
-                        if (!goods.businessId) {
-                            goods.businessId = businessIdList;
-                        }
-                        GoodsSchema.find(goods).skip(skip).limit(pageSize).then((goodsInfo) => {
-                            resolve(goodsInfo);
-                            return;
-                        });
                     });
+                    return;
                 }
+                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                    var businessIdList: Array<String> = [];
+                    for (var i = 0; i < info.length; i++) {
+                        businessIdList.push(info[i].businessId);
+                    }
+                    if (!goods.businessId) {
+                        goods.businessId = businessIdList;
+                    }
+                    GoodsSchema.find(goods).skip(skip).limit(pageSize).then((goodsInfo) => {
+                        resolve(goodsInfo);
+                        return;
+                    });
+                });
             });
         },
 
-        getGoodsWhere(parent, { goods }, context) {
+        getGoodsWhere(parent, { goods }, context): Promise<IGoodsModel[]> {
             if (!context.user) return null;
-            var goodsInfo = GoodsSchema.find(goods);
-            return goodsInfo;
+            return new Promise<IGoodsModel[]>((resolve, reject) => {
+                var goodsInfo = GoodsSchema.find(goods);
+                resolve(goodsInfo);
+                return;
+            });
         },
 
-        getGoodsCount(parent, { goods }, context) {
-            if (!context.user) return 0;
-            var count = GoodsSchema.count(goods);
-            return count;
+        getGoodsCount(parent, { goods }, context): Promise<Number> {
+            if (!context.user) return null;
+            return new Promise<Number>((resolve, reject) => {
+                var count = GoodsSchema.count(goods);
+                resolve(count);
+                return;
+            });
         },
     }
 
@@ -99,80 +106,77 @@ export class Goods {
         saveGoods(parent, { goods }, context): Promise<any> {
             if (!context.user) return null;
             return new Promise<any>((resolve, reject) => {
-                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                if (context.session.isManger) {
                     if (goods.id && goods.id != "0") {
                         GoodsSchema.findByIdAndUpdate(goods.id, goods, (err, res) => {
                             Object.assign(res, goods);
                             resolve(res);
                             return;
                         });
-                    } else {        
-                        goods.times = 0;                
-                        GoodsSchema.create(goods).then((info) => {
-                            resolve(info);
-                            return;
-                        });                        
+                        return;
                     }
-                } else {
-                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                        var flag = false;
-                        for (var i = 0; i < info.length; i++) {
-                            if (info[i].businessId == goods.businessId) {
-                                flag = true;
-                            }
-                        }
-                        if (flag) {
-                            if (goods.id && goods.id != "0") {
-                                GoodsSchema.findByIdAndUpdate(goods.id, goods, (err, res) => {
-                                    Object.assign(res, goods);
-                                    resolve(res);
-                                    return;
-                                });
-                            } else {
-                                goods.times = 0;
-                                GoodsSchema.create(goods).then((info) => {
-                                    resolve(info);
-                                    return;
-                                });   
-                            }
-                        } else {
-                            resolve(null);
-                            return;
-                        }
+                    goods.times = 0;
+                    GoodsSchema.create(goods).then((info) => {
+                        resolve(info);
+                        return;
                     });
+                    return;
                 }
+                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                    var flag = false;
+                    for (var i = 0; i < info.length; i++) {
+                        if (info[i].businessId == goods.businessId) {
+                            flag = true;
+                        }
+                    }
+                    if (!flag) {
+                        resolve(null);
+                        return;
+                    }
+                    if (goods.id && goods.id != "0") {
+                        GoodsSchema.findByIdAndUpdate(goods.id, goods, (err, res) => {
+                            Object.assign(res, goods);
+                            resolve(res);
+                            return;
+                        });
+                        return;
+                    }
+                    goods.times = 0;
+                    GoodsSchema.create(goods).then((info) => {
+                        resolve(info);
+                        return;
+                    });
+                });
             });
         },
         deleteGoods(parent, { id }, context): Promise<Boolean> {
-
+            if (!context.us) return null;
             return new Promise<Boolean>((resolve, reject) => {
-                if (!context.user) resolve(null);
-                if (context.user.roleId == '5a0d0122c61a4b1b30171148') {
+                if (context.session.isManger) {
                     GoodsSchema.findByIdAndRemove(id, (err, res) => {
                         resolve(res != null);
                         return;
                     }).catch(err => reject(err));
-                } else {
-                    var flag = false;
-                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                        GoodsSchema.findById(id, (err, res) => {
-                            for (var i = 0; i < info.length; i++) {
-                                if (info[i].businessId == res.businessId) {
-                                    flag = true;
-                                }
-                            }
-                            if (flag) {
-                                GoodsSchema.findByIdAndRemove(id, (err, res) => {
-                                    resolve(res != null);
-                                    return;
-                                }).catch(err => reject(err));
-                            } else {
-                                resolve(false);
-                                return;
-                            }
-                        });
-                    });
+                    return;
                 }
+                var flag = false;
+                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                    GoodsSchema.findById(id, (err, res) => {
+                        for (var i = 0; i < info.length; i++) {
+                            if (info[i].businessId == res.businessId) {
+                                flag = true;
+                            }
+                        }
+                        if (!flag) {
+                            resolve(false);
+                            return;
+                        }
+                        GoodsSchema.findByIdAndRemove(id, (err, res) => {
+                            resolve(res != null);
+                            return;
+                        }).catch(err => reject(err));
+                    });
+                });
             });
         }
     }

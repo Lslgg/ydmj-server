@@ -4,6 +4,7 @@ import ProfileSchema from '../profile/profile';
 
 
 import { DocumentQuery, MongoosePromise } from 'mongoose';
+import { connect } from 'net';
 
 export class User {
 
@@ -51,7 +52,6 @@ export class User {
 
         getUserWhere(parent, { user }, context) {
             if (!context.user) return null;
-            console.log(user);
             var users = UserSchema.find(user);
             return users;
         },
@@ -60,18 +60,26 @@ export class User {
             if (!context.user) return 0;
             var count = UserSchema.count(user);
             return count;
-        }, 
+        },
 
         login(parent, { username, password }, context) {
             return new Promise<any>((resolve, reject) => {
                 UserSchema.find({ username, password }).then(data => {
                     if (data.length > 0) {
-                        var user=data[0];
+                        var user = data[0];
                         context.session.user = user;
-                        resolve(user);
+                        RoleSchema.findById(user.roleId).then(data => {
+                            context.session.isManger = data.isDefault ? true : false;                                                        
+                            console.log('ism');
+                            console.log(context.session.isManger);
+                            console.log(context.session.isManger);
+                            resolve(user);
+                            return;
+                        });
                     } else {
                         context.session.user = null;
                         resolve(null);
+                        return;
                     }
                 })
             })
@@ -100,8 +108,7 @@ export class User {
 
     static Mutation: any = {
         saveUser(parent, { user }, context) {
-            if (!context.user) return null;
-            console.log(user);
+            if (!context.user) return null;            
             if (user.id && user.id != "0") {
                 return new Promise<IUserModel>((resolve, reject) => {
                     UserSchema.findByIdAndUpdate(user.id, user, (err, res) => {
