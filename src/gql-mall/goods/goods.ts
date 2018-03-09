@@ -10,7 +10,8 @@ export interface IGoodsModel extends Document {
     explain: String
     stock: Number
     times: Number
-    validTime:Number
+    validTime: Number
+    sortIndex: Number
     isValid: Boolean
     updateAt: Date
     createAt: Date
@@ -26,7 +27,8 @@ let schema: Schema = new Schema({
     explain: String,
     stock: Number,
     times: Number,
-    validTime:Number,
+    validTime: Number,
+    sortIndex: Number,
     isValid: Boolean,
     createAt: {
         type: Date,

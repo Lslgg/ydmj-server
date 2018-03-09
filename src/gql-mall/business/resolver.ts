@@ -135,7 +135,7 @@ export class Business {
             return new Promise<any>((resolve, reject) => {
                 if (context.session.isManger) {
                     if (business.id && business.id != "0") {
-                        BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
+                        BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {                            
                             Object.assign(res, business);
                             resolve(res);
                             return;
@@ -168,13 +168,13 @@ export class Business {
                             return;
                         });
                         return;
-                    }                    
+                    }
                 });
             });
         },
-        deleteBusiness(parent, { id }, context):Promise<Boolean> {
+        deleteBusiness(parent, { id }, context): Promise<Boolean> {
             if (!context.user || !context.session.isManger) return null;
-            return new Promise<Boolean>((resolve,reject) => {
+            return new Promise<Boolean>((resolve, reject) => {
                 BusinessSchema.findByIdAndRemove(id, (err, res) => {
                     resolve(res != null);
                     return;
@@ -182,7 +182,7 @@ export class Business {
                     resolve(err);
                     return;
                 });
-            });            
+            });
         }
     }
 }

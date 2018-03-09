@@ -69,10 +69,7 @@ export class User {
                         var user = data[0];
                         context.session.user = user;
                         RoleSchema.findById(user.roleId).then(data => {
-                            context.session.isManger = data.isDefault ? true : false;                                                        
-                            console.log('ism');
-                            console.log(context.session.isManger);
-                            console.log(context.session.isManger);
+                            context.session.isManger = data.isDefault ? true : false;
                             resolve(user);
                             return;
                         });
@@ -108,7 +105,7 @@ export class User {
 
     static Mutation: any = {
         saveUser(parent, { user }, context) {
-            if (!context.user) return null;            
+            if (!context.user) return null;
             if (user.id && user.id != "0") {
                 return new Promise<IUserModel>((resolve, reject) => {
                     UserSchema.findByIdAndUpdate(user.id, user, (err, res) => {

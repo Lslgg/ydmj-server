@@ -100,6 +100,20 @@ export class Goods {
                 return;
             });
         },
+        //前台方法
+        getGoodsPageM(parent, { pageIndex = 1, pageSize = 10, goods, sort }, context): Promise<IGoodsModel[]> {
+            console.log(goods);
+            console.log(sort);
+            // if (!context.user) return null;
+            return new Promise<IGoodsModel[]>((resolve, reject) => {
+                var skip = (pageIndex - 1) * pageSize;
+                GoodsSchema.find(goods).sort(sort).skip(skip).limit(pageSize).then((goodsInfo) => {
+                    resolve(goodsInfo);
+                    return;
+                });
+                return;
+            });
+        },
     }
 
     static Mutation: any = {
@@ -116,6 +130,7 @@ export class Goods {
                         return;
                     }
                     goods.times = 0;
+                    goods.sortIndex = new Date().getTime();
                     GoodsSchema.create(goods).then((info) => {
                         resolve(info);
                         return;
@@ -150,7 +165,7 @@ export class Goods {
             });
         },
         deleteGoods(parent, { id }, context): Promise<Boolean> {
-            if (!context.us) return null;
+            if (!context.user) return null;
             return new Promise<Boolean>((resolve, reject) => {
                 if (context.session.isManger) {
                     GoodsSchema.findByIdAndRemove(id, (err, res) => {
