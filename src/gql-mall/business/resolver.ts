@@ -62,7 +62,6 @@ export class Business {
                 }).catch(err => resolve(null));
             });
             return promise;
-
         },
 
         getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context): Promise<IBusinessModel[]> {
@@ -127,6 +126,18 @@ export class Business {
                 }
             });
         },
+        getBusinessPageM(parent, { pageIndex = 1, pageSize = 10, business, sort }, context): Promise<IBusinessModel[]> {
+            if (!context.user) return null;
+            return new Promise<IBusinessModel[]>((resolve, reject) => {
+                var skip = (pageIndex - 1) * pageSize;
+                // 管理员返回所有商家                              
+                BusinessSchema.find(business).skip(skip).limit(pageSize).sort(sort).then((businessList) => {
+                    resolve(businessList);
+                    return;
+                });
+                return;
+            });
+        },
     }
 
     static Mutation: any = {
@@ -135,7 +146,7 @@ export class Business {
             return new Promise<any>((resolve, reject) => {
                 if (context.session.isManger) {
                     if (business.id && business.id != "0") {
-                        BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {                            
+                        BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
                             Object.assign(res, business);
                             resolve(res);
                             return;

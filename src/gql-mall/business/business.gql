@@ -8,6 +8,7 @@ type Business {
    brief:String
    Images: [File]
    times:Int
+   sortIndex:Float
    score:Int   
    isValid: Boolean
    updateAt:Date
@@ -21,6 +22,8 @@ extend type Query{
     getBusinessById(id:String):Business
     # 分页查找
     getBusinessPage(pageIndex: Int, pageSize: Int,business:searchBusiness): [Business]
+    # 分页查找（前台）
+    getBusinessPageM(pageIndex: Int, pageSize: Int,business:searchBusiness,sort:sortObj): [Business]
     # 查找分页总数
     getBusinessCount(business:searchBusiness):Int
     # 根据条件查找
@@ -45,11 +48,19 @@ input inputBusiness {
    brief:String
    imageIds: [String]
    times:Int
+   sortIndex:Float
    score:Int   
    isValid: Boolean
 }
 
 input searchBusiness{
     id:Json
-    name:RegExp
+    name:RegExp  
+    isValid:Boolean  
 }
+
+# input sortObj {
+#     times:Int    
+#     sortIndex:Int
+#     score:Int
+# }

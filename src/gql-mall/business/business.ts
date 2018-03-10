@@ -9,6 +9,7 @@ export interface IBusinessModel extends Document {
     brief: String
     imageIds: [String]
     times: Number
+    sortIndex:Number
     score: Number
     isValid: Boolean
     updateAt: Date
@@ -24,6 +25,7 @@ let schema: Schema = new Schema({
     brief: String,
     imageIds: [String],
     times: Number,
+    sortIndex:Number,
     score: Number,
     isValid: Boolean,
     createAt: {

@@ -3,12 +3,13 @@ type Goods {
     id:ID   
     Business:Business
     GoodsType:GoodsType
+    Images: [File]
     name:String
     score:Int
     ruler:String
     explain:String
     stock:Int
-    times:Int
+    times:Int    
     validTime:Float
     sortIndex:Float
     isValid:Boolean
@@ -48,6 +49,7 @@ input inputGoods {
     explain:String
     stock:Int
     times:Int
+    imageIds: [String]
     validTime:Float
     sortIndex:Float
     isValid:Boolean    
@@ -55,11 +57,11 @@ input inputGoods {
     createAt:Date
 }
 
-
 input searchGoods{
     id:Json
     name:RegExp
     businessId:Json    
+    isValid:Boolean
 }
 
 input sortObj {

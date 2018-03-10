@@ -5,6 +5,7 @@ import GoodsTypeSchema from '../goodsType/goodsType';
 import UserBusinessSchema from '../userBusiness/userBusiness';
 import { resolve } from 'url';
 import { reject } from 'bluebird';
+import { FileManager } from '../../common/file/fileManager';
 export class Goods {
     constructor() {
 
@@ -16,6 +17,14 @@ export class Goods {
         },
         GoodsType(model) {
             return GoodsTypeSchema.findById(model.goodsTypeId);
+        },
+        Images(model) {
+            let promise = new Promise<Array<any>>((resolve, reject) => {
+                let fm = new FileManager();
+                let imgs = fm.getFileByIds(model.imageIds);
+                resolve(imgs);
+            });
+            return promise;
         }
     }
 
@@ -102,8 +111,6 @@ export class Goods {
         },
         //前台方法
         getGoodsPageM(parent, { pageIndex = 1, pageSize = 10, goods, sort }, context): Promise<IGoodsModel[]> {
-            console.log(goods);
-            console.log(sort);
             // if (!context.user) return null;
             return new Promise<IGoodsModel[]>((resolve, reject) => {
                 var skip = (pageIndex - 1) * pageSize;

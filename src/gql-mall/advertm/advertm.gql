@@ -48,4 +48,5 @@ input inputAdvertm {
 input searchAdvertm{
     id:Json
     title:RegExp
+    type:Json
 }
