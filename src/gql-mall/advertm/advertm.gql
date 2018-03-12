@@ -49,4 +49,7 @@ input searchAdvertm{
     id:Json
     title:RegExp
     type:Json
+    startDate:Json
+    endDate:Json
+    isValid:Boolean
 }

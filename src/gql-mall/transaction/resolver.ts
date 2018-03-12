@@ -49,26 +49,17 @@ export class Transaction {
             });
         },
         getTransactionById(parent, { id }, context): Promise<ITransactionModel> {
-            return;
-            // if (!context.user) return null;
-
-            // return new Promise<ITransactionModel>((resolve, reject) => {
-            //     UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-            //         TransactionSchema.findById(id).then(res => {
-            //             var flag = false;
-            //             for (var i = 0; i < info.length; i++) {
-            //                 if (info[i].businessId == res.businessId) {
-            //                     flag = true;
-            //                 }
-            //             }
-            //             if (flag) {
-            //                 resolve(res);
-            //             } else {
-            //                 resolve(null);
-            //             }
-            //         }).catch(err => resolve(null));
-            //     });
-            // });
+            if (!context.user) return null;
+            return new Promise<ITransactionModel>((resolve, reject) => {
+                TransactionSchema.findById(id).then(res => {
+                    if (!res || res.userId != context.user._id) {
+                        resolve(null);
+                        return;
+                    }                    
+                    resolve(res);
+                    return; 
+                }).catch(err => resolve(null));
+            });
         },
 
         getTransactionPage(parent, { pageIndex = 1, pageSize = 10, transaction }, context): Promise<ITransactionModel[]> {
@@ -123,13 +114,20 @@ export class Transaction {
             if (!context.user) return null;
             return new Promise<Number>((resolve, reject) => {
                 TransactionSchema.find({ code: code }).then(info => {
+                    //没有该交易
                     if (!info || !info[0]) { resolve(-1); return; }
-                    UserBusinessSchema.find({ businessId: info[0].businessId, userId: context.user.id }).then(ubinfo => {
+
+                    UserBusinessSchema.find({ businessId: info[0].businessId, userId: context.user._id }).then(ubinfo => {
+
+                        //不是正确的兑换商家
                         if (!ubinfo || ubinfo.length < 0) { resolve(-1); return; }
+
+                        //已兑换
                         if (info[0].state == 1) { resolve(1); return; }
                         var endTime = info[0].endTime.getTime();
                         var crTime = new Date().getTime();
-                        if (endTime > crTime) { resolve(2); return; }
+                        //已过期
+                        if (endTime < crTime) { resolve(2); return; }
                         info[0].state = 1;
                         var flag;
                         TransactionSchema.findByIdAndUpdate(info[0].id, info[0]).then(info => {
@@ -151,13 +149,13 @@ export class Transaction {
 
         async saveTransaction(parent, { userId, businessId, goodsId }, context): Promise<Boolean> {
             if (!context.user) return null;
-            var user = await UserSchema.findById(userId).then(async res => {
+            var user = await UserSchema.findById(userId).then(res => {
                 return res;
             });
-            var goods = await GoodsSchema.findById(goodsId).then(async res => {
+            var goods = await GoodsSchema.findById(goodsId).then(res => {
                 return res;
             });
-            var business = await BusinessSchema.findById(businessId).then(async res => {
+            var business = await BusinessSchema.findById(businessId).then(res => {
                 return res;
             });
 
@@ -168,57 +166,57 @@ export class Transaction {
             var flag;
             // -----------------------------------------------
             // 用户积分减少
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "扣除用户积分" }).then(async info => {
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "扣除用户积分：" + goods.score }).then(info => {
                 return info ? true : false;
             });
             if (!flag) return false;
 
             //todo
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "扣除用户积分成功" }).then(async info => {
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "扣除用户积分成功" }).then(info => {
                 return info ? true : false;
             });
             if (!flag) return false;
 
             // -----------------------------------------------
             // 商家积分增加，交易次数+1            
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商家信息" }).then(async info => {
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商家信息" }).then(info => {
                 return info ? true : false;
             });
             if (!flag) return false;
 
             var times = parseInt(business.times + '') + 1;
             var score = parseInt(business.score + '') + parseInt(goods.score + '');
-            flag = BusinessSchema.findByIdAndUpdate(businessId, { times: times, score: score, }).then(async info => {
+            flag = BusinessSchema.findByIdAndUpdate(businessId, { times: times, score: score, }).then(info => {
                 return info ? true : false;
             });
             if (!flag) return false;
 
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商家信息成功，原交易次数：" + business.times + "原积分：" + business.score + "商品积分：" + goods.score }).then(async info => {
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商家信息成功，原交易次数：" + business.times + "原积分：" + business.score + "商品积分：" + goods.score }).then(info => {
                 return info ? true : false;
             });
             if (!flag) return false;
             // -----------------------------------------------
             // 商品库存-1，交易次数+1                        
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商品信息" }).then(async info => {
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商品信息" }).then(info => {
                 return info ? true : false;
             });
             if (!flag) return false;
 
             times = parseInt(goods.times + '') + 1;
             var stock = parseInt(goods.stock + '') - 1;
-            flag = GoodsSchema.findByIdAndUpdate(goodsId, { times: times, stock: stock, }).then(async info => {
+            flag = GoodsSchema.findByIdAndUpdate(goodsId, { times: times, stock: stock, }).then(info => {
                 return info ? true : false;
             });
             if (!flag) return false;
 
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商品信息成功！原交易次数：" + goods.times + "原库存:" + goods.stock }).then(async info => {
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商品信息成功！原交易次数：" + goods.times + "原库存:" + goods.stock }).then(info => {
                 return info ? true : false;
             });
             if (!flag) return false;
 
             // -----------------------------------------------
             // 添加交易            
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "添加交易信息" }).then(async info => {
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "添加交易信息" }).then(info => {
                 return info ? true : false;
             });
             if (!flag) return false;
@@ -228,12 +226,12 @@ export class Transaction {
             var endTime = parseFloat(date.getTime() + '') + parseFloat(validTime + '');
             var endDate = new Date(endTime);
             var code = endTime.toString(16);
-            flag = await TransactionSchema.create({ code: code, goodsId: goodsId, businessId: businessId, userId: userId, state: 0, endTime: endDate }).then(info => {
-                return info ? true : false;
+            var tinfo = await TransactionSchema.create({ code: code, goodsId: goodsId, businessId: businessId, userId: userId, state: 0, endTime: endDate }).then(info => {
+                return info ? info.id : null;
             });
-            if (!flag) return false;
+            if (!tinfo) return false;
 
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "添加交易信息成功！" }).then(async info => {
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "添加交易信息成功！交易id:" + tinfo }).then(info => {
                 return info ? true : false;
             });
             if (!flag) return false;

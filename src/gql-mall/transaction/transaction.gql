@@ -51,4 +51,6 @@ input searchTransaction{
     name:Json
     code:Json
     goodsId:Json
-}
+    state:Int
+    endTime:Json
+}   

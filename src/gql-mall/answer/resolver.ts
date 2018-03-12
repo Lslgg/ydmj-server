@@ -29,7 +29,6 @@ export class Answer {
             });
             return promise;
         },
-
         getAnswerPage(parent, { pageIndex = 1, pageSize = 10, answer }, context): Promise<IAnswerModel[]> {
             if (!context.user) return null;
             return new Promise<IAnswerModel[]>((resolve, reject) => {
@@ -39,16 +38,15 @@ export class Answer {
                 return;
             });
         },
-
         getAnswerWhere(parent, { answer }, context): Promise<IAnswerModel[]> {
             if (!context.user) return null;
             return new Promise<IAnswerModel[]>((resolve, reject) => {
-                var answers = AnswerSchema.find(answer);
-                resolve(answer);
-                return;
+                AnswerSchema.find(answer).then(info => {
+                    resolve(info);
+                    return;
+                });
             });
         },
-
         getAnswerCount(parent, { answer }, context): Promise<Number> {
             if (!context.user) return null;
             return new Promise<Number>((resolve, reject) => {

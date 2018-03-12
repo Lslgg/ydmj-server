@@ -52,12 +52,13 @@ export class Business {
 
         },
         getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
+
             // 查找当前用户商家       
             if (!context.user) return null;
-
+            
             let promise = new Promise<IBusinessModel>((resolve, reject) => {
                 BusinessSchema.findById(id).then((res) => {
-                    resolve(res);
+                    resolve(res);                    
                     return;
                 }).catch(err => resolve(null));
             });

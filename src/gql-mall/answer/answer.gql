@@ -44,4 +44,7 @@ input inputAnswer {
 input searchAnswer{
     id:Json
     name:Json
+    isValid:Boolean
+    startDate:Json
+    endDate:Json
 }
