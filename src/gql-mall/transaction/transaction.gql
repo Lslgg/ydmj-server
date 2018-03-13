@@ -18,6 +18,7 @@ extend type Query{
     getTransactionById(id:String):Transaction
     # 分页查找
     getTransactionPage(pageIndex: Int, pageSize: Int,transaction:searchTransaction): [Transaction]
+    getTransactionPageM(pageIndex: Int, pageSize: Int,transaction:searchTransaction): [Transaction]
     # 查找分页总数
     getTransactionCount(transaction:searchTransaction):Int
     # 根据条件查找

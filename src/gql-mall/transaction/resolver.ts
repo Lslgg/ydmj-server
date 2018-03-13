@@ -55,9 +55,9 @@ export class Transaction {
                     if (!res || res.userId != context.user._id) {
                         resolve(null);
                         return;
-                    }                    
+                    }
                     resolve(res);
-                    return; 
+                    return;
                 }).catch(err => resolve(null));
             });
         },
@@ -81,11 +81,24 @@ export class Transaction {
                     if (!transaction.businessId) {
                         transaction.businessId = businessIdList;
                     }
-                    TransactionSchema.find({ business: { $in: businessIdList } }).skip(skip).limit(pageSize).then(res => {
+                    // TransactionSchema.find({ business: { $in: businessIdList } }).skip(skip).limit(pageSize).then(res => {
+                    TransactionSchema.find(transaction).skip(skip).limit(pageSize).then(res => {
                         resolve(res);
                         return;
                     }).catch(err => { resolve(err); return; });
                 });
+            });
+        },
+        getTransactionPageM(parent, { pageIndex = 1, pageSize = 10, transaction }, context): Promise<ITransactionModel[]> {
+            if (!context.user) return null;
+            return new Promise<ITransactionModel[]>((resolve, reject) => {
+                transaction.userId = context.user._id;
+                var skip = (pageIndex - 1) * pageSize;
+                TransactionSchema.find(transaction).skip(skip).limit(pageSize).then(res => {
+                    resolve(res);
+                    return;
+                }).catch(err => { resolve(err); return; });
+                return;
             });
         },
         getTransactionCount(parent, { transaction }, context): Promise<Number> {

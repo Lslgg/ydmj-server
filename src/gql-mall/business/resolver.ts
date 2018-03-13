@@ -68,11 +68,11 @@ export class Business {
         getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context): Promise<IBusinessModel[]> {
             if (!context.user) return null;
             return new Promise<IBusinessModel[]>((resolve, reject) => {
-                var skip = (pageIndex - 1) * pageSize;
-                // 管理员返回所有商家              
-                if (context.session.isManger) {
+                var skip = (pageIndex - 1) * pageSize;                
+                // 管理员返回所有商家                   
+                if (context.session.isManger) {                    
                     BusinessSchema.find(business).skip(skip).limit(pageSize).then((businessList) => {
-                        resolve(businessList);
+                        resolve(businessList);                        
                         return;
                     });
                     return;

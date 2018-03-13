@@ -68,7 +68,7 @@ export class User {
                     if (data.length > 0) {
                         var user = data[0];
                         context.session.user = user;
-                        RoleSchema.findById(user.roleId).then(data => {
+                        RoleSchema.findById(user.roleId).then(data => {                            
                             context.session.isManger = data.isDefault ? true : false;
                             resolve(user);
                             return;
