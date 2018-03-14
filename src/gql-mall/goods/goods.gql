@@ -25,7 +25,7 @@ extend type Query{
     # 分页查找
     getGoodsPage(pageIndex: Int, pageSize: Int,goods:searchGoods): [Goods]
     # 分页查找（前台）
-    getGoodsPageM(pageIndex: Int, pageSize: Int,goods:searchGoods,sort:sortObj): [Goods]
+    getGoodsPageM(pageIndex: Int, pageSize: Int,goods:searchGoods,sort:sortObj): [Goods]    
     # 查找分页总数
     getGoodsCount(goods:searchGoods):Int
     # 根据条件查找
@@ -60,7 +60,7 @@ input inputGoods {
 input searchGoods{
     id:Json
     name:RegExp
-    businessId:Json    
+    businessId:Json
     isValid:Boolean
     goodsTypeId:Json
 }

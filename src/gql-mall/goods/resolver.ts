@@ -111,7 +111,7 @@ export class Goods {
         },
         //前台方法
         getGoodsPageM(parent, { pageIndex = 1, pageSize = 10, goods, sort }, context): Promise<IGoodsModel[]> {
-            // if (!context.user) return null;
+            if (!context.user) return null;
             return new Promise<IGoodsModel[]>((resolve, reject) => {
                 var skip = (pageIndex - 1) * pageSize;
                 GoodsSchema.find(goods).sort(sort).skip(skip).limit(pageSize).then((goodsInfo) => {
@@ -120,7 +120,7 @@ export class Goods {
                 });
                 return;
             });
-        },
+        }       
     }
 
     static Mutation: any = {

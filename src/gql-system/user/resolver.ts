@@ -63,6 +63,7 @@ export class User {
         },
 
         login(parent, { username, password }, context) {
+            console.log('login');
             return new Promise<any>((resolve, reject) => {
                 UserSchema.find({ username, password }).then(data => {
                     if (data.length > 0) {
