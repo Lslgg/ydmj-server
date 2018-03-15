@@ -63,12 +63,13 @@ export class User {
         },
 
         login(parent, { username, password }, context) {
+            console.log('login');
             return new Promise<any>((resolve, reject) => {
                 UserSchema.find({ username, password }).then(data => {
                     if (data.length > 0) {
                         var user = data[0];
                         context.session.user = user;
-                        RoleSchema.findById(user.roleId).then(data => {
+                        RoleSchema.findById(user.roleId).then(data => {                            
                             context.session.isManger = data.isDefault ? true : false;
                             resolve(user);
                             return;

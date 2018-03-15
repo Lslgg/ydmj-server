@@ -140,7 +140,10 @@ class Server {
 				"http://localhost:3000",
 				"http://localhost:8083",
 				"http://localhost:8100",
-				"http://localhost:3000"
+				"http://localhost:3000",
+				"http://test.ms0564.com",
+				"http://admin.ms0564.com",
+				"http://192.168.1.102:8100",
 			],
 			headers: [
 				"Access-Control-Allow-Origin",
