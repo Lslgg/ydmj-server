@@ -23,29 +23,25 @@ export class Business {
     };
 
     static Query: any = {
-        getBusiness(parent, { }, context): Promise<Array<IBusinessModel>> {
+        async getBusiness(parent, { }, context): Promise<Array<IBusinessModel>> {
 
             if (!context.user) return null;
 
-            // 管理员返回所有商家
-            return new Promise<Array<IBusinessModel>>(async (resolve, reject) => {
+            // 管理员返回所有商家            
 
-                if (context.session.isManger) {
-                    let businessList = await BusinessSchema.find();
-                    resolve(businessList);
-                    return;
-                }
+            if (context.session.isManger) {
+                let businessList = await BusinessSchema.find();
+                return businessList;
+            }
 
-                // 普通商家只返回自己的商家
-                let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
-                var businessIdList: Array<String> = [];
-                for (var i = 0; i < userBusinessList.length; i++) {
-                    businessIdList.push(userBusinessList[i].businessId);
-                }
-                let businessList = await BusinessSchema.find({ _id: { $in: businessIdList } });
-                resolve(businessList);
-                return;
-            });
+            // 普通商家只返回自己的商家
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            let businessList = await BusinessSchema.find({ _id: { $in: businessIdList } });
+            return businessList;
         },
 
         getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
@@ -93,7 +89,7 @@ export class Business {
             if (!context.user) return null;
 
             return new Promise<IBusinessModel[]>(async (resolve, reject) => {
-                let businessList = BusinessSchema.find(business);                    
+                let businessList = BusinessSchema.find(business);
                 resolve(businessList);
                 return;
             });
