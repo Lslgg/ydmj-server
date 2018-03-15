@@ -57,10 +57,11 @@ export class Advertm {
         getAdvertmWhere(parent, { advertm }, context): Promise<IAdvertmModel[]> {
             if (!context.user) return null;
             return new Promise<IAdvertmModel[]>((resolve, reject) => {
-                var advertms = AdvertmSchema.find(advertm);
-                resolve(advertms);
-                return;
-            });
+                AdvertmSchema.find(advertm).then(info => {
+                    resolve(info);                
+                    return;
+                });                
+            }); 
         },
 
         getAdvertmCount(parent, { user }, context): Promise<Number> {
