@@ -9,9 +9,7 @@ import TransLogSchema from '../transLog/transLog';
 import { resolve } from 'dns';
 import { reject } from 'bluebird';
 export class Transaction {
-    constructor() {
-
-    }
+    constructor() {}
 
     static Transaction: any = {
         Business(model) {
@@ -26,8 +24,11 @@ export class Transaction {
     }
 
     static Query: any = {
+
         getTransaction(parent, { }, context): Promise<ITransactionModel[]> {
+
             if (!context.user) return null;
+
             return new Promise<ITransactionModel[]>((resolve, reject) => {
                 if (context.session.isManger) {
                     TransactionSchema.find().then(res => {
@@ -48,8 +49,11 @@ export class Transaction {
                 });
             });
         },
+
         getTransactionById(parent, { id }, context): Promise<ITransactionModel> {
+
             if (!context.user) return null;
+
             return new Promise<ITransactionModel>((resolve, reject) => {
                 TransactionSchema.findById(id).then(res => {
                     if (!res || res.userId != context.user._id) {
@@ -58,14 +62,18 @@ export class Transaction {
                     }
                     resolve(res);
                     return;
-                }).catch(err => resolve(null));
+                }).catch(err => {resolve(null);return;});
             });
         },
 
         getTransactionPage(parent, { pageIndex = 1, pageSize = 10, transaction }, context): Promise<ITransactionModel[]> {
+
             if (!context.user) return null;
+
             return new Promise<ITransactionModel[]>((resolve, reject) => {
+
                 var skip = (pageIndex - 1) * pageSize;
+
                 if (context.session.isManger) {
                     TransactionSchema.find(transaction).skip(skip).limit(pageSize).then(res => {
                         resolve(res);
@@ -73,22 +81,25 @@ export class Transaction {
                     }).catch(err => { resolve(err); return; });
                     return;
                 }
+
                 UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+
                     var businessIdList: Array<String> = [];
                     for (var i = 0; i < info.length; i++) {
                         businessIdList.push(info[i].businessId);
                     }
                     if (!transaction.businessId) {
                         transaction.businessId = businessIdList;
-                    }
-                    // TransactionSchema.find({ business: { $in: businessIdList } }).skip(skip).limit(pageSize).then(res => {
+                    }                    
                     TransactionSchema.find(transaction).skip(skip).limit(pageSize).then(res => {
                         resolve(res);
                         return;
                     }).catch(err => { resolve(err); return; });
+
                 });
             });
         },
+
         getTransactionPageM(parent, { pageIndex = 1, pageSize = 10, transaction }, context): Promise<ITransactionModel[]> {
             if (!context.user) return null;
             return new Promise<ITransactionModel[]>((resolve, reject) => {
@@ -101,14 +112,19 @@ export class Transaction {
                 return;
             });
         },
+
         getTransactionCount(parent, { transaction }, context): Promise<Number> {
+
             if (!context.user) return null;
+
             return new Promise<Number>((resolve, reject) => {
+
                 if (context.session.isManger) {
                     var count = TransactionSchema.count(transaction);
                     resolve(count);
                     return;
                 }
+
                 UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
                     var businessIdList: Array<String> = [];
                     for (var i = 0; i < info.length; i++) {
@@ -123,8 +139,11 @@ export class Transaction {
                 });
             });
         },
+
         doTransact(parent, { code }, context): Promise<Number> {
+
             if (!context.user) return null;
+
             return new Promise<Number>((resolve, reject) => {
                 TransactionSchema.find({ code: code }).then(info => {
                     //没有该交易
@@ -137,10 +156,13 @@ export class Transaction {
 
                         //已兑换
                         if (info[0].state == 1) { resolve(1); return; }
+
                         var endTime = info[0].endTime.getTime();
                         var crTime = new Date().getTime();
+
                         //已过期
                         if (endTime < crTime) { resolve(2); return; }
+                        
                         info[0].state = 1;
                         var flag;
                         TransactionSchema.findByIdAndUpdate(info[0].id, info[0]).then(info => {
@@ -155,7 +177,7 @@ export class Transaction {
                     });
                 });
             });
-        },
+        }
     }
 
     static Mutation: any = {

@@ -3,11 +3,10 @@ import { DocumentQuery, MongoosePromise } from 'mongoose';
 import { FileManager } from '../../common/file/fileManager';
 import { resolve } from 'url';
 import { reject } from 'bluebird';
+
 export class Advertm {
 
-    constructor() {
-
-    }
+    constructor() {}
 
     static Advertm: any = {
         Images(model) {
@@ -21,6 +20,7 @@ export class Advertm {
     };
 
     static Query: any = {
+
         getAdvertm(parent, { }, context): Promise<Array<IAdvertmModel>> {
             if (!context.user) return null;
 
@@ -32,6 +32,7 @@ export class Advertm {
             })
             return promise;
         },
+
         getAdvertmById(parent, { id }, context): Promise<IAdvertmModel> {
             if (!context.user) return null;
 
@@ -58,10 +59,10 @@ export class Advertm {
             if (!context.user) return null;
             return new Promise<IAdvertmModel[]>((resolve, reject) => {
                 AdvertmSchema.find(advertm).then(info => {
-                    resolve(info);                
+                    resolve(info);
                     return;
-                });                
-            }); 
+                });
+            });
         },
 
         getAdvertmCount(parent, { user }, context): Promise<Number> {
@@ -72,13 +73,19 @@ export class Advertm {
                 return;
             });
         },
+
     }
 
     static Mutation: any = {
+
         saveAdvertm(parent, { advertm }, context): Promise<any> {
+
             if (!context.user || !context.session.isManger) return null;
+
             return new Promise<any>((resolve, reject) => {
+
                 if (advertm.id && advertm.id != "0") {
+
                     AdvertmSchema.findByIdAndUpdate(advertm.id, advertm, (err, res) => {
                         Object.assign(res, advertm);
                         resolve(res);
@@ -86,21 +93,30 @@ export class Advertm {
                     })
                     return;
                 }
+
                 AdvertmSchema.create(advertm).then(info => {
                     resolve(info);
                     return;
                 });
+
             });
         },
+
         deleteAdvertm(parent, { id }, context): Promise<Boolean> {
+
             if (!context.user || !context.session.isManger) return null;
+
             let promise = new Promise<Boolean>((resolve, reject) => {
+
                 AdvertmSchema.findByIdAndRemove(id, (err, res) => {
                     resolve(res != null);
                     return;
                 }).catch(err => reject(err));
+
             });
+
             return promise;
         }
+        
     }
 }

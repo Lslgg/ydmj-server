@@ -9,9 +9,7 @@ import { reject } from 'bluebird';
 
 export class Business {
 
-    constructor() {
-
-    }
+    constructor() { }
 
     static Business: any = {
         Images(model) {
@@ -26,131 +24,143 @@ export class Business {
 
     static Query: any = {
         getBusiness(parent, { }, context): Promise<Array<IBusinessModel>> {
+
             if (!context.user) return null;
+
             // 管理员返回所有商家
-            return new Promise<Array<IBusinessModel>>((resolve, reject) => {
+            return new Promise<Array<IBusinessModel>>(async (resolve, reject) => {
+
                 if (context.session.isManger) {
-                    BusinessSchema.find().then((businessList) => {
-                        resolve(businessList);
-                        return;
-                    });
+                    let businessList = await BusinessSchema.find();
+                    resolve(businessList);
                     return;
-                } else {
-                    // 普通商家只返回自己的商家
-                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                        var businessIdList: Array<String> = [];
-                        for (var i = 0; i < info.length; i++) {
-                            businessIdList.push(info[i].businessId);
-                        }
-                        BusinessSchema.find({ _id: { $in: businessIdList } }).then(info => {
-                            resolve(info);
-                            return;
-                        });
-                    });
                 }
+
+                // 普通商家只返回自己的商家
+                let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+                var businessIdList: Array<String> = [];
+                for (var i = 0; i < userBusinessList.length; i++) {
+                    businessIdList.push(userBusinessList[i].businessId);
+                }
+                let businessList = await BusinessSchema.find({ _id: { $in: businessIdList } });
+                resolve(businessList);
+                return;
             });
-
         },
-        getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
 
+        getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
             // 查找当前用户商家       
             if (!context.user) return null;
-            
-            let promise = new Promise<IBusinessModel>((resolve, reject) => {
-                BusinessSchema.findById(id).then((res) => {
-                    resolve(res);                    
-                    return;
-                }).catch(err => resolve(null));
+
+            let promise = new Promise<IBusinessModel>(async (resolve, reject) => {
+                let business = await BusinessSchema.findById(id);
+                resolve(business);
+                return;
             });
             return promise;
         },
 
         getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context): Promise<IBusinessModel[]> {
+
             if (!context.user) return null;
-            return new Promise<IBusinessModel[]>((resolve, reject) => {
-                var skip = (pageIndex - 1) * pageSize;                
+
+            return new Promise<IBusinessModel[]>(async (resolve, reject) => {
+
+                var skip = (pageIndex - 1) * pageSize;
+
                 // 管理员返回所有商家                   
-                if (context.session.isManger) {                    
-                    BusinessSchema.find(business).skip(skip).limit(pageSize).then((businessList) => {
-                        resolve(businessList);                        
-                        return;
-                    });
+                if (context.session.isManger) {
+                    let businessList = BusinessSchema.find(business).skip(skip).limit(pageSize);
+                    resolve(businessList);
                     return;
-                } else {
-                    // 普通商家只返回自己的商家
-                    UserBusinessSchema.find({ userId: context.user._id }).skip(skip).limit(pageSize).then((info) => {
-                        var businessIdList: Array<String> = [];
-                        for (var i = 0; i < info.length; i++) {
-                            businessIdList.push(info[i].businessId);
-                        }
-                        business._id = businessIdList;
-                        BusinessSchema.find(business).then(info => {
-                            resolve(info);
-                            return;
-                        });
-                    });
                 }
+
+                // 普通商家只返回自己的商家
+                let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id }).skip(skip).limit(pageSize);
+                var businessIdList: Array<String> = [];
+                for (var i = 0; i < userBusinessList.length; i++) {
+                    businessIdList.push(userBusinessList[i].businessId);
+                }
+                business._id = { "$in": businessIdList };
+                let businessList = await BusinessSchema.find(business);
+                resolve(businessList);
+                return;
             });
         },
 
         getBusinessWhere(parent, { business }, context): Promise<IBusinessModel[]> {
+
             if (!context.user) return null;
-            return new Promise<IBusinessModel[]>((resolve, reject) => {
-                BusinessSchema.find(business).then(info => {
-                    resolve(info);
-                    return;
-                });
+
+            return new Promise<IBusinessModel[]>(async (resolve, reject) => {
+                let businessList = BusinessSchema.find(business);                    
+                resolve(businessList);
+                return;
             });
         },
 
         getBusinessCount(parent, { business }, context): Promise<Number> {
 
-            return new Promise<Number>((resolve, reject) => {
-                if (!context.user) resolve(null);
+            if (!context.user) return null;
+
+            return new Promise<Number>(async (resolve, reject) => {
+
                 // 管理员统计所有                            
                 if (context.session.isManger) {
                     var count = BusinessSchema.count(business);
                     resolve(count);
                     return;
-                } else {
-                    // 非管理员统计自己的商家
-                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                        var businessIdList: Array<String> = [];
-                        for (var i = 0; i < info.length; i++) {
-                            businessIdList.push(info[i].businessId);
-                        }
-                        business._id = businessIdList;
-                        var count = BusinessSchema.count(business);
-                        resolve(count);
-                        return;
-                    });
                 }
+
+                // 非管理员统计自己的商家
+                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
+                    var businessIdList: Array<String> = [];
+                    for (var i = 0; i < info.length; i++) {
+                        businessIdList.push(info[i].businessId);
+                    }
+                    business._id = businessIdList;
+                    var count = BusinessSchema.count(business);
+                    resolve(count);
+                    return;
+                });
+
             });
         },
+
+        //前台方法
         getBusinessPageM(parent, { pageIndex = 1, pageSize = 10, business, sort }, context): Promise<IBusinessModel[]> {
+
             if (!context.user) return null;
+
             return new Promise<IBusinessModel[]>((resolve, reject) => {
+
                 var skip = (pageIndex - 1) * pageSize;
-                // 管理员返回所有商家                              
+
                 BusinessSchema.find(business).skip(skip).limit(pageSize).sort(sort).then((businessList) => {
                     resolve(businessList);
                     return;
                 });
+
                 return;
             });
         },
     }
 
     static Mutation: any = {
-        saveBusiness(parent, { business }, context): Promise<any> {
+
+        async saveBusiness(parent, { business }, context): Promise<any> {
+
             if (!context.user) return null;
+
             return new Promise<any>((resolve, reject) => {
+
                 if (context.session.isManger) {
+
                     if (business.id && business.id != "0") {
                         BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
-                            Object.assign(res, business);
-                            resolve(res);
-                            return;
+                            // Object.assign(res, business);                            
+                            // resolve(res);
+                            return res;
                         });
                         return;
                     }
@@ -161,6 +171,7 @@ export class Business {
                         return;
                     });
                     return;
+
                 }
                 UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
                     var flag = false;
@@ -169,24 +180,26 @@ export class Business {
                             flag = true;
                         }
                     }
-                    if (!flag) {
+                    if (!flag || !business.id || business.id != "0") {
                         resolve(null);
                         return;
                     }
-                    if (business.id && business.id != "0") {
-                        BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
-                            Object.assign(res, business);
-                            resolve(res);
-                            return;
-                        });
+                    BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
+                        Object.assign(res, business);
+                        resolve(res);
                         return;
-                    }
+                    });
+                    return;
+
                 });
             });
         },
         deleteBusiness(parent, { id }, context): Promise<Boolean> {
+
             if (!context.user || !context.session.isManger) return null;
+
             return new Promise<Boolean>((resolve, reject) => {
+
                 BusinessSchema.findByIdAndRemove(id, (err, res) => {
                     resolve(res != null);
                     return;
@@ -194,7 +207,9 @@ export class Business {
                     resolve(err);
                     return;
                 });
+
             });
         }
+
     }
 }

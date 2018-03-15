@@ -8,9 +8,7 @@ import { reject } from 'bluebird';
 
 export class GoodsType {
 
-    constructor() {
-
-    }
+    constructor() { }
 
     static GoodsType: any = {
         Business(model) {
@@ -19,8 +17,11 @@ export class GoodsType {
     }
 
     static Query: any = {
+
         getGoodsType(parent, { }, context): Promise<IGoodsTypeModel[]> {
+
             if (!context.user) return null;
+
             return new Promise<IGoodsTypeModel[]>((resolve, reject) => {
                 // 管理员返回所有
                 if (context.session.isManger) {
@@ -43,7 +44,9 @@ export class GoodsType {
                 });
             });
         },
+
         getGoodsTypeById(parent, { id }, context): Promise<IGoodsTypeModel> {
+
             if (!context.user) return null;
 
             let promise = new Promise<IGoodsTypeModel>((resolve, reject) => {
@@ -55,7 +58,9 @@ export class GoodsType {
         },
 
         getGoodsTypePage(parent, { pageIndex = 1, pageSize = 10, goodsType }, context): Promise<IGoodsTypeModel[]> {
+
             if (!context.user) return null;
+
             return new Promise<IGoodsTypeModel[]>((resolve, reject) => {
                 var skip = (pageIndex - 1) * pageSize;
                 // 管理员返回所有
@@ -82,8 +87,11 @@ export class GoodsType {
                 });
             });
         },
+
         getGoodsTypeWhere(parent, { goodsType }, context): Promise<IGoodsTypeModel[]> {
+
             if (!context.user) return null;
+
             return new Promise<IGoodsTypeModel[]>((resolve, reject) => {
                 var goodsTypeInfo = GoodsTypeSchema.find(goodsType);
                 resolve(goodsTypeInfo);
@@ -91,8 +99,11 @@ export class GoodsType {
             });
 
         },
+
         getGoodsTypeByIdIn(parent, { id }, context): Promise<IGoodsTypeModel[]> {
+
             if (!context.user) return null;
+
             return new Promise<IGoodsTypeModel[]>((resolve, reject) => {
                 var ninfo = id.split(',');
                 var goodsTypeInfo = GoodsTypeSchema.find({ businessId: { $in: ninfo } });
@@ -100,6 +111,7 @@ export class GoodsType {
                 return;
             });
         },
+
         getGoodsTypeCount(parent, { goodsType }, context): Promise<Number> {
             if (!context.user) return null;
             return new Promise<Number>((resolve, reject) => {
@@ -123,11 +135,12 @@ export class GoodsType {
                     return;
                 });
             });
-        },
+        }
     }
 
     static Mutation: any = {
         saveGoodsType(parent, { goodsType }, context): Promise<any> {
+
             if (!context.user) return null;
 
             return new Promise<any>((resolve, reject) => {
@@ -173,8 +186,11 @@ export class GoodsType {
                 });
             });
         },
+
         deleteGoodsType(parent, { id }, context): Promise<Boolean> {
+
             if (!context.user) return null;
+
             return new Promise<Boolean>((resolve, reject) => {
                 if (context.session.isManger) {
                     GoodsTypeSchema.findByIdAndRemove(id, (err, res) => {
@@ -192,7 +208,10 @@ export class GoodsType {
                                 flag = true;
                             }
                         }
-                        if (!flag) { resolve(false); return; }
+                        if (!flag) {
+                            resolve(false);
+                            return;
+                        }
                         GoodsTypeSchema.findByIdAndRemove(id, (err, res) => {
                             resolve(res != null);
                             return;
@@ -201,5 +220,6 @@ export class GoodsType {
                 });
             });
         }
+        
     }
 }

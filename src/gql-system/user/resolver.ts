@@ -62,8 +62,7 @@ export class User {
             return count;
         },
 
-        login(parent, { username, password }, context) {
-            console.log('login');
+        login(parent, { username, password }, context) {            
             return new Promise<any>((resolve, reject) => {
                 UserSchema.find({ username, password }).then(data => {
                     if (data.length > 0) {

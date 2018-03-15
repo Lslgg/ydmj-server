@@ -29,9 +29,13 @@ export class Goods {
     }
 
     static Query: any = {
+
         getGoods(parent, { }, context): Promise<Array<IGoodsModel>> {
+
             if (!context.user) return null;
+
             return new Promise<Array<IGoodsModel>>((resolve, reject) => {
+
                 if (context.session.isManger) {
                     GoodsSchema.find().then(res => {
                         resolve(res);
@@ -39,6 +43,7 @@ export class Goods {
                     }).catch(err => { resolve(null); });
                     return;
                 }
+
                 UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
                     var businessIdList: Array<String> = [];
                     for (var i = 0; i < info.length; i++) {
@@ -52,21 +57,26 @@ export class Goods {
 
             });
         },
+
         getGoodsById(parent, { id }, context): Promise<IGoodsModel> {
+
             if (!context.user) return null;
 
             let promise = new Promise<IGoodsModel>((resolve, reject) => {
                 GoodsSchema.findById(id).then(res => {
                     resolve(res);
                     return;
-                }).catch(err => resolve(null));
+                }).catch(err => { resolve(null); return; });
             });
             return promise;
         },
 
         getGoodsPage(parent, { pageIndex = 1, pageSize = 10, goods }, context): Promise<IGoodsModel[]> {
+
             if (!context.user) return null;
+
             return new Promise<IGoodsModel[]>((resolve, reject) => {
+
                 var skip = (pageIndex - 1) * pageSize;
 
                 if (context.session.isManger) {
@@ -76,6 +86,7 @@ export class Goods {
                     });
                     return;
                 }
+
                 UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
                     var businessIdList: Array<String> = [];
                     for (var i = 0; i < info.length; i++) {
@@ -93,7 +104,9 @@ export class Goods {
         },
 
         getGoodsWhere(parent, { goods }, context): Promise<IGoodsModel[]> {
+
             if (!context.user) return null;
+
             return new Promise<IGoodsModel[]>((resolve, reject) => {
                 var goodsInfo = GoodsSchema.find(goods);
                 resolve(goodsInfo);
@@ -102,30 +115,37 @@ export class Goods {
         },
 
         getGoodsCount(parent, { goods }, context): Promise<Number> {
+
             if (!context.user) return null;
+
             return new Promise<Number>((resolve, reject) => {
                 var count = GoodsSchema.count(goods);
                 resolve(count);
                 return;
             });
         },
+
         //前台方法
         getGoodsPageM(parent, { pageIndex = 1, pageSize = 10, goods, sort }, context): Promise<IGoodsModel[]> {
+
             if (!context.user) return null;
+
             return new Promise<IGoodsModel[]>((resolve, reject) => {
                 var skip = (pageIndex - 1) * pageSize;
                 GoodsSchema.find(goods).sort(sort).skip(skip).limit(pageSize).then((goodsInfo) => {
                     resolve(goodsInfo);
                     return;
                 });
-                return;
             });
-        }       
+        }
     }
 
     static Mutation: any = {
+
         saveGoods(parent, { goods }, context): Promise<any> {
+
             if (!context.user) return null;
+
             return new Promise<any>((resolve, reject) => {
                 if (context.session.isManger) {
                     if (goods.id && goods.id != "0") {
@@ -171,8 +191,11 @@ export class Goods {
                 });
             });
         },
+
         deleteGoods(parent, { id }, context): Promise<Boolean> {
+
             if (!context.user) return null;
+            
             return new Promise<Boolean>((resolve, reject) => {
                 if (context.session.isManger) {
                     GoodsSchema.findByIdAndRemove(id, (err, res) => {
@@ -201,5 +224,6 @@ export class Goods {
                 });
             });
         }
+        
     }
 }
