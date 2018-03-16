@@ -9,7 +9,8 @@ import TransLogSchema from '../transLog/transLog';
 import { resolve } from 'dns';
 import { reject } from 'bluebird';
 export class Transaction {
-    constructor() {}
+
+    constructor() { }
 
     static Transaction: any = {
         Business(model) {
@@ -25,158 +26,109 @@ export class Transaction {
 
     static Query: any = {
 
-        getTransaction(parent, { }, context): Promise<ITransactionModel[]> {
+        async getTransaction(parent, { }, context): Promise<ITransactionModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<ITransactionModel[]>((resolve, reject) => {
-                if (context.session.isManger) {
-                    TransactionSchema.find().then(res => {
-                        resolve(res);
-                        return;
-                    }).catch(err => { resolve(null); return; });
-                    return;
-                }
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    TransactionSchema.find({ business: { $in: businessIdList } }).then(res => {
-                        resolve(res);
-                        return;
-                    }).catch(err => { resolve(err); return; });
-                });
-            });
+            if (context.session.isManger) {
+                return await TransactionSchema.find();
+            }
+
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            return await TransactionSchema.find({ business: { $in: businessIdList } });
         },
 
-        getTransactionById(parent, { id }, context): Promise<ITransactionModel> {
+        async getTransactionById(parent, { id }, context): Promise<ITransactionModel> {
 
             if (!context.user) return null;
 
-            return new Promise<ITransactionModel>((resolve, reject) => {
-                TransactionSchema.findById(id).then(res => {
-                    if (!res || res.userId != context.user._id) {
-                        resolve(null);
-                        return;
-                    }
-                    resolve(res);
-                    return;
-                }).catch(err => {resolve(null);return;});
-            });
+            let res = await TransactionSchema.findById(id);
+
+            if (!res || res.userId != context.user._id) {
+                return null;
+            }
+
+            return res;
         },
 
-        getTransactionPage(parent, { pageIndex = 1, pageSize = 10, transaction }, context): Promise<ITransactionModel[]> {
+        async getTransactionPage(parent, { pageIndex = 1, pageSize = 10, transaction }, context): Promise<ITransactionModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<ITransactionModel[]>((resolve, reject) => {
 
-                var skip = (pageIndex - 1) * pageSize;
+            var skip = (pageIndex - 1) * pageSize;
 
-                if (context.session.isManger) {
-                    TransactionSchema.find(transaction).skip(skip).limit(pageSize).then(res => {
-                        resolve(res);
-                        return;
-                    }).catch(err => { resolve(err); return; });
-                    return;
-                }
+            if (context.session.isManger) {
+                return await TransactionSchema.find(transaction).skip(skip).limit(pageSize);
+            }
 
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    if (!transaction.businessId) {
-                        transaction.businessId = businessIdList;
-                    }                    
-                    TransactionSchema.find(transaction).skip(skip).limit(pageSize).then(res => {
-                        resolve(res);
-                        return;
-                    }).catch(err => { resolve(err); return; });
-
-                });
-            });
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            if (!transaction.businessId) {
+                transaction.businessId = businessIdList;
+            }
+            return await TransactionSchema.find(transaction).skip(skip).limit(pageSize);
         },
 
-        getTransactionPageM(parent, { pageIndex = 1, pageSize = 10, transaction }, context): Promise<ITransactionModel[]> {
+        async getTransactionPageM(parent, { pageIndex = 1, pageSize = 10, transaction }, context): Promise<ITransactionModel[]> {
+
             if (!context.user) return null;
-            return new Promise<ITransactionModel[]>((resolve, reject) => {
-                transaction.userId = context.user._id;
-                var skip = (pageIndex - 1) * pageSize;
-                TransactionSchema.find(transaction).skip(skip).limit(pageSize).then(res => {
-                    resolve(res);
-                    return;
-                }).catch(err => { resolve(err); return; });
-                return;
-            });
+            transaction.userId = context.user._id;
+            var skip = (pageIndex - 1) * pageSize;
+            return await TransactionSchema.find(transaction).skip(skip).limit(pageSize);
         },
 
-        getTransactionCount(parent, { transaction }, context): Promise<Number> {
+        async getTransactionCount(parent, { transaction }, context): Promise<Number> {
 
             if (!context.user) return null;
 
-            return new Promise<Number>((resolve, reject) => {
+            if (context.session.isManger) {
+                return await TransactionSchema.count(transaction);
+            }
 
-                if (context.session.isManger) {
-                    var count = TransactionSchema.count(transaction);
-                    resolve(count);
-                    return;
-                }
-
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    if (!transaction.businessId) {
-                        transaction.businessId = businessIdList;
-                    }
-                    var count = TransactionSchema.count(transaction);
-                    resolve(count);
-                    return;
-                });
-            });
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            if (!transaction.businessId) {
+                transaction.businessId = businessIdList;
+            }
+            return await TransactionSchema.count(transaction);
         },
 
-        doTransact(parent, { code }, context): Promise<Number> {
+        async doTransact(parent, { code }, context): Promise<Number> {
 
             if (!context.user) return null;
 
-            return new Promise<Number>((resolve, reject) => {
-                TransactionSchema.find({ code: code }).then(info => {
-                    //没有该交易
-                    if (!info || !info[0]) { resolve(-1); return; }
+            let trans = TransactionSchema.find({ code: code });
+            //没有该交易
+            if (!trans || !trans[0]) { return -1; }
 
-                    UserBusinessSchema.find({ businessId: info[0].businessId, userId: context.user._id }).then(ubinfo => {
+            let ubinfo = await UserBusinessSchema.find({ businessId: trans[0].businessId, userId: context.user._id });
 
-                        //不是正确的兑换商家
-                        if (!ubinfo || ubinfo.length < 0) { resolve(-1); return; }
+            //不是正确的兑换商家
+            if (!ubinfo || ubinfo.length < 0) { return -1; }
 
-                        //已兑换
-                        if (info[0].state == 1) { resolve(1); return; }
+            //已兑换
+            if (trans[0].state == 1) { return 1; }
 
-                        var endTime = info[0].endTime.getTime();
-                        var crTime = new Date().getTime();
+            var endTime = trans[0].endTime.getTime();
+            var crTime = new Date().getTime();
 
-                        //已过期
-                        if (endTime < crTime) { resolve(2); return; }
-                        
-                        info[0].state = 1;
-                        var flag;
-                        TransactionSchema.findByIdAndUpdate(info[0].id, info[0]).then(info => {
-                            if (info) {
-                                resolve(3);
-                                return;
-                            } else {
-                                resolve(4);
-                                return;
-                            }
-                        });
-                    });
-                });
-            });
+            //已过期
+            if (endTime < crTime) { return 2; }
+
+            trans[0].state = 1;
+            let result = TransactionSchema.findByIdAndUpdate(trans[0].id, trans[0]);
+            return result ? 3 : 4;
         }
     }
 
@@ -184,76 +136,56 @@ export class Transaction {
 
         async saveTransaction(parent, { userId, businessId, goodsId }, context): Promise<Boolean> {
             if (!context.user) return null;
-            var user = await UserSchema.findById(userId).then(res => {
-                return res;
-            });
-            var goods = await GoodsSchema.findById(goodsId).then(res => {
-                return res;
-            });
-            var business = await BusinessSchema.findById(businessId).then(res => {
-                return res;
-            });
+            var user = await UserSchema.findById(userId);
+
+            var goods = await GoodsSchema.findById(goodsId);
+
+            var business = await BusinessSchema.findById(businessId);
 
             if (!user || !goods || !business) return false;
+
             if (goods.stock <= 0 || !goods.isValid || !business.isValid) return false;
+
             if (goods.businessId != business.id) return false;
 
             var flag;
             // -----------------------------------------------
             // 用户积分减少
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "扣除用户积分：" + goods.score }).then(info => {
-                return info ? true : false;
-            });
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "扣除用户积分：" + goods.score });
             if (!flag) return false;
 
             //todo
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "扣除用户积分成功" }).then(info => {
-                return info ? true : false;
-            });
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "扣除用户积分成功" });
             if (!flag) return false;
 
             // -----------------------------------------------
             // 商家积分增加，交易次数+1            
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商家信息" }).then(info => {
-                return info ? true : false;
-            });
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商家信息" });
             if (!flag) return false;
 
             var times = parseInt(business.times + '') + 1;
             var score = parseInt(business.score + '') + parseInt(goods.score + '');
-            flag = BusinessSchema.findByIdAndUpdate(businessId, { times: times, score: score, }).then(info => {
-                return info ? true : false;
-            });
+            flag = BusinessSchema.findByIdAndUpdate(businessId, { times: times, score: score, });
             if (!flag) return false;
 
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商家信息成功，原交易次数：" + business.times + "原积分：" + business.score + "商品积分：" + goods.score }).then(info => {
-                return info ? true : false;
-            });
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商家信息成功，原交易次数：" + business.times + "原积分：" + business.score + "商品积分：" + goods.score });
             if (!flag) return false;
             // -----------------------------------------------
             // 商品库存-1，交易次数+1                        
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商品信息" }).then(info => {
-                return info ? true : false;
-            });
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商品信息" });
             if (!flag) return false;
 
             times = parseInt(goods.times + '') + 1;
             var stock = parseInt(goods.stock + '') - 1;
-            flag = GoodsSchema.findByIdAndUpdate(goodsId, { times: times, stock: stock, }).then(info => {
-                return info ? true : false;
-            });
+            flag = GoodsSchema.findByIdAndUpdate(goodsId, { times: times, stock: stock, });
             if (!flag) return false;
 
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商品信息成功！原交易次数：" + goods.times + "原库存:" + goods.stock }).then(info => {
-                return info ? true : false;
-            });
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "修改商品信息成功！原交易次数：" + goods.times + "原库存:" + goods.stock });
             if (!flag) return false;
 
             // -----------------------------------------------
             // 添加交易            
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "添加交易信息" }).then(info => {
-                return info ? true : false;
-            });
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "添加交易信息" });
             if (!flag) return false;
 
             var validTime = goods.validTime;
@@ -261,14 +193,10 @@ export class Transaction {
             var endTime = parseFloat(date.getTime() + '') + parseFloat(validTime + '');
             var endDate = new Date(endTime);
             var code = endTime.toString(16);
-            var tinfo = await TransactionSchema.create({ code: code, goodsId: goodsId, businessId: businessId, userId: userId, state: 0, endTime: endDate }).then(info => {
-                return info ? info.id : null;
-            });
+            var tinfo = await TransactionSchema.create({ code: code, goodsId: goodsId, businessId: businessId, userId: userId, state: 0, endTime: endDate });
             if (!tinfo) return false;
 
-            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "添加交易信息成功！交易id:" + tinfo }).then(info => {
-                return info ? true : false;
-            });
+            flag = await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: "添加交易信息成功！交易id:" + tinfo });
             if (!flag) return false;
 
             return true;

@@ -7,9 +7,8 @@ import { resolve } from 'url';
 import { reject } from 'bluebird';
 import { FileManager } from '../../common/file/fileManager';
 export class Goods {
-    constructor() {
 
-    }
+    constructor() { }
 
     static Goods: any = {
         Business(model) {
@@ -30,200 +29,133 @@ export class Goods {
 
     static Query: any = {
 
-        getGoods(parent, { }, context): Promise<Array<IGoodsModel>> {
+        async getGoods(parent, { }, context): Promise<Array<IGoodsModel>> {
 
             if (!context.user) return null;
 
-            return new Promise<Array<IGoodsModel>>((resolve, reject) => {
+            if (context.session.isManger) {
+                return await GoodsSchema.find();
+            }
 
-                if (context.session.isManger) {
-                    GoodsSchema.find().then(res => {
-                        resolve(res);
-                        return;
-                    }).catch(err => { resolve(null); });
-                    return;
-                }
-
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    GoodsSchema.find({ businessId: { $in: businessIdList } }).then(res => {
-                        resolve(res);
-                        return;
-                    }).catch(err => { resolve(null) });
-                });
-
-            });
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            return await GoodsSchema.find({ businessId: { $in: businessIdList } });
         },
 
-        getGoodsById(parent, { id }, context): Promise<IGoodsModel> {
+        async getGoodsById(parent, { id }, context): Promise<IGoodsModel> {
 
             if (!context.user) return null;
 
-            let promise = new Promise<IGoodsModel>((resolve, reject) => {
-                GoodsSchema.findById(id).then(res => {
-                    resolve(res);
-                    return;
-                }).catch(err => { resolve(null); return; });
-            });
-            return promise;
+            return await GoodsSchema.findById(id);
         },
 
-        getGoodsPage(parent, { pageIndex = 1, pageSize = 10, goods }, context): Promise<IGoodsModel[]> {
+        async getGoodsPage(parent, { pageIndex = 1, pageSize = 10, goods }, context): Promise<IGoodsModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<IGoodsModel[]>((resolve, reject) => {
 
-                var skip = (pageIndex - 1) * pageSize;
+            var skip = (pageIndex - 1) * pageSize;
 
-                if (context.session.isManger) {
-                    GoodsSchema.find(goods).skip(skip).limit(pageSize).then((goodsInfo) => {
-                        resolve(goodsInfo);
-                        return;
-                    });
-                    return;
-                }
+            if (context.session.isManger) {
+                return await GoodsSchema.find(goods).skip(skip).limit(pageSize);
+            }
 
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    if (!goods.businessId) {
-                        goods.businessId = businessIdList;
-                    }
-                    GoodsSchema.find(goods).skip(skip).limit(pageSize).then((goodsInfo) => {
-                        resolve(goodsInfo);
-                        return;
-                    });
-                });
-            });
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            if (!goods.businessId) {
+                goods.businessId = businessIdList;
+            }
+            return await GoodsSchema.find(goods).skip(skip).limit(pageSize);
         },
 
-        getGoodsWhere(parent, { goods }, context): Promise<IGoodsModel[]> {
+        async getGoodsWhere(parent, { goods }, context): Promise<IGoodsModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<IGoodsModel[]>((resolve, reject) => {
-                var goodsInfo = GoodsSchema.find(goods);
-                resolve(goodsInfo);
-                return;
-            });
+            return await GoodsSchema.find(goods);
         },
 
-        getGoodsCount(parent, { goods }, context): Promise<Number> {
+        async getGoodsCount(parent, { goods }, context): Promise<Number> {
 
             if (!context.user) return null;
 
-            return new Promise<Number>((resolve, reject) => {
-                var count = GoodsSchema.count(goods);
-                resolve(count);
-                return;
-            });
+            return await GoodsSchema.count(goods);
         },
 
         //前台方法
-        getGoodsPageM(parent, { pageIndex = 1, pageSize = 10, goods, sort }, context): Promise<IGoodsModel[]> {
+        async getGoodsPageM(parent, { pageIndex = 1, pageSize = 10, goods, sort }, context): Promise<IGoodsModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<IGoodsModel[]>((resolve, reject) => {
-                var skip = (pageIndex - 1) * pageSize;
-                GoodsSchema.find(goods).sort(sort).skip(skip).limit(pageSize).then((goodsInfo) => {
-                    resolve(goodsInfo);
-                    return;
-                });
-            });
+            var skip = (pageIndex - 1) * pageSize;
+
+            return await GoodsSchema.find(goods).sort(sort).skip(skip).limit(pageSize);
         }
     }
 
     static Mutation: any = {
 
-        saveGoods(parent, { goods }, context): Promise<any> {
+        async saveGoods(parent, { goods }, context): Promise<any> {
 
             if (!context.user) return null;
 
-            return new Promise<any>((resolve, reject) => {
-                if (context.session.isManger) {
-                    if (goods.id && goods.id != "0") {
-                        GoodsSchema.findByIdAndUpdate(goods.id, goods, (err, res) => {
-                            Object.assign(res, goods);
-                            resolve(res);
-                            return;
-                        });
-                        return;
-                    }
-                    goods.times = 0;
-                    goods.sortIndex = new Date().getTime();
-                    GoodsSchema.create(goods).then((info) => {
-                        resolve(info);
-                        return;
-                    });
-                    return;
+            if (context.session.isManger) {
+                if (goods.id && goods.id != "0") {
+                    let res = await GoodsSchema.findByIdAndUpdate(goods.id, goods);
+                    Object.assign(res, goods);
+                    return res;
                 }
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var flag = false;
-                    for (var i = 0; i < info.length; i++) {
-                        if (info[i].businessId == goods.businessId) {
-                            flag = true;
-                        }
-                    }
-                    if (!flag) {
-                        resolve(null);
-                        return;
-                    }
-                    if (goods.id && goods.id != "0") {
-                        GoodsSchema.findByIdAndUpdate(goods.id, goods, (err, res) => {
-                            Object.assign(res, goods);
-                            resolve(res);
-                            return;
-                        });
-                        return;
-                    }
-                    goods.times = 0;
-                    GoodsSchema.create(goods).then((info) => {
-                        resolve(info);
-                        return;
-                    });
-                });
-            });
+                goods.times = 0;
+                goods.sortIndex = new Date().getTime();
+                return await GoodsSchema.create(goods);
+            }
+
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var flag = false;
+            for (var i = 0; i < userBusinessList.length; i++) {
+                if (userBusinessList[i].businessId == goods.businessId) {
+                    flag = true;
+                }
+            }
+            if (!flag) {
+                return;
+            }
+            if (goods.id && goods.id != "0") {
+                let res = await GoodsSchema.findByIdAndUpdate(goods.id, goods);
+                Object.assign(res, goods);
+                return res;
+            }
+            goods.times = 0;
+            goods.sortIndex = new Date().getTime();
+            return await GoodsSchema.create(goods);
         },
 
-        deleteGoods(parent, { id }, context): Promise<Boolean> {
+        async deleteGoods(parent, { id }, context): Promise<Boolean> {
 
             if (!context.user) return null;
-            
-            return new Promise<Boolean>((resolve, reject) => {
-                if (context.session.isManger) {
-                    GoodsSchema.findByIdAndRemove(id, (err, res) => {
-                        resolve(res != null);
-                        return;
-                    }).catch(err => reject(err));
-                    return;
+
+            if (context.session.isManger) {
+                return (await GoodsSchema.findByIdAndRemove(id) != null);
+            }
+            var flag = false;
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            let res = await GoodsSchema.findById(id);
+            for (var i = 0; i < userBusinessList.length; i++) {
+                if (userBusinessList[i].businessId == res.businessId) {
+                    flag = true;
                 }
-                var flag = false;
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    GoodsSchema.findById(id, (err, res) => {
-                        for (var i = 0; i < info.length; i++) {
-                            if (info[i].businessId == res.businessId) {
-                                flag = true;
-                            }
-                        }
-                        if (!flag) {
-                            resolve(false);
-                            return;
-                        }
-                        GoodsSchema.findByIdAndRemove(id, (err, res) => {
-                            resolve(res != null);
-                            return;
-                        }).catch(err => reject(err));
-                    });
-                });
-            });
+            }
+            if (!flag) {
+                return false;
+            }
+            return (await GoodsSchema.findByIdAndRemove(id) != null);
         }
-        
+
     }
 }

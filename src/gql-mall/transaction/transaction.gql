@@ -18,21 +18,17 @@ extend type Query{
     getTransactionById(id:String):Transaction
     # 分页查找
     getTransactionPage(pageIndex: Int, pageSize: Int,transaction:searchTransaction): [Transaction]
+    # 分页查找 前台
     getTransactionPageM(pageIndex: Int, pageSize: Int,transaction:searchTransaction): [Transaction]
     # 查找分页总数
     getTransactionCount(transaction:searchTransaction):Int
     # 根据条件查找
-    # getTransactionWhere(transaction:searchTransaction): [Transaction]         
+    # getTransactionWhere(transaction:searchTransaction): [Transaction]    
+    # 添加交易     
     doTransact(code:String):Int
 }
 
 extend type Mutation{
-    # 添加修改交易
-    # saveTranUser:Boolean
-    # saveTranBusiness:Boolean    
-    # saveTranGoods(userId:String, businessId:String, goodsId:String):Boolean           
-    # 删除交易
-    # deleteTransaction(id:String):Boolean
     # 添加交易
     saveTransaction(userId:String, businessId:String, goodsId:String):Boolean
 }

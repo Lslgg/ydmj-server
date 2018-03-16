@@ -28,10 +28,8 @@ export class Business {
             if (!context.user) return null;
 
             // 管理员返回所有商家            
-
             if (context.session.isManger) {
-                let businessList = await BusinessSchema.find();
-                return businessList;
+                return await BusinessSchema.find();
             }
 
             // 普通商家只返回自己的商家
@@ -40,106 +38,73 @@ export class Business {
             for (var i = 0; i < userBusinessList.length; i++) {
                 businessIdList.push(userBusinessList[i].businessId);
             }
-            let businessList = await BusinessSchema.find({ _id: { $in: businessIdList } });
-            return businessList;
+            return await BusinessSchema.find({ _id: { $in: businessIdList } });
         },
 
-        getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
+        async getBusinessById(parent, { id }, context): Promise<IBusinessModel> {
             // 查找当前用户商家       
             if (!context.user) return null;
 
-            let promise = new Promise<IBusinessModel>(async (resolve, reject) => {
-                let business = await BusinessSchema.findById(id);
-                resolve(business);
-                return;
-            });
-            return promise;
+            return await BusinessSchema.findById(id);
         },
 
-        getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context): Promise<IBusinessModel[]> {
+        async getBusinessPage(parent, { pageIndex = 1, pageSize = 10, business }, context): Promise<IBusinessModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<IBusinessModel[]>(async (resolve, reject) => {
 
-                var skip = (pageIndex - 1) * pageSize;
+            var skip = (pageIndex - 1) * pageSize;
 
-                // 管理员返回所有商家                   
-                if (context.session.isManger) {
-                    let businessList = BusinessSchema.find(business).skip(skip).limit(pageSize);
-                    resolve(businessList);
-                    return;
-                }
+            // 管理员返回所有商家                   
+            if (context.session.isManger) {
+                return await BusinessSchema.find(business).skip(skip).limit(pageSize);
+            }
 
-                // 普通商家只返回自己的商家
-                let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id }).skip(skip).limit(pageSize);
-                var businessIdList: Array<String> = [];
-                for (var i = 0; i < userBusinessList.length; i++) {
-                    businessIdList.push(userBusinessList[i].businessId);
-                }
-                business._id = { "$in": businessIdList };
-                let businessList = await BusinessSchema.find(business);
-                resolve(businessList);
-                return;
-            });
+            // 普通商家只返回自己的商家
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id }).skip(skip).limit(pageSize);
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            business._id = { "$in": businessIdList };
+            return await BusinessSchema.find(business);
         },
 
-        getBusinessWhere(parent, { business }, context): Promise<IBusinessModel[]> {
+        async getBusinessWhere(parent, { business }, context): Promise<IBusinessModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<IBusinessModel[]>(async (resolve, reject) => {
-                let businessList = BusinessSchema.find(business);
-                resolve(businessList);
-                return;
-            });
+            return await BusinessSchema.find(business);
         },
 
-        getBusinessCount(parent, { business }, context): Promise<Number> {
+        async getBusinessCount(parent, { business }, context): Promise<Number> {
 
             if (!context.user) return null;
 
-            return new Promise<Number>(async (resolve, reject) => {
+            // 管理员统计所有                            
+            if (context.session.isManger) {
+                return await BusinessSchema.count(business);
+            }
 
-                // 管理员统计所有                            
-                if (context.session.isManger) {
-                    var count = BusinessSchema.count(business);
-                    resolve(count);
-                    return;
-                }
-
-                // 非管理员统计自己的商家
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    business._id = businessIdList;
-                    var count = BusinessSchema.count(business);
-                    resolve(count);
-                    return;
-                });
-
-            });
+            // 非管理员统计自己的商家
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            business._id = businessIdList;
+            return await BusinessSchema.count(business);
         },
 
         //前台方法
-        getBusinessPageM(parent, { pageIndex = 1, pageSize = 10, business, sort }, context): Promise<IBusinessModel[]> {
+        async getBusinessPageM(parent, { pageIndex = 1, pageSize = 10, business, sort }, context): Promise<IBusinessModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<IBusinessModel[]>((resolve, reject) => {
+            var skip = (pageIndex - 1) * pageSize;
 
-                var skip = (pageIndex - 1) * pageSize;
-
-                BusinessSchema.find(business).skip(skip).limit(pageSize).sort(sort).then((businessList) => {
-                    resolve(businessList);
-                    return;
-                });
-
-                return;
-            });
-        },
+            return await BusinessSchema.find(business).skip(skip).limit(pageSize).sort(sort);
+        }
     }
 
     static Mutation: any = {
@@ -148,63 +113,40 @@ export class Business {
 
             if (!context.user) return null;
 
-            return new Promise<any>((resolve, reject) => {
 
-                if (context.session.isManger) {
+            if (context.session.isManger) {
 
-                    if (business.id && business.id != "0") {
-                        BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
-                            // Object.assign(res, business);                            
-                            // resolve(res);
-                            return res;
-                        });
-                        return;
-                    }
-                    business.times = 0;
-                    business.score = 0;
-                    BusinessSchema.create(business).then((info) => {
-                        resolve(info);
-                        return;
-                    });
-                    return;
-
+                if (business.id && business.id != "0") {
+                    let res = await BusinessSchema.findByIdAndUpdate(business.id, business);
+                    Object.assign(res, business);
+                    return res;
                 }
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var flag = false;
-                    for (var i = 0; i < info.length; i++) {
-                        if (info[i].businessId == business.id) {
-                            flag = true;
-                        }
-                    }
-                    if (!flag || !business.id || business.id != "0") {
-                        resolve(null);
-                        return;
-                    }
-                    BusinessSchema.findByIdAndUpdate(business.id, business, (err, res) => {
-                        Object.assign(res, business);
-                        resolve(res);
-                        return;
-                    });
-                    return;
 
-                });
-            });
+                business.times = 0;
+                business.score = 0;
+                return await BusinessSchema.create(business);
+            }
+
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var flag = false;
+            for (var i = 0; i < userBusinessList.length; i++) {
+                if (userBusinessList[i].businessId == business.id) {
+                    flag = true;
+                }
+            }
+            if (!flag || !business.id || business.id != "0") {
+                return;
+            }
+            let res = await BusinessSchema.findByIdAndUpdate(business.id, business);
+            Object.assign(res, business);
+            return res;
         },
-        deleteBusiness(parent, { id }, context): Promise<Boolean> {
+
+        async deleteBusiness(parent, { id }, context): Promise<Boolean> {
 
             if (!context.user || !context.session.isManger) return null;
 
-            return new Promise<Boolean>((resolve, reject) => {
-
-                BusinessSchema.findByIdAndRemove(id, (err, res) => {
-                    resolve(res != null);
-                    return;
-                }).catch(err => {
-                    resolve(err);
-                    return;
-                });
-
-            });
+            return await (BusinessSchema.findByIdAndRemove(id) != null);
         }
 
     }

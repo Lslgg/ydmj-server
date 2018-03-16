@@ -24,53 +24,36 @@ export class TransLog {
 
     static Query: any = {
 
-        getTransLog(parent, { }, context): Promise<Array<ITransLogModel>> {
+        async getTransLog(parent, { }, context): Promise<Array<ITransLogModel>> {
 
             if (!context.user) return null;
 
-            return new Promise<Array<ITransLogModel>>((resolve, reject) => {
+            if (context.session.isManger) {
+                return await TransLogSchema.find();
+            }
 
-                if (context.session.isManger) {
-                    TransLogSchema.find().then(res => {
-                        resolve(res);
-                        return;
-                    }).catch(err => { resolve(null); return; });
-                    return;
-                }
-
-                resolve(null);
-                return;
-            });
+            return null;
         },
 
-        getTransLogCount(parent, { transLog }, context): Promise<Number> {
+        async getTransLogCount(parent, { transLog }, context): Promise<Number> {
 
             if (!context.user) return null;
 
-            return new Promise<Number>((resolve, reject) => {
-                if (context.session.isManger) {
-                    var count = TransLogSchema.count(transLog);
-                    resolve(count);
-                    return;
-                }
-                resolve(null);
-                return;
-            });
+            if (context.session.isManger) {
+                return await TransLogSchema.count(transLog);
+            }
+
+            return null;
         }
     }
 
     static Mutation: any = {
 
-        saveTransLog(parent, { userId, businessId, goodsId, info }, context): Promise<ITransLogModel> {
+        async saveTransLog(parent, { userId, businessId, goodsId, info }, context): Promise<ITransLogModel> {
 
             if (!context.user) return null;
-            
-            return new Promise((resolve, reject) => {
-                TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: info }).then((info) => {
-                    resolve(info);
-                    return;
-                });
-            });
+
+            return await TransLogSchema.create({ userId: userId, businessId: businessId, goodsId: goodsId, info: info });
         }
 
     }

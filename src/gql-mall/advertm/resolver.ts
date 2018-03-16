@@ -6,7 +6,7 @@ import { reject } from 'bluebird';
 
 export class Advertm {
 
-    constructor() {}
+    constructor() { }
 
     static Advertm: any = {
         Images(model) {
@@ -21,102 +21,67 @@ export class Advertm {
 
     static Query: any = {
 
-        getAdvertm(parent, { }, context): Promise<Array<IAdvertmModel>> {
+        async getAdvertm(parent, { }, context): Promise<Array<IAdvertmModel>> {
+
             if (!context.user) return null;
 
-            let promise = new Promise<Array<IAdvertmModel>>((resolve, reject) => {
-                AdvertmSchema.find().then(res => {
-                    resolve(res);
-                    return;
-                }).catch(err => resolve(null));
-            })
-            return promise;
+            return await AdvertmSchema.find();
         },
 
-        getAdvertmById(parent, { id }, context): Promise<IAdvertmModel> {
+        async getAdvertmById(parent, { id }, context): Promise<IAdvertmModel> {
+
             if (!context.user) return null;
 
-            let promise = new Promise<IAdvertmModel>((resolve, reject) => {
-                AdvertmSchema.findById(id).then(res => {
-                    resolve(res);
-                    return;
-                }).catch(err => resolve(null));
-            });
-            return promise;
+            return await AdvertmSchema.findById(id);
         },
 
-        getAdvertmPage(parent, { pageIndex = 1, pageSize = 10, advertm }, context): Promise<IAdvertmModel[]> {
+        async getAdvertmPage(parent, { pageIndex = 1, pageSize = 10, advertm }, context): Promise<IAdvertmModel[]> {
+
             if (!context.user) return null;
-            return new Promise<IAdvertmModel[]>((resolve, reject) => {
-                var skip = (pageIndex - 1) * pageSize
-                var advertmInfo = AdvertmSchema.find(advertm).skip(skip).limit(pageSize);
-                resolve(advertmInfo);
-                return;
-            });
+
+            var skip = (pageIndex - 1) * pageSize;
+
+            return await AdvertmSchema.find(advertm).skip(skip).limit(pageSize);
         },
 
-        getAdvertmWhere(parent, { advertm }, context): Promise<IAdvertmModel[]> {
+        async getAdvertmWhere(parent, { advertm }, context): Promise<IAdvertmModel[]> {
+
             if (!context.user) return null;
-            return new Promise<IAdvertmModel[]>((resolve, reject) => {
-                AdvertmSchema.find(advertm).then(info => {
-                    resolve(info);
-                    return;
-                });
-            });
+
+            return await AdvertmSchema.find(advertm);
         },
 
-        getAdvertmCount(parent, { user }, context): Promise<Number> {
+        async getAdvertmCount(parent, { user }, context): Promise<Number> {
+
             if (!context.user) return null;
-            return new Promise<Number>((resolve, reject) => {
-                var count = AdvertmSchema.count(user);
-                resolve(count);
-                return;
-            });
+
+            return await AdvertmSchema.count(user);
         },
 
     }
 
     static Mutation: any = {
 
-        saveAdvertm(parent, { advertm }, context): Promise<any> {
+        async saveAdvertm(parent, { advertm }, context): Promise<any> {
 
             if (!context.user || !context.session.isManger) return null;
 
-            return new Promise<any>((resolve, reject) => {
+            if (advertm.id && advertm.id != "0") {
+                let res = await AdvertmSchema.findByIdAndUpdate(advertm.id, advertm);
+                Object.assign(res, advertm);
+                return res;
+            }
 
-                if (advertm.id && advertm.id != "0") {
-
-                    AdvertmSchema.findByIdAndUpdate(advertm.id, advertm, (err, res) => {
-                        Object.assign(res, advertm);
-                        resolve(res);
-                        return;
-                    })
-                    return;
-                }
-
-                AdvertmSchema.create(advertm).then(info => {
-                    resolve(info);
-                    return;
-                });
-
-            });
+            return await AdvertmSchema.create(advertm);
         },
 
-        deleteAdvertm(parent, { id }, context): Promise<Boolean> {
+        async deleteAdvertm(parent, { id }, context): Promise<Boolean> {
 
             if (!context.user || !context.session.isManger) return null;
 
-            let promise = new Promise<Boolean>((resolve, reject) => {
+            return (await AdvertmSchema.findByIdAndRemove(id) != null);
 
-                AdvertmSchema.findByIdAndRemove(id, (err, res) => {
-                    resolve(res != null);
-                    return;
-                }).catch(err => reject(err));
-
-            });
-
-            return promise;
         }
-        
+
     }
 }

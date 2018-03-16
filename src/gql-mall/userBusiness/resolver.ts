@@ -20,65 +20,42 @@ export class UserBusiness {
 
     static Query: any = {
 
-        getUserBusiness(parent, { }, context): Promise<Array<IUserBusinessModel>> {
+        async getUserBusiness(parent, { }, context): Promise<Array<IUserBusinessModel>> {
 
             if (!context.user || !context.session.isManger) return null;
 
-            let promise = new Promise<Array<IUserBusinessModel>>((resolve, reject) => {
-                UserBusinessSchema.find().then(res => {
-                    resolve(res);
-                    return;
-                }).catch(err => { resolve(null); return; });
-            })
-            return promise;
+            return await UserBusinessSchema.find();
 
         },
 
-        getUserBusinessById(parent, { id }, context): Promise<IUserBusinessModel> {
+        async getUserBusinessById(parent, { id }, context): Promise<IUserBusinessModel> {
 
             if (!context.user || !context.session.isManger) return null;
 
-            let promise = new Promise<IUserBusinessModel>((resolve, reject) => {
-                UserBusinessSchema.findById(id).then(res => {
-                    resolve(res);
-                    return;
-                }).catch(err => { resolve(null); return; });
-            });
-            return promise;
+            return await UserBusinessSchema.findById(id);
         },
 
-        getUserBusinessWhere(parent, { userBusiness }, context): Promise<IUserBusinessModel[]> {
+        async getUserBusinessWhere(parent, { userBusiness }, context): Promise<IUserBusinessModel[]> {
 
             if (!context.user || !context.session.isManger) return null;
 
-            return new Promise<IUserBusinessModel[]>((resolve, reject) => {
-                var userBusinessInfo = UserBusinessSchema.find(userBusiness);
-                resolve(userBusinessInfo);
-                return;
-            });
+            return await UserBusinessSchema.find(userBusiness);
         },
 
-        getUserBusinessPage(parent, { pageIndex = 1, pageSize = 10, userbusiness }, context): Promise<IUserBusinessModel[]> {
+        async getUserBusinessPage(parent, { pageIndex = 1, pageSize = 10, userbusiness }, context): Promise<IUserBusinessModel[]> {
 
             if (!context.user || !context.session.isManger) return null;
 
-            return new Promise<IUserBusinessModel[]>((resolve, reject) => {
-                var skip = (pageIndex - 1) * pageSize;
-                var userBusinessInfo = UserBusinessSchema.find(userbusiness).skip(skip).limit(pageSize);
-                resolve(userBusinessInfo);
-                return;
-            });
+            var skip = (pageIndex - 1) * pageSize;
+
+            return await UserBusinessSchema.find(userbusiness).skip(skip).limit(pageSize);
         },
 
-        getUserBusinessCount(parent, { userBusiness }, context): Promise<Number> {
+        async getUserBusinessCount(parent, { userBusiness }, context): Promise<Number> {
 
             if (!context.user || !context.session.isManger) return null;
 
-            return new Promise<Number>((resolve, reject) => {
-                var count = UserBusinessSchema.count(userBusiness);
-                resolve(count);
-                return;
-            });
+            return await UserBusinessSchema.count(userBusiness);
         },
 
     }
@@ -106,30 +83,19 @@ export class UserBusiness {
             // });
         },
 
-        saveUserBusinessAll(parent, { userBusiness }, context): Promise<IUserBusinessModel[]> {
+        async saveUserBusinessAll(parent, { userBusiness }, context): Promise<IUserBusinessModel[]> {
 
             if (!context.user || !context.session.isManger) return null;
 
-            return new Promise<IUserBusinessModel[]>((resolve, reject) => {
-                UserBusinessSchema.create(userBusiness).then(info => {
-                    resolve(info);
-                    return;
-                });
-            });
+            return await UserBusinessSchema.create(userBusiness);
         },
 
-        deleteUserBusinessAll(parent, { id }, context): Promise<Boolean> {
+        async deleteUserBusinessAll(parent, { id }, context): Promise<Boolean> {
 
             if (!context.user || !context.session.isManger) return null;
 
-            let promise = new Promise<Boolean>((resolve, reject) => {
-                UserBusinessSchema.find({ _id: { $in: id } }).remove().then(res => {
-                    resolve(true);
-                    return;
-                }).catch(err => { resolve(err); return; });
-            });
+            return (await UserBusinessSchema.find({ _id: { $in: id } }).remove() != null);
 
-            return promise;
         },
 
         deleteUserBusiness(parent, { id }, context): Promise<Boolean> {
@@ -138,13 +104,6 @@ export class UserBusiness {
 
             return null;
 
-            // let promise = new Promise<Boolean>((resolve, reject) => {
-            //     UserBusinessSchema.findByIdAndRemove(id, (err, res) => {
-            //         resolve(res != null);
-            //         return;
-            //     }).catch(err => { resolve(err); return; });
-            // });
-            // return promise;
         },
     }
 }

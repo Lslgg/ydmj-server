@@ -18,208 +18,140 @@ export class GoodsType {
 
     static Query: any = {
 
-        getGoodsType(parent, { }, context): Promise<IGoodsTypeModel[]> {
+        async getGoodsType(parent, { }, context): Promise<IGoodsTypeModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<IGoodsTypeModel[]>((resolve, reject) => {
-                // 管理员返回所有
-                if (context.session.isManger) {
-                    GoodsTypeSchema.find().then(res => {
-                        resolve(res);
-                        return;
-                    }).catch(err => { resolve(err); return; });
-                    return;
-                }
-                // 商家返回自己的类别
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    GoodsTypeSchema.find({ businessId: { $in: businessIdList } }).then(res => {
-                        resolve(res);
-                        return;
-                    }).catch(err => { resolve(err); });
-                });
-            });
+            // 管理员返回所有
+            if (context.session.isManger) {
+                return await GoodsTypeSchema.find();
+            }
+            // 商家返回自己的类别
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            return await GoodsTypeSchema.find({ businessId: { $in: businessIdList } });
         },
 
-        getGoodsTypeById(parent, { id }, context): Promise<IGoodsTypeModel> {
+        async getGoodsTypeById(parent, { id }, context): Promise<IGoodsTypeModel> {
 
             if (!context.user) return null;
 
-            let promise = new Promise<IGoodsTypeModel>((resolve, reject) => {
-                GoodsTypeSchema.findById(id).then(res => {
-                    resolve(res); return;
-                }).catch(err => { resolve(null); return; });
-            });
-            return promise;
+            return await GoodsTypeSchema.findById(id);
         },
 
-        getGoodsTypePage(parent, { pageIndex = 1, pageSize = 10, goodsType }, context): Promise<IGoodsTypeModel[]> {
+        async getGoodsTypePage(parent, { pageIndex = 1, pageSize = 10, goodsType }, context): Promise<IGoodsTypeModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<IGoodsTypeModel[]>((resolve, reject) => {
-                var skip = (pageIndex - 1) * pageSize;
-                // 管理员返回所有
-                if (context.session.isManger) {
-                    GoodsTypeSchema.find(goodsType).skip(skip).limit(pageSize).then(res => {
-                        resolve(res);
-                        return;
-                    }).catch(err => { resolve(err); return; });
-                    return;
-                }
-                // 商家返回自己的类别
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    if (!goodsType.businessId) {
-                        goodsType.businessId = businessIdList;
-                    }
-                    GoodsTypeSchema.find(goodsType).skip(skip).limit(pageSize).then(res => {
-                        resolve(res);
-                        return;
-                    }).catch(err => { resolve(err); return; });
-                });
-            });
+            var skip = (pageIndex - 1) * pageSize;
+            // 管理员返回所有
+            if (context.session.isManger) {
+                return await GoodsTypeSchema.find(goodsType).skip(skip).limit(pageSize);
+            }
+            // 商家返回自己的类别
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            if (!goodsType.businessId) {
+                goodsType.businessId = businessIdList;
+            }
+            return await GoodsTypeSchema.find(goodsType).skip(skip).limit(pageSize);
         },
 
-        getGoodsTypeWhere(parent, { goodsType }, context): Promise<IGoodsTypeModel[]> {
+        async getGoodsTypeWhere(parent, { goodsType }, context): Promise<IGoodsTypeModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<IGoodsTypeModel[]>((resolve, reject) => {
-                var goodsTypeInfo = GoodsTypeSchema.find(goodsType);
-                resolve(goodsTypeInfo);
-                return;
-            });
-
+            return await GoodsTypeSchema.find(goodsType);
         },
 
-        getGoodsTypeByIdIn(parent, { id }, context): Promise<IGoodsTypeModel[]> {
+        async getGoodsTypeByIdIn(parent, { id }, context): Promise<IGoodsTypeModel[]> {
 
             if (!context.user) return null;
 
-            return new Promise<IGoodsTypeModel[]>((resolve, reject) => {
-                var ninfo = id.split(',');
-                var goodsTypeInfo = GoodsTypeSchema.find({ businessId: { $in: ninfo } });
-                resolve(goodsTypeInfo);
-                return;
-            });
+            var ninfo = id.split(',');
+
+            return await GoodsTypeSchema.find({ businessId: { $in: ninfo } });
         },
 
-        getGoodsTypeCount(parent, { goodsType }, context): Promise<Number> {
+        async getGoodsTypeCount(parent, { goodsType }, context): Promise<Number> {
+
             if (!context.user) return null;
-            return new Promise<Number>((resolve, reject) => {
-                // 管理员统计所有
-                if (context.session.isManger) {
-                    var count = GoodsTypeSchema.count(goodsType);
-                    resolve(count);
-                    return;
-                }
-                // 商家统计自己的
-                GoodsTypeSchema.find({ userId: context.user._id }).then((info) => {
-                    var businessIdList: Array<String> = [];
-                    for (var i = 0; i < info.length; i++) {
-                        businessIdList.push(info[i].businessId);
-                    }
-                    if (!goodsType.businessId) {
-                        goodsType.businessId = businessIdList;
-                    }
-                    var count = GoodsTypeSchema.count(goodsType);
-                    resolve(count);
-                    return;
-                });
-            });
+            // 管理员统计所有
+            if (context.session.isManger) {
+                return await GoodsTypeSchema.count(goodsType);
+            }
+            // 商家统计自己的
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            if (!goodsType.businessId) {
+                goodsType.businessId = businessIdList;
+            }
+            return await GoodsTypeSchema.count(goodsType);
         }
     }
 
     static Mutation: any = {
-        saveGoodsType(parent, { goodsType }, context): Promise<any> {
+
+        async saveGoodsType(parent, { goodsType }, context): Promise<any> {
 
             if (!context.user) return null;
 
-            return new Promise<any>((resolve, reject) => {
-                if (context.session.isManger) {
-                    if (goodsType.id && goodsType.id != "0") {
-                        GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType, (err, res) => {
-                            Object.assign(res, goodsType);
-                            resolve(res);
-                            return;
-                        })
-                        return;
-                    }
-                    GoodsTypeSchema.create(goodsType).then(info => {
-                        resolve(info);
-                        return;
-                    });
-                    return;
+            if (context.session.isManger) {
+                if (goodsType.id && goodsType.id != "0") {
+                    let res = await GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType);
+                    Object.assign(res, goodsType);
+                    return res;
                 }
-                UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                    var flag = false;
-                    for (var i = 0; i < info.length; i++) {
-                        if (info[i].businessId == goodsType.businessId) {
-                            flag = true;
-                        }
-                    }
-                    // 判断该类别是否为该用户
-                    if (!flag) {
-                        resolve(info);
-                        return;
-                    }
-                    if (goodsType.id && goodsType.id != "0") {
-                        GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType, (err, res) => {
-                            Object.assign(res, goodsType);
-                            resolve(res);
-                            return;
-                        })
-                        return;
-                    }
-                    GoodsTypeSchema.create(goodsType).then(info => {
-                        resolve(info);
-                        return;
-                    });
-                });
-            });
+                return await GoodsTypeSchema.create(goodsType);
+            }
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var flag = false;
+            for (var i = 0; i < userBusinessList.length; i++) {
+                if (userBusinessList[i].businessId == goodsType.businessId) {
+                    flag = true;
+                }
+            }
+            // 判断该类别是否为该用户
+            if (!flag) {
+                return null;
+            }
+
+            if (goodsType.id && goodsType.id != "0") {
+                return await GoodsTypeSchema.findByIdAndUpdate(goodsType.id, goodsType);
+            }
+            return await GoodsTypeSchema.create(goodsType);
         },
 
-        deleteGoodsType(parent, { id }, context): Promise<Boolean> {
+        async deleteGoodsType(parent, { id }, context): Promise<Boolean> {
 
             if (!context.user) return null;
 
-            return new Promise<Boolean>((resolve, reject) => {
-                if (context.session.isManger) {
-                    GoodsTypeSchema.findByIdAndRemove(id, (err, res) => {
-                        resolve(res != null);
-                        return;
-                    }).catch(err => { resolve(err); return; });
-                    return;
-                }
+            if (context.session.isManger) {
+                return (await GoodsTypeSchema.findByIdAndRemove(id) != null);
+            }
 
-                GoodsTypeSchema.findById(id).then((goodstype) => {
-                    UserBusinessSchema.find({ userId: context.user._id }).then((info) => {
-                        var flag = false;
-                        for (var i = 0; i < info.length; i++) {
-                            if (info[i].businessId == goodstype.businessId) {
-                                flag = true;
-                            }
-                        }
-                        if (!flag) {
-                            resolve(false);
-                            return;
-                        }
-                        GoodsTypeSchema.findByIdAndRemove(id, (err, res) => {
-                            resolve(res != null);
-                            return;
-                        }).catch(err => { resolve(err); return; });
-                    });
-                });
-            });
+            let goodsType = await GoodsTypeSchema.findById(id);
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var flag = false;
+            for (var i = 0; i < userBusinessList.length; i++) {
+                if (userBusinessList[i].businessId == goodsType.businessId) {
+                    flag = true;
+                }
+            }
+            if (!flag) {
+                return false;
+            }
+            return (await GoodsTypeSchema.findByIdAndRemove(id) != null);
         }
-        
+
     }
 }
