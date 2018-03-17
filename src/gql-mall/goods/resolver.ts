@@ -85,6 +85,20 @@ export class Goods {
 
             if (!context.user) return null;
 
+            // 管理员统计所有                            
+            if (context.session.isManger) {
+                return await GoodsSchema.count(goods);
+            }
+
+            // 非管理员统计自己的商家
+            let userBusinessList = await UserBusinessSchema.find({ userId: context.user._id });
+            var businessIdList: Array<String> = [];
+            for (var i = 0; i < userBusinessList.length; i++) {
+                businessIdList.push(userBusinessList[i].businessId);
+            }
+            if (!goods.businessId) {
+                goods.businessId = businessIdList;
+            }
             return await GoodsSchema.count(goods);
         },
 
