@@ -61,6 +61,43 @@ class Server {
 				}
 			})
 		);
+		this.app.get('/wxlogin', (req, res) => {
+			console.log('dohere1111111111111111111111111111111111111');
+			var post_data = req.query;
+			if (post_data.code) {
+				console.log("code");
+				console.log(post_data.code);
+				let https = require('https');
+				let appId = 'wx7b80c3dba5d880b6';
+				let secret = 'eb1dc047a60625023061726fcec8dc31';
+				//get 请求外网  
+				https.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + appId + '&secret=' + secret + '&code=' + post_data.code + '&grant_type=authorization_code', function (req) {
+					let result = '';
+					req.on('data', function (data) {
+						result += data;
+					});
+					req.on('end', function () {
+						let resultObj = JSON.parse(result);
+						let token = resultObj.access_token
+						let openid = resultObj.openid;
+						if (openid && token) {
+							let https = require('https');
+							https.get(' https://api.weixin.qq.com/sns/userinfo?access_token=' + token + '&openid=' + openid + '&lang=zh_CN', function (req) {
+								let result = '';
+								req.on('data', function (data) {
+									result += data;
+								});
+								req.on('end', function () {
+									let resultObj = JSON.parse(result);
+									console.log(resultObj);																																				
+								});
+							});
+						}
+					});
+				});
+			} 			
+			res.end('出错了！请重新登录。');
+		});
 
 		this.app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 		this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
@@ -144,16 +181,19 @@ class Server {
 				"http://test.ms0564.com",
 				"http://admin.ms0564.com",
 				"http://192.168.1.102:8100",
+				"https://open.weixin.qq.com"
 			],
 			headers: [
 				"Access-Control-Allow-Origin",
 				"Access-Control-Allow-Headers",
 				"Origin, X-Requested-With, Content-Type",
 				"CORELATION_ID"
-			] 
+			]
 		}
 		this.app.use(cors(corsOption));
 	}
 }
+
+
 
 export default new Server().app;
