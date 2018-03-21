@@ -62,41 +62,82 @@ class Server {
 			})
 		);
 		this.app.get('/wxlogin', (req, res) => {
-			console.log('dohere1111111111111111111111111111111111111');
-			var post_data = req.query;
-			if (post_data.code) {
-				console.log("code");
-				console.log(post_data.code);
-				let https = require('https');
-				let appId = 'wx7b80c3dba5d880b6';
-				let secret = 'eb1dc047a60625023061726fcec8dc31';
-				//get 请求外网  
-				https.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + appId + '&secret=' + secret + '&code=' + post_data.code + '&grant_type=authorization_code', function (req) {
-					let result = '';
-					req.on('data', function (data) {
-						result += data;
-					});
-					req.on('end', function () {
-						let resultObj = JSON.parse(result);
+			if (req.query && req.query.code) {
+				let async = require('async');
+				async.waterfall([
+					function (callback) {
+						callback(null,null);
+						console.log('f1');
+						let https = require('https');
+						let appId = 'wx7b80c3dba5d880b6';
+						let secret = 'eb1dc047a60625023061726fcec8dc31';
+						//get 请求外网  
+						https.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + appId + '&secret=' + secret + '&code=' + req.query.code + '&grant_type=authorization_code', function (req) {
+							let result = '';
+							req.on('data', function (data) {
+								result += data;
+							});
+							req.on('end', function () {
+								let resultObj = JSON.parse(result);
+								callback(null, resultObj);
+							});
+						});
+					},
+					function (resultObj, callback) {
+						console.log('f2');
+						if (!resultObj || !resultObj.access_token || !resultObj.openid) {
+							callback(null, null);
+						}
 						let token = resultObj.access_token
 						let openid = resultObj.openid;
-						if (openid && token) {
-							let https = require('https');
-							https.get(' https://api.weixin.qq.com/sns/userinfo?access_token=' + token + '&openid=' + openid + '&lang=zh_CN', function (req) {
-								let result = '';
-								req.on('data', function (data) {
-									result += data;
-								});
-								req.on('end', function () {
-									let resultObj = JSON.parse(result);
-									console.log(resultObj);																																				
-								});
+						let https = require('https');
+						https.get(' https://api.weixin.qq.com/sns/userinfo?access_token=' + token + '&openid=' + openid + '&lang=zh_CN', function (req) {
+							let result = '';
+							req.on('data', function (data) {
+								result += data;
 							});
+							req.on('end', function () {
+								let resultObj = JSON.parse(result);
+								callback(null, resultObj);
+							});
+						});
+					},
+					function (resultObj, callback) {
+						console.log('f3');
+						if (!resultObj || !resultObj.openid) {
+							callback(null, null, null);
 						}
-					});
+						var MongoClient = require('mongodb').MongoClient;
+						var url = "mongodb://localhost:27017/webSite";
+						MongoClient.connect(url, function (err, db) {
+							if (err) throw err;
+							let dbo = db.db("webSite");
+							dbo.collection("users").find({ username: resultObj.openid }).toArray(function (err, result) { // 返回集合中所有数据
+								if (err) throw err;
+								callback(null, result, resultObj);
+							});
+						});
+					},
+					function (result, resultObj, callback) {
+						console.log('f14');
+						console.log(result);
+						console.log(resultObj);
+						// var MongoClient = require('mongodb').MongoClient;
+						// var url = "mongodb://localhost:27017/webSite";
+						// MongoClient.connect(url, function (err, db) {
+						// 	if (err) throw err;
+						// 	let dbo = db.db("webSite");
+						// 	dbo.collection("users").find({ username: resultObj.openid }).toArray(function (err, result) { // 返回集合中所有数据
+						// 		if (err) throw err;
+
+						// 	});
+						// });
+					}
+				], function (err, result) {
+					console.log(err);
+					console.log(result);
 				});
-			} 			
-			res.end('出错了！请重新登录。');
+			}
 		});
 
 		this.app.get('/playground', expressPlayground({ endpoint: '/graphql' }));

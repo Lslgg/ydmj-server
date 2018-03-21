@@ -1,5 +1,5 @@
 import App from './server';
-var PORT=8080;
+var PORT=8070;
 var server=App.listen(PORT, function () {
 	console.log('Now browse to http://localhost:8080/playground');
 	console.log('Now browse to http://localhost:8080/graphiql');
