@@ -39,6 +39,7 @@ class Server {
 		this.setCors();
 		//设置Session
 		this.setSession();
+		console.log('config');
 	}
 
 	private routes(): void {
@@ -47,7 +48,8 @@ class Server {
 		this.app.use('/', uploadFileRouter);
 
 		this.app.use('/graphql', apolloUploadExpress(),
-			graphqlExpress(req => {
+			graphqlExpress(req => {				
+				console.log('getcontent');
 				let context = {
 					session: req.session,
 					user: req.session.user
@@ -66,8 +68,6 @@ class Server {
 				let async = require('async');
 				async.waterfall([
 					function (callback) {
-						callback(null,null);
-						console.log('f1');
 						let https = require('https');
 						let appId = 'wx7b80c3dba5d880b6';
 						let secret = 'eb1dc047a60625023061726fcec8dc31';
@@ -87,56 +87,90 @@ class Server {
 						console.log('f2');
 						if (!resultObj || !resultObj.access_token || !resultObj.openid) {
 							callback(null, null);
+						} else {
+							let token = resultObj.access_token
+							let openid = resultObj.openid;
+							let https = require('https');
+							https.get(' https://api.weixin.qq.com/sns/userinfo?access_token=' + token + '&openid=' + openid + '&lang=zh_CN', function (req) {
+								let result = '';
+								req.on('data', function (data) {
+									result += data;
+								});
+								req.on('end', function () {
+									let resultObj = JSON.parse(result);
+									callback(null, resultObj);
+								});
+							});
 						}
-						let token = resultObj.access_token
-						let openid = resultObj.openid;
-						let https = require('https');
-						https.get(' https://api.weixin.qq.com/sns/userinfo?access_token=' + token + '&openid=' + openid + '&lang=zh_CN', function (req) {
-							let result = '';
-							req.on('data', function (data) {
-								result += data;
-							});
-							req.on('end', function () {
-								let resultObj = JSON.parse(result);
-								callback(null, resultObj);
-							});
-						});
 					},
 					function (resultObj, callback) {
 						console.log('f3');
 						if (!resultObj || !resultObj.openid) {
 							callback(null, null, null);
-						}
-						var MongoClient = require('mongodb').MongoClient;
-						var url = "mongodb://localhost:27017/webSite";
-						MongoClient.connect(url, function (err, db) {
-							if (err) throw err;
-							let dbo = db.db("webSite");
-							dbo.collection("users").find({ username: resultObj.openid }).toArray(function (err, result) { // 返回集合中所有数据
+						} else {
+							var MongoClient = require('mongodb').MongoClient;
+							var url = "mongodb://localhost:27017/webSite";
+							MongoClient.connect(url, function (err, db) {
 								if (err) throw err;
-								callback(null, result, resultObj);
+								let dbo = db.db("webSite");
+								dbo.collection("users").find({ username: resultObj.openid }).toArray(function (err, result) { // 返回集合中所有数据
+									if (err) throw err;
+									callback(null, result, resultObj);
+								});
 							});
-						});
+						}
 					},
 					function (result, resultObj, callback) {
-						console.log('f14');
-						console.log(result);
-						console.log(resultObj);
-						// var MongoClient = require('mongodb').MongoClient;
-						// var url = "mongodb://localhost:27017/webSite";
-						// MongoClient.connect(url, function (err, db) {
-						// 	if (err) throw err;
-						// 	let dbo = db.db("webSite");
-						// 	dbo.collection("users").find({ username: resultObj.openid }).toArray(function (err, result) { // 返回集合中所有数据
-						// 		if (err) throw err;
+						console.log('f4');
 
-						// 	});
-						// });
+						if (result && result.length > 0) {
+							callback(null, resultObj);
+						} else {
+							let user = {
+								username: resultObj.openid, name: resultObj.nickname, email: resultObj.nickname + "@qq.com", password: "123456",
+								createAt: new Date().toISOString(), updateAt: new Date().toISOString(), isValid: true, roleId: "5ab20e680cf8253288611536",
+								profileId: "test", openid: resultObj.openid, nickname: resultObj.nickname, language: resultObj.language,
+								city: resultObj.city, province: resultObj.province, country: resultObj.country, headimgurl: resultObj.headimgurl, isWinxin: true
+							};
+							var MongoClient = require('mongodb').MongoClient;
+							var url = "mongodb://localhost:27017/webSite";
+							MongoClient.connect(url, function (err, db) {
+								let dbo = db.db("webSite");
+								dbo.collection("users").insertOne(user, function (err, res) {
+									if (err) throw err;
+									if (res && res.ops && res.ops[0]) {
+										callback(null, res.ops[0]);
+									} else {
+										callback(null, null);
+									}
+								});
+							});
+						}
+					},
+					function (userObj, callback) {
+						console.log('f5');
+						if (userObj) {
+							console.log('dohere');
+							req['session'].user = userObj;								
+							console.log(req['session']);
+							callback(null, true);
+						} else {
+							callback(null, false);
+						}
 					}
 				], function (err, result) {
-					console.log(err);
-					console.log(result);
+					console.log('end');
+					if (result) {
+						console.log('red');
+						res.redirect(302, '/#/%E4%B8%BB%E9%A1%B5/home');						
+						res.end();						
+					} else {
+						res.end('出错了！请重新登录。');
+					}
 				});
+			} else {
+				console.log('nocode');
+				res.end('nocode');
 			}
 		});
 
@@ -219,10 +253,9 @@ class Server {
 				"http://localhost:8083",
 				"http://localhost:8100",
 				"http://localhost:3000",
-				"http://test.ms0564.com",
+				"http://kk11.ms0564.com",
 				"http://admin.ms0564.com",
-				"http://192.168.1.102:8100",
-				"https://open.weixin.qq.com"
+				"http://192.168.1.102:8100",				
 			],
 			headers: [
 				"Access-Control-Allow-Origin",

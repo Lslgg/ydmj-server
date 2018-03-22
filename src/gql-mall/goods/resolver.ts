@@ -105,6 +105,8 @@ export class Goods {
         //前台方法
         async getGoodsPageM(parent, { pageIndex = 1, pageSize = 10, goods, sort }, context): Promise<IGoodsModel[]> {
 
+            console.log(context);
+
             if (!context.user) return null;
 
             var skip = (pageIndex - 1) * pageSize;

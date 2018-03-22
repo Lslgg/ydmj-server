@@ -70,7 +70,8 @@ export class User {
                         context.session.user = user;
                         RoleSchema.findById(user.roleId).then(data => {                            
                             context.session.isManger = data.isDefault ? true : false;
-                            resolve(user);
+                            resolve(user);       
+                            // console.log(context);                     
                             return;
                         });
                     } else {
