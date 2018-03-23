@@ -64,7 +64,6 @@ class Server {
 			})
 		);
 		this.app.get('/wxlogin', (req, res) => {
-<<<<<<< HEAD
 			if (req.query && req.query.code) {
 				let async = require('async');
 				async.waterfall([
@@ -176,44 +175,6 @@ class Server {
 			}
 		});
 
-=======
-			var post_data = req.query;
-			console.log('do');
-			if (!post_data.code) {
-				console.log('query');
-				var appid = "wx7b80c3dba5d880b6"
-				var backUrl = "http%3a%2f%2fkk11.ms0564.com";
-				var host = "open.weixin.qq.com";
-
-				var path = "/connect/oauth2/authorize?appid=wx7b80c3dba5d880b6&redirect_uri=http%3a%2f%2fkk11.ms0564.com&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
-				// var path = `connect/oauth2/authorize?
-				// 	appid=${appid}&redirect_uri=${backUrl}&response_type=code
-				// 		&scope=snsapi_userinfo&state=STATE#wechat_redirect`;
-				var http = require('http');
-				var options = {
-					host: host,                   //host是要访问的域名，别加http或https
-					path: path,       //请求的路径或参数，参数怎么写我不用说了吧？
-					method: 'get'                              //请求类型，这里是get
-				}
-				var sendmsg = '';                                //创建空字符串，用来存放收到的数据
-				var reqResult = http.request(options, function (req) {      //发出请求，加上参数，然后有回调函数
-					// req.on("data", function (chunk) {               //监听data,接受数据
-					// 	sendmsg += chunk;                         //把接受的数据存入定放的sendmsg
-					// });
-					// req.on("end", function (d) {                     //监听end事件，请求结束后调用
-					// 	// var list = JSON.parse(sendmsg);            //对接受到的数据流进行编码
-					// 	// console.log(list)                  //打印出结果
-					// 	console.log(sendmsg);
-					// });
-
-				});
-				reqResult.end();
-			} else {
-				console.log('result');				
-			}
-			res.send({ Hello: "Hello" })
-		});
->>>>>>> 1b169aed91185da0445559ffb7f1e0ae8f3ee610
 		this.app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
 		this.app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 		this.app.use('/voyager', middleware({ endpointUrl: '/graphql' }));
