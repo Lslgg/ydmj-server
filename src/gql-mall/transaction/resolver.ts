@@ -108,7 +108,7 @@ export class Transaction {
 
             if (!context.user) return null;
 
-            let trans = await TransactionSchema.find({ code: code });
+            let trans = await TransactionSchema.find({ code: code });                        
             //没有该交易
             if (!trans || !trans[0]) { return -1; }
 
@@ -127,8 +127,8 @@ export class Transaction {
             if (endTime < crTime) { return 2; }
 
             trans[0].state = 1;
-            let result = TransactionSchema.findByIdAndUpdate(trans[0].id, trans[0]);
-            return result ? 3 : 4;
+            let result = await TransactionSchema.findByIdAndUpdate(trans[0].id, trans[0]);            
+            return result ? 3 : 4;            
         }
     }
 
