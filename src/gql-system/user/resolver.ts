@@ -64,14 +64,13 @@ export class User {
 
         login(parent, { username, password }, context) {            
             return new Promise<any>((resolve, reject) => {
-                UserSchema.find({ username, password }).then(data => {
+                UserSchema.find({ username, password }).then(data => {                                     
                     if (data.length > 0) {
                         var user = data[0];
                         context.session.user = user;
-                        RoleSchema.findById(user.roleId).then(data => {                            
+                        RoleSchema.findById(user.roleId).then(data => {                                                                                       
                             context.session.isManger = data.isDefault ? true : false;
-                            resolve(user);       
-                            // console.log(context);                     
+                            resolve(user);                                                      
                             return;
                         });
                     } else {
@@ -87,8 +86,9 @@ export class User {
             context.session.user = null;
             return true;
         },
-        currentUser(parent, { }, context) {
-            if (!context.user) return null;
+        currentUser(parent, { }, context) {            
+            if (!context.user) return null;            
+
             let promise = new Promise<IUserModel>((resolve, reject) => {
                 let user = context.user;
                 if (user) {

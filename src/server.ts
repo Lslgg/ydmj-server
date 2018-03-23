@@ -48,7 +48,7 @@ class Server {
 		this.app.use('/', uploadFileRouter);
 
 		this.app.use('/graphql', apolloUploadExpress(),
-			graphqlExpress(req => {				
+			graphqlExpress(req => {
 				console.log('getcontent');
 				let context = {
 					session: req.session,
@@ -124,11 +124,11 @@ class Server {
 						console.log('f4');
 
 						if (result && result.length > 0) {
-							callback(null, resultObj);
+							callback(null, result[0]);
 						} else {
 							let user = {
 								username: resultObj.openid, name: resultObj.nickname, email: resultObj.nickname + "@qq.com", password: "123456",
-								createAt: new Date().toISOString(), updateAt: new Date().toISOString(), isValid: true, roleId: "5ab20e680cf8253288611536",
+								createAt: new Date().toISOString(), updateAt: new Date().toISOString(), isValid: true, roleId: "5a58795c498fb060c09bede3",
 								profileId: "test", openid: resultObj.openid, nickname: resultObj.nickname, language: resultObj.language,
 								city: resultObj.city, province: resultObj.province, country: resultObj.country, headimgurl: resultObj.headimgurl, isWinxin: true
 							};
@@ -139,7 +139,9 @@ class Server {
 								dbo.collection("users").insertOne(user, function (err, res) {
 									if (err) throw err;
 									if (res && res.ops && res.ops[0]) {
-										callback(null, res.ops[0]);
+										var MongoClient = require('mongodb').MongoClient;
+										var url = "mongodb://localhost:27017/webSite";										
+										callback(null, res.ops[0]);										
 									} else {
 										callback(null, null);
 									}
@@ -147,12 +149,11 @@ class Server {
 							});
 						}
 					},
-					function (userObj, callback) {
+					function (userObj, callback) {										
 						console.log('f5');
 						if (userObj) {
 							console.log('dohere');
-							req['session'].user = userObj;								
-							console.log(req['session']);
+							req['session'].user = userObj;							
 							callback(null, true);
 						} else {
 							callback(null, false);
@@ -162,8 +163,8 @@ class Server {
 					console.log('end');
 					if (result) {
 						console.log('red');
-						res.redirect(302, '/#/%E4%B8%BB%E9%A1%B5/home');						
-						res.end();						
+						res.redirect(302, '/#/%E4%B8%BB%E9%A1%B5/home');
+						res.end();
 					} else {
 						res.end('出错了！请重新登录。');
 					}
@@ -255,7 +256,7 @@ class Server {
 				"http://localhost:3000",
 				"http://kk11.ms0564.com",
 				"http://admin.ms0564.com",
-				"http://192.168.1.102:8100",				
+				"http://192.168.1.102:8100",
 			],
 			headers: [
 				"Access-Control-Allow-Origin",

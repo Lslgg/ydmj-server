@@ -104,11 +104,11 @@ export class Transaction {
             return await TransactionSchema.count(transaction);
         },
 
-        async doTransact(parent, { code }, context): Promise<Number> {
+        async doTransact(parent, { code }, context): Promise<Number> {            
 
             if (!context.user) return null;
 
-            let trans = TransactionSchema.find({ code: code });
+            let trans = await TransactionSchema.find({ code: code });
             //没有该交易
             if (!trans || !trans[0]) { return -1; }
 
@@ -134,7 +134,8 @@ export class Transaction {
 
     static Mutation: any = {
 
-        async saveTransaction(parent, { userId, businessId, goodsId }, context): Promise<Boolean> {
+        async saveTransaction(parent, { userId, businessId, goodsId }, context): Promise<Boolean> {            
+
             if (!context.user) return null;
             var user = await UserSchema.findById(userId);
 

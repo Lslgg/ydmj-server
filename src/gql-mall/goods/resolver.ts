@@ -29,11 +29,11 @@ export class Goods {
 
     static Query: any = {
 
-        async getGoods(parent, { }, context): Promise<Array<IGoodsModel>> {
-
+        async getGoods(parent, { }, context): Promise<Array<IGoodsModel>> {                              
             if (!context.user) return null;
 
             if (context.session.isManger) {
+                console.log('dohere');
                 return await GoodsSchema.find();
             }
 
@@ -103,9 +103,7 @@ export class Goods {
         },
 
         //前台方法
-        async getGoodsPageM(parent, { pageIndex = 1, pageSize = 10, goods, sort }, context): Promise<IGoodsModel[]> {
-
-            console.log(context);
+        async getGoodsPageM(parent, { pageIndex = 1, pageSize = 10, goods, sort }, context): Promise<IGoodsModel[]> {            
 
             if (!context.user) return null;
 

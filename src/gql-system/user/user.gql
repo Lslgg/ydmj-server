@@ -19,6 +19,9 @@ type User {
     isValid:Boolean
     #用户资料
     Profile:Profile
+    isDefault:Boolean
+    nickname:String
+    headimgurl:String
 }
 
 extend type Query {
@@ -57,6 +60,7 @@ input inputUser{
     roleId:String
     profileId:String
     isValid:Boolean
+    isDefault:Boolean
 }
 
 input searchUser{
