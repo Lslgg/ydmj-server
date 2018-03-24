@@ -232,7 +232,7 @@ class Server {
 		this.app.use(compression());
 		const engine = new Engine({
 			engineConfig: path.join(__dirname, './engineConfig.json'),
-			graphqlPort: 8080,
+			graphqlPort: 8070,
 			endpoint: '/graphql',
 			dumpTraffic: true
 		});
@@ -244,16 +244,9 @@ class Server {
 	private setCors() {
 		var corsOption = {
 			credentials: true,
-			origin: [
-				"http://localhost:4200",
-				"http://localhost:3000",
-				"http://localhost:8083",
-				"http://localhost:8100",
-				"http://localhost:3000",
+			origin: [				
 				"http://kk11.ms0564.com",
-				"http://admin.ms0564.com",
-				"http://192.168.1.102:8100",
-				"https://open.weixin.qq.com"
+				"http://admin.ms0564.com",								
 			],
 			headers: [
 				"Access-Control-Allow-Origin",
