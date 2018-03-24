@@ -38,8 +38,7 @@ class Server {
 		//设置cors 跨域
 		this.setCors();
 		//设置Session
-		this.setSession();
-		console.log('config');
+		this.setSession();		
 	}
 
 	private routes(): void {
@@ -48,8 +47,7 @@ class Server {
 		this.app.use('/', uploadFileRouter);
 
 		this.app.use('/graphql', apolloUploadExpress(),
-			graphqlExpress(req => {
-				console.log('getcontent');
+			graphqlExpress(req => {				
 				let context = {
 					session: req.session,
 					user: req.session.user
@@ -63,33 +61,33 @@ class Server {
 				}
 			})
 		);
-		this.app.get('/wxlogin', (req, res) => {
-			if (req.query && req.query.code) {
+		this.app.get('/wxlogin', (req, res) => {			
+			res.setHeader('content-type', 'text/html;charset=utf-8');
+			if (req.query && req.query.code) {	
+				console.log('wxlogin');			
 				let async = require('async');
 				async.waterfall([
 					function (callback) {
 						let https = require('https');
-						let appId = 'wx7b80c3dba5d880b6';
-						let secret = 'eb1dc047a60625023061726fcec8dc31';
+						let wxInfo = require('./common/wxInfo.js');								;				
 						//get 请求外网  
-						https.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + appId + '&secret=' + secret + '&code=' + req.query.code + '&grant_type=authorization_code', function (req) {
+						https.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + wxInfo.wxInfo.appId + '&secret=' + wxInfo.wxInfo.secret + '&code=' + req.query.code + '&grant_type=authorization_code', function (req) {
 							let result = '';
 							req.on('data', function (data) {
 								result += data;
 							});
 							req.on('end', function () {
-								let resultObj = JSON.parse(result);
-								callback(null, resultObj);
+								let tokenObj = JSON.parse(result);
+								callback(null, tokenObj);
 							});
 						});
 					},
-					function (resultObj, callback) {
-						console.log('f2');
-						if (!resultObj || !resultObj.access_token || !resultObj.openid) {
+					function (tokenObj, callback) {						
+						if (!tokenObj || !tokenObj.access_token || !tokenObj.openid) {
 							callback(null, null);
 						} else {
-							let token = resultObj.access_token
-							let openid = resultObj.openid;
+							let token = tokenObj.access_token
+							let openid = tokenObj.openid;
 							let https = require('https');
 							https.get(' https://api.weixin.qq.com/sns/userinfo?access_token=' + token + '&openid=' + openid + '&lang=zh_CN', function (req) {
 								let result = '';
@@ -97,40 +95,40 @@ class Server {
 									result += data;
 								});
 								req.on('end', function () {
-									let resultObj = JSON.parse(result);
-									callback(null, resultObj);
+									let userObj = JSON.parse(result);									
+									callback(null, userObj);
 								});
 							});
 						}
 					},
-					function (resultObj, callback) {
-						console.log('f3');
-						if (!resultObj || !resultObj.openid) {
+					function (userObj, callback) {						
+						if (!userObj || !userObj.openid) {
 							callback(null, null, null);
 						} else {
+							console.log(userObj.nickname);							
 							var MongoClient = require('mongodb').MongoClient;
 							var url = "mongodb://localhost:27017/webSite";
 							MongoClient.connect(url, function (err, db) {
 								if (err) throw err;
 								let dbo = db.db("webSite");
-								dbo.collection("users").find({ username: resultObj.openid }).toArray(function (err, result) { // 返回集合中所有数据
+								dbo.collection("users").find({ username: userObj.openid }).toArray(function (err, result) { // 返回集合中所有数据
 									if (err) throw err;
-									callback(null, result, resultObj);
+									callback(null, result, userObj);
 								});
 							});
 						}
 					},
-					function (result, resultObj, callback) {
-						console.log('f4');
+					function (result, userObj, callback) {						
 
 						if (result && result.length > 0) {
 							callback(null, result[0]);
-						} else {
+						}
+						else if (userObj && userObj.openid) {
 							let user = {
-								username: resultObj.openid, name: resultObj.nickname, email: resultObj.nickname + "@qq.com", password: "123456",
+								username: userObj.openid, name: userObj.nickname, email: userObj.nickname + "@qq.com", password: "123456",
 								createAt: new Date().toISOString(), updateAt: new Date().toISOString(), isValid: true, roleId: "5a58795c498fb060c09bede3",
-								profileId: "test", openid: resultObj.openid, nickname: resultObj.nickname, language: resultObj.language,
-								city: resultObj.city, province: resultObj.province, country: resultObj.country, headimgurl: resultObj.headimgurl, isWinxin: true
+								profileId: "test", openid: userObj.openid, nickname: userObj.nickname, language: userObj.language,
+								city: userObj.city, province: userObj.province, country: userObj.country, headimgurl: userObj.headimgurl, isWinxin: true
 							};
 							var MongoClient = require('mongodb').MongoClient;
 							var url = "mongodb://localhost:27017/webSite";
@@ -140,38 +138,36 @@ class Server {
 									if (err) throw err;
 									if (res && res.ops && res.ops[0]) {
 										var MongoClient = require('mongodb').MongoClient;
-										var url = "mongodb://localhost:27017/webSite";										
-										callback(null, res.ops[0]);										
+										var url = "mongodb://localhost:27017/webSite";
+										callback(null, res.ops[0]);
 									} else {
 										callback(null, null);
 									}
 								});
 							});
+						} else {
+							callback(null, null);
 						}
 					},
-					function (userObj, callback) {										
-						console.log('f5');
-						if (userObj) {
-							console.log('dohere');
-							req['session'].user = userObj;							
+					function (userObj, callback) {						
+						if (userObj) {							
+							req['session'].user = userObj;
 							callback(null, true);
 						} else {
 							callback(null, false);
 						}
 					}
-				], function (err, result) {
-					console.log('end');
-					if (result) {
-						console.log('red');
+				], function (err, result) {					
+					if (result) {	
+						console.log('success');					
 						res.redirect(302, '/#/%E4%B8%BB%E9%A1%B5/home');
 						res.end();
 					} else {
 						res.end('出错了！请重新登录。');
 					}
 				});
-			} else {
-				console.log('nocode');
-				res.end('nocode');
+			} else {				
+				res.end('出错了！请重新登录。');
 			}
 		});
 
