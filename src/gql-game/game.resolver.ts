@@ -31,7 +31,5 @@ export class GameResolver{
         ...CardLog.Mutation,
         ...Dealer.Mutation,
         ...Setting.Mutation,
-        ...Order.Mutation,
-        ...CardRecord.Mutation,
     }
 }

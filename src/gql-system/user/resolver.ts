@@ -60,13 +60,13 @@ export class User {
             if (!context.user) return 0;
             var count = UserSchema.count(user);
             return count;
-        }, 
+        },
 
         login(parent, { username, password }, context) {
             return new Promise<any>((resolve, reject) => {
                 UserSchema.find({ username, password }).then(data => {
                     if (data.length > 0) {
-                        var user=data[0];
+                        var user = data[0];
                         context.session.user = user;
                         resolve(user);
                     } else {

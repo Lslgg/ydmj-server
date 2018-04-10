@@ -65,7 +65,7 @@ export class UploadFile {
 
 
 		//根据图片名字删除图片
-		router.post('/delimg/:id', async (req, res) => {
+		router.post('/delimg/:id', async (req:any, res) => {
 			try {
 				const col = await loadCollection(this.COLLECTION_NAME, this.db);
 				const result = col.find({ filename: req.params.id })[0];
