@@ -11,6 +11,9 @@ export interface IUserModel extends Document {
     createdAt: Date,
     updateAt: Date,
     isValid:Boolean,
+    isDefault:Boolean,
+    nickname:String,
+    headimgurl:String
 }
 
 let UserSchema: Schema = new Schema({
@@ -24,6 +27,9 @@ let UserSchema: Schema = new Schema({
     password: String, 
     roleId: String,
     profileId:String,
+    isDefault:Boolean,
+    nickname:String,
+    headimgurl:String,
     isValid:{
         type:Boolean,
         default:true

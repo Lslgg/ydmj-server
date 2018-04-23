@@ -1,0 +1,34 @@
+# 积分统计
+type TransLog {
+   id:ID   
+   User:User
+   Goods:Goods
+   Business:Business
+   info:String
+   updateAt:Date
+   createAt:Date
+}
+
+extend type Query{
+    # 查询所有
+    getTransLog:[TransLog]    
+    # 查找分页总数
+    getTransLogCount(transLog:searchTransLog):Int       
+}
+
+extend type Mutation{    
+    # 添加交易日志
+    saveTransLog(userId:String, businessId:String, goodsId:String,info:String):TransLog
+}
+
+input inputTransLog {   
+   id:String  
+   userId:String
+   goodsId:String
+   businessId:String
+   info:String
+}
+
+input searchTransLog{
+    id:Json
+}

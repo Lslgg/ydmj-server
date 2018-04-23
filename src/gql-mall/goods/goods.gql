@@ -1,21 +1,20 @@
 # 商品
 type Goods {
-   id:ID   
-   name:String
-   cost_score:Int
-   rule:String
-   explain:String
-   count:Int
-   trans_times:Int
-   goods_type:String             
-   imageSrc:String
-   stock:Int
-   limit:Int
-   Business:Business
-   GoodsType:GoodsType 
-   isValid: Boolean
-   updateAt:Date
-   createAt:Date
+    id:ID   
+    Business:Business
+    GoodsType:GoodsType
+    Images: [File]
+    name:String
+    score:Int
+    ruler:String
+    explain:String
+    stock:Int
+    times:Int    
+    validTime:Float
+    sortIndex:Float
+    isValid:Boolean
+    updateAt:Date
+    createAt:Date
 }
 
 extend type Query{
@@ -25,6 +24,8 @@ extend type Query{
     getGoodsById(id:String):Goods
     # 分页查找
     getGoodsPage(pageIndex: Int, pageSize: Int,goods:searchGoods): [Goods]
+    # 分页查找（前台）
+    getGoodsPageM(pageIndex: Int, pageSize: Int,goods:searchGoods,sort:sortObj): [Goods]    
     # 查找分页总数
     getGoodsCount(goods:searchGoods):Int
     # 根据条件查找
@@ -39,24 +40,34 @@ extend type Mutation{
 }
 
 input inputGoods {   
-   id:ID   
-   name:String
-   cost_score:Int
-   rule:String
-   explain:String
-   count:Int
-   trans_times:Int
-   goods_type:String             
-   imageSrc:String
-   stock:Int
-   limit:Int
-   business_id:String
-   goodsType_id:String 
-   isValid: Boolean   
+    id:String  
+    businessId:String
+    goodsTypeId:String
+    name:String
+    score:Int
+    ruler:String
+    explain:String
+    stock:Int
+    times:Int
+    imageIds: [String]
+    validTime:Float
+    sortIndex:Float
+    isValid:Boolean    
+    updateAt:Date
+    createAt:Date
 }
-
 
 input searchGoods{
     id:Json
-    name:Json
+    name:RegExp
+    businessId:Json
+    isValid:Boolean
+    goodsTypeId:Json
+}
+
+input sortObj {
+    times:Int    
+    sortIndex:Int
+    score:Int
+    goodsTypeId:String
 }

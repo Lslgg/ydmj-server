@@ -1,30 +1,39 @@
 import { createWriteStream } from 'fs';
 import * as del from 'del';
+import * as express from 'express';
+import * as multer from 'multer';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as Loki from 'lokijs';
+import { imageFilter, loadCollection, cleanFolder } from '../file_server/utils';
 
 export class FileManager {
 
     private uploadDir = 'uploads';
 
+    private COLLECTION_NAME: string = 'db';
+    private upload: any;
     private db: any;
 
-    private dbName: string;
+    constructor() {
+        this.config();
+    }
 
-    /**
-     * 如果默认为images不用填
-     * @param dbname 默认:images
-     * @param Dbdefaluts 默认:{ images: [] } 
-     */
-    constructor(dbname: string = "images",
-        Dbdefaluts: {} = { images: [] }) {
+    private config() {
+        var storage = multer.diskStorage({
+            destination: function (req, file, cb) {
+                cb(null, 'uploads')
+            },
+            filename: function (req, file, cb) {
+                var index = file.originalname.lastIndexOf(".");
+                var fileName = file.originalname.substr(0, index);
+                var exit = file.originalname.substr(index);
+                cb(null, fileName + '-' + Date.now() + exit);
+            }
+        })
 
-        this.dbName = dbname;
-        const mkdirp = require('mkdirp');
-        mkdirp.sync(this.uploadDir);
-
-        const lowdb = require('lowdb');
-        const FileSync = require('lowdb/adapters/FileSync');
-        this.db = lowdb(new FileSync(this.uploadDir + '/db.json'));
-        this.db.defaults(Dbdefaluts).write()
+        this.upload = multer({ storage: storage, fileFilter: imageFilter });
+        this.db = new Loki(`uploads/db.json`, { persistenceMethod: 'fs' });
     }
 
     //上传文件
@@ -33,43 +42,59 @@ export class FileManager {
         var { id, path } = await this.storeUpload({ stream, filename });
         var originalname = filename; //上传的文件名
         filename = `${id}-${filename}`; //新的文件名
-        return this.recordFile({ id, originalname, filename, mimetype, encoding, path })
+        const col = await loadCollection(this.COLLECTION_NAME, this.db);
+        const data = col.insert({ id, originalname, filename, mimetype, encoding, path });
+        this.db.saveDatabase();
+        return data;
     }
 
     //根据id查找文件
-    public getFileById(id: string): any {
-        return this.db.get(this.dbName).find({ id }).value();
+    public getFileById(id: string): Promise<any> {
+        var promise = new Promise<any>((resolve, reject) => {
+            loadCollection(this.COLLECTION_NAME, this.db).then((col) => {
+                const result = col.findOne({ id: id });
+                resolve(result);
+            });
+        })
+        return promise
     }
 
     //根据id列表查找文件
-    public getFileByIds(ids: Array<string>): Array<any> {
-        var list = [];
-        ids.forEach(p => {
-            var file = this.getFileById(p);
-            list.push(file);
+    public async getFileByIds(ids: Array<string>): Promise<any> {
+        var promise = new Promise<any>((resolve, reject) => {
+            loadCollection(this.COLLECTION_NAME, this.db).then((col) => {
+                const result = col.find({ id: { '$in': ids } });
+                resolve(result);
+            });
         })
-        return list;
+        return promise;
     }
 
     /**
      * 删除单个文件
     */
-    public delFild(id: string) {
-        var file = this.getFileById(id);
-        this.cleanFolder("uploads/", file.filename);
-        this.db.get(this.dbName).remove({ id }).write();
-        return true;
+    public delFild(id: string): Promise<boolean> {
+        var promise = new Promise<boolean>((resolve, reject) => {
+            this.getFileById(id).then((file) => {
+                this.cleanFolder("uploads/", file.filename);
+                loadCollection(this.COLLECTION_NAME, this.db).then((col) => {
+                    col.remove(file);
+                    this.db.saveDatabase();
+                    resolve(true);
+                })
+            });
+        });
+        return promise;
     }
 
     /**
     * 批量删除删除文件
-   */
-    public delFilds(ids: Array<string>) {
-        if(ids.length<=0) return true;
-        ids.forEach(p=>{
-            this.delFild(p)
-        });
-        return true;
+    */
+    public delFilds(ids: Array<string>): Promise<boolean[]> {
+        if (ids.length >= 0) {
+            return Promise.all(ids.map(this.delFild));
+        }
+        return null;
     }
 
     //设置上传
@@ -87,12 +112,6 @@ export class FileManager {
 
     //清除文件
     private cleanFolder = (folderPath, fileName) => {
-        console.log([`${folderPath}${fileName}`, `!${folderPath}`]);
         del.sync([`${folderPath}${fileName}`, `!${folderPath}`]);
     };
-
-    //保存文件
-    private recordFile = file => this.db.get(this.dbName).push(file).last().write()
-
-
 }

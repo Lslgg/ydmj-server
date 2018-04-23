@@ -6,8 +6,9 @@ export interface IRoleModel extends Document {
     desc: string,
     code:string
     isValid: Boolean,
+    isDefault:Boolean,
     createdAt: Date,
-    updateAt: Date,
+    updateAt: Date,    
 }
 
 export interface IRolePowerModel extends Document {
@@ -26,6 +27,7 @@ let RoleSchema: Schema = new Schema({
     desc: String,
     code:String, 
     isValid: Boolean,
+    isDefault:Boolean,
     createAt: {
         type: Date,
         default: new Date(),

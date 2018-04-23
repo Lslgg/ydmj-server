@@ -4,9 +4,9 @@ type Answer {
    name:String
    type:String
    content:String
-   startDate:Date
-   endDate:Date   
    isValid: Boolean
+    startDate: Date
+    endDate: Date
    updateAt:Date
    createAt:Date
 }
@@ -35,13 +35,16 @@ input inputAnswer {
    id:String
    name:String
    type:String
-   content:String
-   startDate:Date
-   endDate:Date   
-   isValid: Boolean   
+   content:String   
+   isValid: Boolean  
+    startDate: Date
+    endDate: Date
 }
 
 input searchAnswer{
     id:Json
     name:Json
+    isValid:Boolean
+    startDate:Json
+    endDate:Json
 }

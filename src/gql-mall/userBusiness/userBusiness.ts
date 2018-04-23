@@ -1,17 +1,16 @@
 import { model, Schema, Document } from 'mongoose';
 
-export interface IGoodsTypeModel extends Document {
+export interface IUserBusinessModel extends Document {
     id: string
-    name: String
-    businessId:String    
+    userId: String
+    businessId: String
     updateAt: Date
     createAt: Date
 }
 
 let schema: Schema = new Schema({
-    // id: String,
-    name: String,
-    businessId:String,    
+    userId: String,
+    businessId: String,
     createAt: {
         type: Date,
         default: new Date(),
@@ -24,4 +23,5 @@ let schema: Schema = new Schema({
     },
 })
 
-export default model<IGoodsTypeModel>('GoodsType', schema);
+
+export default model<IUserBusinessModel>('UserBusiness', schema);

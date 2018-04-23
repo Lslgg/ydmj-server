@@ -1,73 +1,73 @@
 import AnswerSchema, { IAnswerModel } from './answer';
 import { DocumentQuery, MongoosePromise } from 'mongoose';
+import { resolve, reject } from 'bluebird';
 export class Answer {
-    constructor() {
 
-    }
+    constructor() { }
 
     static Query: any = {
-        getAnswer(parent, { }, context): Promise<Array<IAnswerModel>> {
+
+        async getAnswer(parent, { }, context): Promise<Array<IAnswerModel>> {
+
             if (!context.user) return null;
 
-            let promise = new Promise<Array<IAnswerModel>>((resolve, reject) => {
-                AnswerSchema.find().then(res => {
-                    resolve(res);
-                }).catch(err => resolve(null));
-            })
-            return promise;
+            return await AnswerSchema.find();
         },
-        getAnswerById(parent, { id }, context): Promise<IAnswerModel> {
+
+        async getAnswerById(parent, { id }, context): Promise<IAnswerModel> {
+
             if (!context.user) return null;
 
-            let promise = new Promise<IAnswerModel>((resolve, reject) => {
-                AnswerSchema.findById(id).then(res => {
-                    resolve(res);
-                }).catch(err => resolve(null));
-            });
-            return promise;
+            return await AnswerSchema.findById(id);
         },
 
-        getAnswerPage(parent, { pageIndex = 1, pageSize = 10, answer }, context) {
+        async getAnswerPage(parent, { pageIndex = 1, pageSize = 10, answer }, context): Promise<IAnswerModel[]> {
+
             if (!context.user) return null;
-            var skip = (pageIndex - 1) * pageSize
-            var advertmInfo = AnswerSchema.find(answer).skip(skip).limit(pageSize)
-            return advertmInfo;
+
+            var skip = (pageIndex - 1) * pageSize;
+
+            return await AnswerSchema.find(answer).skip(skip).limit(pageSize);
         },
 
-        getAnswerWhere(parent, { answer }, context) {
+        async getAnswerWhere(parent, { answer }, context): Promise<IAnswerModel[]> {
+
             if (!context.user) return null;
-            var answers = AnswerSchema.find(answer);
-            return answers;
+
+            return await AnswerSchema.find(answer);
+
         },
 
-        getAnswerCount(parent, { answer }, context) {
-            if (!context.user) return 0;
-            var count = AnswerSchema.count(answer);
-            return count;
+        async getAnswerCount(parent, { answer }, context): Promise<Number> {
+
+            if (!context.user) return null;
+
+            return await AnswerSchema.count(answer);
+
         },
     }
 
     static Mutation: any = {
-        saveAnswer(parent, { answer }, context) {
-            if (!context.user) return null;            
+
+        async saveAnswer(parent, { answer }, context): Promise<any> {
+
+            if (!context.user || !context.session.isManger) return null;
+
             if (answer.id && answer.id != "0") {
-                return new Promise<IAnswerModel>((resolve, reject) => {
-                    AnswerSchema.findByIdAndUpdate(answer.id, answer, (err, res) => {
-                        Object.assign(res, answer);
-                        resolve(res);
-                    })
-                });
+                let res = await AnswerSchema.findByIdAndUpdate(answer.id, answer);
+                Object.assign(res, answer);
+                return res;
             }
-            return AnswerSchema.create(answer);
+
+            return await AnswerSchema.create(answer);
         },
-        deleteAnswer(parent, { id }, context): Promise<Boolean> {
-            if (!context.user) return null;
-            let promise = new Promise<Boolean>((resolve, reject) => {
-                AnswerSchema.findByIdAndRemove(id, (err, res) => {
-                    resolve(res != null)
-                }).catch(err => reject(err));
-            });
-            return promise;
+
+        async deleteAnswer(parent, { id }, context): Promise<Boolean> {
+
+            if (!context.user || !context.session.isManger) return null;
+
+            return await (AnswerSchema.findByIdAndRemove(id) != null);
         }
+
     }
 }
