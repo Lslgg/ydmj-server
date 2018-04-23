@@ -69,7 +69,7 @@ class Server {
 				async.waterfall([
 					function (callback) {
 						let https = require('https');
-						let wxInfo = require('./common/wxInfo.js');;
+						let wxInfo = require('./common/wxInfo.js');
 						//get 请求外网  
 						https.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + wxInfo.wxInfo.appId + '&secret=' + wxInfo.wxInfo.secret + '&code=' + req.query.code + '&grant_type=authorization_code', function (req) {
 							let result = '';
