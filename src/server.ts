@@ -244,9 +244,7 @@ class Server {
 	private setCors() {
 		var corsOption = {
 			credentials: true,
-			origin: [				
-				"http://kk11.ms0564.com",
-				"http://admin.ms0564.com",								
+			origin: [																			
 			],
 			headers: [
 				"Access-Control-Allow-Origin",
