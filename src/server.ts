@@ -38,7 +38,7 @@ class Server {
 		//设置cors 跨域
 		this.setCors();
 		//设置Session
-		this.setSession();		
+		this.setSession();
 	}
 
 	private routes(): void {
@@ -47,7 +47,7 @@ class Server {
 		this.app.use('/', uploadFileRouter);
 
 		this.app.use('/graphql', apolloUploadExpress(),
-			graphqlExpress(req => {				
+			graphqlExpress(req => {
 				let context = {
 					session: req.session,
 					user: req.session.user
@@ -61,15 +61,15 @@ class Server {
 				}
 			})
 		);
-		this.app.get('/wxlogin', (req, res) => {			
+		this.app.get('/wxlogin', (req, res) => {
 			res.setHeader('content-type', 'text/html;charset=utf-8');
-			if (req.query && req.query.code) {	
-				console.log('wxlogin');			
+			if (req.query && req.query.code) {
+				console.log('wxlogin');
 				let async = require('async');
 				async.waterfall([
 					function (callback) {
 						let https = require('https');
-						let wxInfo = require('./common/wxInfo.js');								;				
+						let wxInfo = require('./common/wxInfo.js');;
 						//get 请求外网  
 						https.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + wxInfo.wxInfo.appId + '&secret=' + wxInfo.wxInfo.secret + '&code=' + req.query.code + '&grant_type=authorization_code', function (req) {
 							let result = '';
@@ -82,7 +82,7 @@ class Server {
 							});
 						});
 					},
-					function (tokenObj, callback) {						
+					function (tokenObj, callback) {
 						if (!tokenObj || !tokenObj.access_token || !tokenObj.openid) {
 							callback(null, null);
 						} else {
@@ -95,17 +95,17 @@ class Server {
 									result += data;
 								});
 								req.on('end', function () {
-									let userObj = JSON.parse(result);									
+									let userObj = JSON.parse(result);
 									callback(null, userObj);
 								});
 							});
 						}
 					},
-					function (userObj, callback) {						
+					function (userObj, callback) {
 						if (!userObj || !userObj.openid) {
 							callback(null, null, null);
 						} else {
-							console.log(userObj.nickname);							
+							console.log(userObj.nickname);
 							var MongoClient = require('mongodb').MongoClient;
 							var url = "mongodb://localhost:27017/webSite";
 							MongoClient.connect(url, function (err, db) {
@@ -118,7 +118,7 @@ class Server {
 							});
 						}
 					},
-					function (result, userObj, callback) {						
+					function (result, userObj, callback) {
 
 						if (result && result.length > 0) {
 							callback(null, result[0]);
@@ -149,24 +149,24 @@ class Server {
 							callback(null, null);
 						}
 					},
-					function (userObj, callback) {						
-						if (userObj) {							
+					function (userObj, callback) {
+						if (userObj) {
 							req['session'].user = userObj;
 							callback(null, true);
 						} else {
 							callback(null, false);
 						}
 					}
-				], function (err, result) {					
-					if (result) {	
-						console.log('success');					
+				], function (err, result) {
+					if (result) {
+						console.log('success');
 						res.redirect(302, '/#/%E4%B8%BB%E9%A1%B5/home');
 						res.end();
 					} else {
 						res.end('出错了！请重新登录。');
 					}
 				});
-			} else {				
+			} else {
 				res.end('出错了！请重新登录。');
 			}
 		});
@@ -244,7 +244,7 @@ class Server {
 	private setCors() {
 		var corsOption = {
 			credentials: true,
-			origin: [																			
+			origin: [
 			],
 			headers: [
 				"Access-Control-Allow-Origin",
