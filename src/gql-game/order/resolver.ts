@@ -43,17 +43,15 @@ export class Order {
                         SUM(tr.cost) cost 
                       FROM t_order tr JOIN t_user tu ON tr.userId = tu.id JOIN t_dealers td ON tu.code=td.id
                       WHERE tr.state=1 and ${where}`;
+
             let promise = new Promise((resolve, reject) => {
                 Order.mysql.findSql(sql).then(result => {
                     var count = result[0];
                     resolve(count);
                 })
             })
+            
             return promise;
         }
-    }
-
-    static Mutation = {
-
     }
 }

@@ -27,6 +27,3 @@ extend type Query {
     getCardRecordStatistice(where:String!,order:String): Int
 }
 
-extend type Mutation {
-   
-}

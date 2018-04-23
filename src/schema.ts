@@ -1,4 +1,4 @@
-var { makeExecutableSchema } = require('graphql-tools');
+import { makeExecutableSchema } from 'graphql-tools';
 var requireText = require('require-text');
 import resolvers from './resolvers'
 
@@ -12,13 +12,12 @@ var typeDefs = [Base];
 typeDefs = typeDefs.concat(SystemSchema);
 //游戏表
 typeDefs = typeDefs.concat(GameSchema);
-//商城表
+// //商城表
 typeDefs = typeDefs.concat(MallSchema);
 
 const schema = makeExecutableSchema({
   typeDefs: typeDefs,
   resolvers: resolvers,
-  logger: { log: e => console.log(e) }
 })
 
 

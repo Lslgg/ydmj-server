@@ -53,12 +53,6 @@ export class CardRecord {
         }
     }
 
-    static Mutation = {
-
-    }
-
-
-
     //连表查询的消费房卡记录Str
     private static recordSql=` SELECT 
             tcr.id,

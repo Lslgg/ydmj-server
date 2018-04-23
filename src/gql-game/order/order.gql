@@ -25,7 +25,3 @@ type OrderCardCost{
     cost:Int
 }
 
-
-extend type Mutation {
-   
-}
