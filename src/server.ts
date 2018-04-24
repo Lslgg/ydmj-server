@@ -137,9 +137,6 @@ class Server {
 			credentials: true,
 			origin: [
 				"http://localhost:4200",
-				"http://localhost:3000",
-				"http://localhost:8083",
-				"http://localhost:8100",
 			],
 			headers: [
 				"Access-Control-Allow-Origin",
